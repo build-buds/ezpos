@@ -90,7 +90,7 @@ const Reports = () => {
 
         {/* Top Products */}
         <div className="bg-card rounded-2xl p-4 card-shadow">
-          <p className="text-sm font-semibold mb-3">🏆 Produk Terlaris</p>
+          <p className="text-sm font-semibold mb-3">Produk Terlaris</p>
           <div className="space-y-2">
             {[
               { rank: 1, name: "Nasi Goreng Spesial", qty: 45, revenue: 1125000 },

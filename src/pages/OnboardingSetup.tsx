@@ -104,7 +104,7 @@ const OnboardingSetup = () => {
           variant="cta"
           className="w-full h-14 text-base mt-6"
         >
-          Mulai Gunakan Warungku
+          Mulai Gunakan Warung OS
         </Button>
       </div>
     </div>

@@ -67,8 +67,8 @@ const OnboardingCategory = () => {
                 cat.colorClass
               )}
             >
-              <div className={cn("w-14 h-14 rounded-xl flex items-center justify-center text-2xl", cat.bgClass)}>
-                {cat.emoji}
+              <div className={cn("w-14 h-14 rounded-xl flex items-center justify-center", cat.bgClass)}>
+                <Icon className="w-7 h-7" />
               </div>
               <div className="text-left flex-1">
                 <p className="font-bold text-foreground text-base">{cat.label}</p>
