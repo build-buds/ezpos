@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Banknote, Building2, FileText } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const OnboardingSetup = () => {
