@@ -31,7 +31,7 @@ const Dashboard = () => {
       <div className={cn("px-5 pt-10 pb-6 text-primary-foreground", headerColor)}>
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-xs opacity-80">Selamat datang 👋</p>
+            <p className="text-xs opacity-80">Selamat datang</p>
             <h1 className="text-xl font-bold mt-0.5">{businessName || "Warungku"}</h1>
           </div>
           <div className="w-10 h-10 rounded-full bg-primary-foreground/20 flex items-center justify-center">

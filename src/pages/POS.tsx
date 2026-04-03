@@ -4,9 +4,27 @@ import { useAppState } from "@/contexts/AppContext";
 import { SAMPLE_PRODUCTS, PRODUCT_CATEGORIES, formatRupiah } from "@/data/products";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Search, Minus, Plus, ShoppingCart, X, Banknote, Building2, Clock } from "lucide-react";
+import { Search, Minus, Plus, ShoppingCart, X, Banknote, Building2, Clock, UtensilsCrossed, Coffee, Cookie } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+
+const categoryIcon = (cat: string) => {
+  switch (cat) {
+    case "Makanan": return <UtensilsCrossed className="w-8 h-8 text-muted-foreground" />;
+    case "Minuman": return <Coffee className="w-8 h-8 text-muted-foreground" />;
+    case "Snack": return <Cookie className="w-8 h-8 text-muted-foreground" />;
+    default: return <UtensilsCrossed className="w-8 h-8 text-muted-foreground" />;
+  }
+};
+
+const categoryIconSmall = (cat: string) => {
+  switch (cat) {
+    case "Makanan": return <UtensilsCrossed className="w-5 h-5 text-muted-foreground" />;
+    case "Minuman": return <Coffee className="w-5 h-5 text-muted-foreground" />;
+    case "Snack": return <Cookie className="w-5 h-5 text-muted-foreground" />;
+    default: return <UtensilsCrossed className="w-5 h-5 text-muted-foreground" />;
+  }
+};
 
 const POS = () => {
   const { businessCategory, cart, addToCart, updateCartQty, removeFromCart, clearCart, cartTotal } = useAppState();
@@ -31,6 +49,10 @@ const POS = () => {
   const change = amountPaid ? parseInt(amountPaid) - cartTotal : 0;
 
   const handleCheckout = (method: string) => {
+    if (method === "Cash" && (!amountPaid || parseInt(amountPaid) < cartTotal)) {
+      toast.error("Nominal bayar kurang dari total!");
+      return;
+    }
     toast.success(`Transaksi ${formatRupiah(cartTotal)} berhasil! (${method})`);
     clearCart();
     setShowCart(false);
@@ -93,21 +115,21 @@ const POS = () => {
           const inCart = cart.find((i) => i.product.id === product.id);
           return (
             <div key={product.id} className="bg-card rounded-2xl card-shadow overflow-hidden">
-              <div className="h-28 bg-muted flex items-center justify-center text-3xl">
-                {product.category === "Makanan" ? "🍽️" : product.category === "Minuman" ? "🥤" : "🍿"}
+              <div className="h-28 bg-muted flex items-center justify-center">
+                {categoryIcon(product.category)}
               </div>
               <div className="p-3">
                 <p className="text-xs font-bold text-foreground line-clamp-1">{product.name}</p>
                 <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">{product.description}</p>
-                <div className="flex items-center justify-between mt-2">
-                  <p className="text-sm font-extrabold text-foreground">{formatRupiah(product.price)}</p>
+                <div className="flex items-center justify-between mt-3 gap-2">
+                  <p className="text-sm font-extrabold text-foreground shrink-0">{formatRupiah(product.price)}</p>
                   {inCart ? (
-                    <div className="flex items-center gap-1">
-                      <button onClick={() => updateCartQty(product.id, inCart.quantity - 1)} className="w-6 h-6 rounded-full bg-muted flex items-center justify-center">
+                    <div className="flex items-center gap-2 shrink-0">
+                      <button onClick={() => updateCartQty(product.id, inCart.quantity - 1)} className="w-7 h-7 rounded-full bg-muted flex items-center justify-center">
                         <Minus className="w-3 h-3" />
                       </button>
                       <span className="text-xs font-bold w-5 text-center">{inCart.quantity}</span>
-                      <button onClick={() => addToCart(product)} className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
+                      <button onClick={() => addToCart(product)} className="w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
                         <Plus className="w-3 h-3" />
                       </button>
                     </div>
@@ -115,7 +137,7 @@ const POS = () => {
                     <Button
                       onClick={() => addToCart(product)}
                       variant="outline"
-                      className="h-7 px-3 text-[10px] rounded-full border-success text-success font-bold"
+                      className="h-8 px-3 text-[11px] rounded-full border-primary text-primary font-bold shrink-0"
                     >
                       + Tambah
                     </Button>
@@ -147,8 +169,8 @@ const POS = () => {
       {showCart && (
         <div className="fixed inset-0 z-50 flex flex-col">
           <div className="flex-1 bg-foreground/40" onClick={() => setShowCart(false)} />
-          <div className="bg-card rounded-t-3xl max-h-[80vh] flex flex-col animate-slide-up max-w-lg mx-auto w-full">
-            <div className="flex items-center justify-between px-5 py-4 border-b">
+          <div className="bg-card rounded-t-3xl max-h-[85vh] flex flex-col animate-slide-up max-w-lg mx-auto w-full">
+            <div className="flex items-center justify-between px-5 py-4 border-b shrink-0">
               <h2 className="text-lg font-bold">Keranjang</h2>
               <button onClick={() => setShowCart(false)}>
                 <X className="w-5 h-5 text-muted-foreground" />
@@ -157,14 +179,14 @@ const POS = () => {
             <div className="flex-1 overflow-y-auto px-5 py-3 space-y-3">
               {cart.map((item) => (
                 <div key={item.product.id} className="flex items-center gap-3 py-2">
-                  <div className="w-12 h-12 bg-muted rounded-xl flex items-center justify-center text-xl">
-                    {item.product.category === "Makanan" ? "🍽️" : item.product.category === "Minuman" ? "🥤" : "🍿"}
+                  <div className="w-12 h-12 bg-muted rounded-xl flex items-center justify-center">
+                    {categoryIconSmall(item.product.category)}
                   </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-semibold">{item.product.name}</p>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold truncate">{item.product.name}</p>
                     <p className="text-xs text-muted-foreground">{formatRupiah(item.product.price)}</p>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 shrink-0">
                     <button onClick={() => updateCartQty(item.product.id, item.quantity - 1)} className="w-7 h-7 rounded-full bg-muted flex items-center justify-center">
                       <Minus className="w-3 h-3" />
                     </button>
@@ -173,11 +195,11 @@ const POS = () => {
                       <Plus className="w-3 h-3" />
                     </button>
                   </div>
-                  <p className="text-sm font-bold w-20 text-right">{formatRupiah(item.subtotal)}</p>
+                  <p className="text-sm font-bold w-20 text-right shrink-0">{formatRupiah(item.subtotal)}</p>
                 </div>
               ))}
             </div>
-            <div className="border-t px-5 py-4 space-y-3">
+            <div className="border-t px-5 py-4 space-y-3 shrink-0">
               <div className="flex justify-between">
                 <span className="text-base font-semibold">Total</span>
                 <span className="text-price">{formatRupiah(cartTotal)}</span>
@@ -198,7 +220,7 @@ const POS = () => {
                   {amountPaid && parseInt(amountPaid) >= cartTotal && (
                     <div className="text-center">
                       <p className="text-xs text-muted-foreground">Kembalian</p>
-                      <p className="text-2xl font-extrabold text-success">{formatRupiah(change)}</p>
+                      <p className="text-2xl font-extrabold text-primary">{formatRupiah(change)}</p>
                     </div>
                   )}
                   <div className="grid grid-cols-3 gap-2">
