@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 const Settings = () => {
-  const { businessCategory, businessName, setIsOnboarded } = useAppState();
+  const { businessCategory, businessName, logout } = useAppState();
   const navigate = useNavigate();
 
   const headerColor = businessCategory === 'restoran'
