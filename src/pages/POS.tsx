@@ -167,9 +167,9 @@ const POS = () => {
 
       {/* Cart Sheet */}
       {showCart && (
-        <div className="fixed inset-0 z-50 flex flex-col">
+        <div className="fixed inset-0 z-[60] flex flex-col">
           <div className="flex-1 bg-foreground/40" onClick={() => setShowCart(false)} />
-          <div className="bg-card rounded-t-3xl max-h-[85vh] flex flex-col animate-slide-up max-w-lg mx-auto w-full">
+          <div className="bg-card rounded-t-3xl max-h-[85vh] flex flex-col animate-slide-up max-w-lg mx-auto w-full pb-20">
             <div className="flex items-center justify-between px-5 py-4 border-b shrink-0">
               <h2 className="text-lg font-bold">Keranjang</h2>
               <button onClick={() => setShowCart(false)}>
