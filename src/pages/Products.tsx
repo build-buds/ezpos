@@ -15,6 +15,7 @@ const Products = () => {
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState("Semua");
   const [showAddForm, setShowAddForm] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [products, setProducts] = useState(SAMPLE_PRODUCTS);
   const [newProduct, setNewProduct] = useState({ name: "", price: "", category: "Makanan", stock: "" });
 
@@ -32,17 +33,46 @@ const Products = () => {
 
   const handleAdd = () => {
     if (!newProduct.name || !newProduct.price) return;
-    const product: Product = {
-      id: Date.now().toString(),
-      name: newProduct.name,
-      price: parseInt(newProduct.price),
-      category: newProduct.category,
-      stock: parseInt(newProduct.stock) || 0,
-    };
-    setProducts([product, ...products]);
+    if (editingProduct) {
+      setProducts(products.map(p => p.id === editingProduct.id ? {
+        ...p,
+        name: newProduct.name,
+        price: parseInt(newProduct.price),
+        category: newProduct.category,
+        stock: parseInt(newProduct.stock) || 0,
+      } : p));
+      toast.success("Produk berhasil diperbarui!");
+    } else {
+      const product: Product = {
+        id: Date.now().toString(),
+        name: newProduct.name,
+        price: parseInt(newProduct.price),
+        category: newProduct.category,
+        stock: parseInt(newProduct.stock) || 0,
+      };
+      setProducts([product, ...products]);
+      toast.success("Produk berhasil ditambahkan!");
+    }
     setNewProduct({ name: "", price: "", category: "Makanan", stock: "" });
+    setEditingProduct(null);
     setShowAddForm(false);
-    toast.success("Produk berhasil ditambahkan!");
+  };
+
+  const handleEdit = (product: Product) => {
+    setEditingProduct(product);
+    setNewProduct({
+      name: product.name,
+      price: product.price.toString(),
+      category: product.category,
+      stock: product.stock.toString(),
+    });
+    setShowAddForm(true);
+  };
+
+  const handleCloseForm = () => {
+    setShowAddForm(false);
+    setEditingProduct(null);
+    setNewProduct({ name: "", price: "", category: "Makanan", stock: "" });
   };
 
   return (
@@ -110,7 +140,7 @@ const Products = () => {
                 </span>
               </div>
             </div>
-            <button className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+            <button onClick={() => handleEdit(product)} className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
               <Edit2 className="w-3.5 h-3.5 text-muted-foreground" />
             </button>
           </div>
@@ -120,11 +150,11 @@ const Products = () => {
       {/* Add Product Sheet */}
       {showAddForm && (
         <div className="fixed inset-0 z-50 flex flex-col">
-          <div className="flex-1 bg-foreground/40" onClick={() => setShowAddForm(false)} />
+          <div className="flex-1 bg-foreground/40" onClick={handleCloseForm} />
           <div className="bg-card rounded-t-3xl max-w-lg mx-auto w-full animate-slide-up">
             <div className="flex items-center justify-between px-5 py-4 border-b">
-              <h2 className="text-lg font-bold">Tambah Produk</h2>
-              <button onClick={() => setShowAddForm(false)}>
+              <h2 className="text-lg font-bold">{editingProduct ? "Edit Produk" : "Tambah Produk"}</h2>
+              <button onClick={handleCloseForm}>
                 <X className="w-5 h-5 text-muted-foreground" />
               </button>
             </div>

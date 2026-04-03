@@ -93,7 +93,7 @@ const Dashboard = () => {
               <AlertTriangle className="w-4 h-4 text-warning" />
               <p className="text-sm font-semibold">Stok Kritis</p>
             </div>
-            <button className="text-xs text-primary font-medium flex items-center gap-1">
+            <button onClick={() => navigate("/products")} className="text-xs text-primary font-medium flex items-center gap-1">
               Lihat Semua <ArrowRight className="w-3 h-3" />
             </button>
           </div>
