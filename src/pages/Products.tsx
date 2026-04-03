@@ -56,6 +56,7 @@ const Products = () => {
       toast.success("Produk berhasil ditambahkan!");
     }
     setNewProduct({ name: "", price: "", category: "Makanan", stock: "" });
+    setProductImage(null);
     setEditingProduct(null);
     setShowAddForm(false);
   };
