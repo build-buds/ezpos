@@ -1,3 +1,4 @@
+import { forwardRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { LayoutDashboard, ShoppingCart, Package, FileText, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -11,7 +12,7 @@ const navItems = [
   { path: "/settings", label: "Lainnya", icon: Settings },
 ];
 
-const BottomNav = () => {
+const BottomNav = forwardRef<HTMLElement>((_, ref) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { businessCategory } = useAppState();
@@ -23,7 +24,7 @@ const BottomNav = () => {
     : 'text-primary';
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-card border-t border-border">
+    <nav ref={ref} className="fixed bottom-0 left-0 right-0 z-50 bg-card border-t border-border">
       <div className="flex items-center justify-around max-w-lg mx-auto h-16 px-2">
         {navItems.map((item) => {
           const isActive = location.pathname === item.path;
@@ -45,6 +46,8 @@ const BottomNav = () => {
       </div>
     </nav>
   );
-};
+});
+
+BottomNav.displayName = "BottomNav";
 
 export default BottomNav;
