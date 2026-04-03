@@ -76,6 +76,16 @@ const Products = () => {
     setShowAddForm(false);
     setEditingProduct(null);
     setNewProduct({ name: "", price: "", category: "Makanan", stock: "" });
+    setProductImage(null);
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => setProductImage(reader.result as string);
+      reader.readAsDataURL(file);
+    }
   };
 
   return (
