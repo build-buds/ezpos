@@ -3,6 +3,7 @@ import { useAppState } from "@/contexts/AppContext";
 import { cn } from "@/lib/utils";
 import { User, Store, Bell, Palette, LogOut, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 const Settings = () => {
   const { businessCategory, businessName, setIsOnboarded } = useAppState();
