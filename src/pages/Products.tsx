@@ -150,11 +150,11 @@ const Products = () => {
       {/* Add Product Sheet */}
       {showAddForm && (
         <div className="fixed inset-0 z-50 flex flex-col">
-          <div className="flex-1 bg-foreground/40" onClick={() => setShowAddForm(false)} />
+          <div className="flex-1 bg-foreground/40" onClick={handleCloseForm} />
           <div className="bg-card rounded-t-3xl max-w-lg mx-auto w-full animate-slide-up">
             <div className="flex items-center justify-between px-5 py-4 border-b">
-              <h2 className="text-lg font-bold">Tambah Produk</h2>
-              <button onClick={() => setShowAddForm(false)}>
+              <h2 className="text-lg font-bold">{editingProduct ? "Edit Produk" : "Tambah Produk"}</h2>
+              <button onClick={handleCloseForm}>
                 <X className="w-5 h-5 text-muted-foreground" />
               </button>
             </div>
