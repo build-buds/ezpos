@@ -107,6 +107,14 @@ const Auth = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
+          {mode === "register" && (
+            <Input
+              type="password"
+              placeholder="Konfirmasi password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
+          )}
           <Input
             type="password"
             placeholder="Password"
