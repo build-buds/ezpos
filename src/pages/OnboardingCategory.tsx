@@ -4,11 +4,10 @@ import { BusinessCategory } from "@/types";
 import { ShoppingCart, UtensilsCrossed, Package } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const categories: { id: BusinessCategory; label: string; emoji: string; description: string; icon: typeof ShoppingCart; colorClass: string; bgClass: string }[] = [
+const categories: { id: BusinessCategory; label: string; description: string; icon: typeof ShoppingCart; colorClass: string; bgClass: string }[] = [
   {
     id: "warung",
     label: "Warung / Kelontong",
-    emoji: "🛒",
     description: "Toko kelontong, warung sembako, minimarket kecil",
     icon: ShoppingCart,
     colorClass: "text-primary border-primary",
@@ -17,7 +16,6 @@ const categories: { id: BusinessCategory; label: string; emoji: string; descript
   {
     id: "restoran",
     label: "Restoran / Warung Makan",
-    emoji: "🍜",
     description: "Warung makan, restoran kecil, kedai kopi, food stall",
     icon: UtensilsCrossed,
     colorClass: "text-restoran border-restoran",
@@ -26,7 +24,6 @@ const categories: { id: BusinessCategory; label: string; emoji: string; descript
   {
     id: "onlineshop",
     label: "Online Shop / Reseller",
-    emoji: "📦",
     description: "Jualan online via WA, Instagram, Tokopedia, Shopee",
     icon: Package,
     colorClass: "text-onlineshop border-onlineshop",
