@@ -139,7 +139,7 @@ const Dashboard = () => {
         {businessCategory === 'restoran' && (
           <div className="bg-card rounded-2xl p-4 card-shadow">
             <div className="flex items-center justify-between mb-3">
-              <p className="text-sm font-semibold">🍽️ Order Aktif</p>
+              <p className="text-sm font-semibold">Order Aktif</p>
               <span className="text-xs font-bold text-primary-foreground bg-restoran px-2 py-0.5 rounded-full">3 order</span>
             </div>
             <div className="grid grid-cols-3 gap-2">
