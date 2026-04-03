@@ -33,17 +33,46 @@ const Products = () => {
 
   const handleAdd = () => {
     if (!newProduct.name || !newProduct.price) return;
-    const product: Product = {
-      id: Date.now().toString(),
-      name: newProduct.name,
-      price: parseInt(newProduct.price),
-      category: newProduct.category,
-      stock: parseInt(newProduct.stock) || 0,
-    };
-    setProducts([product, ...products]);
+    if (editingProduct) {
+      setProducts(products.map(p => p.id === editingProduct.id ? {
+        ...p,
+        name: newProduct.name,
+        price: parseInt(newProduct.price),
+        category: newProduct.category,
+        stock: parseInt(newProduct.stock) || 0,
+      } : p));
+      toast.success("Produk berhasil diperbarui!");
+    } else {
+      const product: Product = {
+        id: Date.now().toString(),
+        name: newProduct.name,
+        price: parseInt(newProduct.price),
+        category: newProduct.category,
+        stock: parseInt(newProduct.stock) || 0,
+      };
+      setProducts([product, ...products]);
+      toast.success("Produk berhasil ditambahkan!");
+    }
     setNewProduct({ name: "", price: "", category: "Makanan", stock: "" });
+    setEditingProduct(null);
     setShowAddForm(false);
-    toast.success("Produk berhasil ditambahkan!");
+  };
+
+  const handleEdit = (product: Product) => {
+    setEditingProduct(product);
+    setNewProduct({
+      name: product.name,
+      price: product.price.toString(),
+      category: product.category,
+      stock: product.stock.toString(),
+    });
+    setShowAddForm(true);
+  };
+
+  const handleCloseForm = () => {
+    setShowAddForm(false);
+    setEditingProduct(null);
+    setNewProduct({ name: "", price: "", category: "Makanan", stock: "" });
   };
 
   return (
