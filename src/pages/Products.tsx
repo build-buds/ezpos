@@ -15,6 +15,7 @@ const Products = () => {
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState("Semua");
   const [showAddForm, setShowAddForm] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [products, setProducts] = useState(SAMPLE_PRODUCTS);
   const [newProduct, setNewProduct] = useState({ name: "", price: "", category: "Makanan", stock: "" });
 
