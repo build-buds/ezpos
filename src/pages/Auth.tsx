@@ -29,9 +29,17 @@ const Auth = () => {
       toast.error("Email dan password wajib diisi");
       return;
     }
+    if (password.length < 6) {
+      toast.error("Password minimal 6 karakter");
+      return;
+    }
     if (mode === "register") {
       if (!name) {
         toast.error("Nama wajib diisi");
+        return;
+      }
+      if (password !== confirmPassword) {
+        toast.error("Konfirmasi password tidak cocok");
         return;
       }
       register(name, email, password);
