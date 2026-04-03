@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import { Plus, Search, Package, Edit2, X } from "lucide-react";
+import { Plus, Search, Package, Edit2, X, UtensilsCrossed, Coffee, Cookie } from "lucide-react";
 import { Product } from "@/types";
 import { toast } from "sonner";
 
@@ -122,8 +122,8 @@ const Products = () => {
       <div className="px-5 pb-4 space-y-3">
         {filtered.map((product) => (
           <div key={product.id} className="bg-card rounded-2xl card-shadow p-4 flex items-center gap-3">
-            <div className="w-14 h-14 bg-muted rounded-xl flex items-center justify-center text-2xl flex-shrink-0">
-              {product.category === "Makanan" ? "🍽️" : product.category === "Minuman" ? "🥤" : "🍿"}
+            <div className="w-14 h-14 bg-muted rounded-xl flex items-center justify-center flex-shrink-0">
+              {product.category === "Makanan" ? <UtensilsCrossed className="w-6 h-6 text-muted-foreground" /> : product.category === "Minuman" ? <Coffee className="w-6 h-6 text-muted-foreground" /> : <Cookie className="w-6 h-6 text-muted-foreground" />}
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-bold text-foreground truncate">{product.name}</p>

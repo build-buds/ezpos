@@ -4,11 +4,10 @@ import { BusinessCategory } from "@/types";
 import { ShoppingCart, UtensilsCrossed, Package } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const categories: { id: BusinessCategory; label: string; emoji: string; description: string; icon: typeof ShoppingCart; colorClass: string; bgClass: string }[] = [
+const categories: { id: BusinessCategory; label: string; description: string; icon: typeof ShoppingCart; colorClass: string; bgClass: string }[] = [
   {
     id: "warung",
     label: "Warung / Kelontong",
-    emoji: "🛒",
     description: "Toko kelontong, warung sembako, minimarket kecil",
     icon: ShoppingCart,
     colorClass: "text-primary border-primary",
@@ -17,7 +16,6 @@ const categories: { id: BusinessCategory; label: string; emoji: string; descript
   {
     id: "restoran",
     label: "Restoran / Warung Makan",
-    emoji: "🍜",
     description: "Warung makan, restoran kecil, kedai kopi, food stall",
     icon: UtensilsCrossed,
     colorClass: "text-restoran border-restoran",
@@ -26,7 +24,6 @@ const categories: { id: BusinessCategory; label: string; emoji: string; descript
   {
     id: "onlineshop",
     label: "Online Shop / Reseller",
-    emoji: "📦",
     description: "Jualan online via WA, Instagram, Tokopedia, Shopee",
     icon: Package,
     colorClass: "text-onlineshop border-onlineshop",
@@ -48,7 +45,7 @@ const OnboardingCategory = () => {
       {/* Header */}
       <div className="px-6 pt-12 pb-6">
         <h1 className="text-2xl font-extrabold text-foreground">Selamat Datang di</h1>
-        <h1 className="text-3xl font-extrabold text-primary mt-1">Warungku</h1>
+        <h1 className="text-3xl font-extrabold text-primary mt-1">Warung OS</h1>
         <p className="text-muted-foreground mt-3 text-sm leading-relaxed">
           Pilih jenis bisnis kamu untuk pengalaman yang sesuai. Kasir, stok, laporan — semua disesuaikan untuk bisnismu.
         </p>
@@ -70,8 +67,8 @@ const OnboardingCategory = () => {
                 cat.colorClass
               )}
             >
-              <div className={cn("w-14 h-14 rounded-xl flex items-center justify-center text-2xl", cat.bgClass)}>
-                {cat.emoji}
+              <div className={cn("w-14 h-14 rounded-xl flex items-center justify-center", cat.bgClass)}>
+                <Icon className="w-7 h-7" />
               </div>
               <div className="text-left flex-1">
                 <p className="font-bold text-foreground text-base">{cat.label}</p>

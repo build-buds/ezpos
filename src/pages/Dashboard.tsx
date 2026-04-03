@@ -31,8 +31,8 @@ const Dashboard = () => {
       <div className={cn("px-5 pt-10 pb-6 text-primary-foreground", headerColor)}>
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-xs opacity-80">Selamat datang 👋</p>
-            <h1 className="text-xl font-bold mt-0.5">{businessName || "Warungku"}</h1>
+            <p className="text-xs opacity-80">Selamat datang</p>
+            <h1 className="text-xl font-bold mt-0.5">{businessName || "Warung OS"}</h1>
           </div>
           <div className="w-10 h-10 rounded-full bg-primary-foreground/20 flex items-center justify-center">
             <CatIcon className="w-5 h-5" />
@@ -139,7 +139,7 @@ const Dashboard = () => {
         {businessCategory === 'restoran' && (
           <div className="bg-card rounded-2xl p-4 card-shadow">
             <div className="flex items-center justify-between mb-3">
-              <p className="text-sm font-semibold">🍽️ Order Aktif</p>
+              <p className="text-sm font-semibold">Order Aktif</p>
               <span className="text-xs font-bold text-primary-foreground bg-restoran px-2 py-0.5 rounded-full">3 order</span>
             </div>
             <div className="grid grid-cols-3 gap-2">
@@ -162,7 +162,7 @@ const Dashboard = () => {
         {/* Online Shop specific: Financial Summary */}
         {businessCategory === 'onlineshop' && (
           <div className="bg-card rounded-2xl p-4 card-shadow">
-            <p className="text-sm font-semibold mb-3">💰 Ringkasan Finansial</p>
+            <p className="text-sm font-semibold mb-3">Ringkasan Finansial</p>
             <div className="space-y-2">
               <div className="flex justify-between">
                 <span className="text-sm text-muted-foreground">Modal Awal</span>

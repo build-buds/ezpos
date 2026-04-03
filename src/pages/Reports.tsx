@@ -71,9 +71,9 @@ const Reports = () => {
           <p className="text-sm font-semibold mb-3">Breakdown Metode Bayar</p>
           <div className="space-y-2">
             {[
-              { method: "💵 Cash", amount: 850000, pct: 68 },
-              { method: "🏦 Transfer", amount: 300000, pct: 24 },
-              { method: "📝 Bayar Nanti", amount: 100000, pct: 8 },
+              { method: "Cash", amount: 850000, pct: 68 },
+              { method: "Transfer", amount: 300000, pct: 24 },
+              { method: "Bayar Nanti", amount: 100000, pct: 8 },
             ].map((item) => (
               <div key={item.method}>
                 <div className="flex justify-between text-xs mb-1">
@@ -90,7 +90,7 @@ const Reports = () => {
 
         {/* Top Products */}
         <div className="bg-card rounded-2xl p-4 card-shadow">
-          <p className="text-sm font-semibold mb-3">🏆 Produk Terlaris</p>
+          <p className="text-sm font-semibold mb-3">Produk Terlaris</p>
           <div className="space-y-2">
             {[
               { rank: 1, name: "Nasi Goreng Spesial", qty: 45, revenue: 1125000 },

@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Banknote, Building2, FileText } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const OnboardingSetup = () => {
@@ -30,10 +30,10 @@ const OnboardingSetup = () => {
     : 'bg-primary';
 
   const categoryLabel = businessCategory === 'warung'
-    ? '🛒 Warung / Kelontong'
+    ? 'Warung / Kelontong'
     : businessCategory === 'restoran'
-    ? '🍜 Restoran / Warung Makan'
-    : '📦 Online Shop / Reseller';
+    ? 'Restoran / Warung Makan'
+    : 'Online Shop / Reseller';
 
   const nameLabel = businessCategory === 'warung'
     ? 'Nama Warung'
@@ -82,16 +82,16 @@ const OnboardingSetup = () => {
           <Label className="text-sm font-semibold">Metode Bayar Aktif</Label>
           <div className="space-y-3">
             <div className="flex items-center justify-between p-3 bg-card rounded-xl card-shadow">
-              <span className="text-sm font-medium">💵 Cash</span>
+              <span className="text-sm font-medium flex items-center gap-2"><Banknote className="w-4 h-4 text-muted-foreground" /> Cash</span>
               <Switch checked={paymentCash} onCheckedChange={setPaymentCash} />
             </div>
             <div className="flex items-center justify-between p-3 bg-card rounded-xl card-shadow">
-              <span className="text-sm font-medium">🏦 Transfer</span>
+              <span className="text-sm font-medium flex items-center gap-2"><Building2 className="w-4 h-4 text-muted-foreground" /> Transfer</span>
               <Switch checked={paymentTransfer} onCheckedChange={setPaymentTransfer} />
             </div>
             {businessCategory !== 'onlineshop' && (
               <div className="flex items-center justify-between p-3 bg-card rounded-xl card-shadow">
-                <span className="text-sm font-medium">📝 Bayar Nanti (Hutang)</span>
+                <span className="text-sm font-medium flex items-center gap-2"><FileText className="w-4 h-4 text-muted-foreground" /> Bayar Nanti (Hutang)</span>
                 <Switch checked={paymentBayarNanti} onCheckedChange={setPaymentBayarNanti} />
               </div>
             )}
@@ -104,7 +104,7 @@ const OnboardingSetup = () => {
           variant="cta"
           className="w-full h-14 text-base mt-6"
         >
-          Mulai Gunakan Warungku
+          Mulai Gunakan Warung OS
         </Button>
       </div>
     </div>
