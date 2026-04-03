@@ -18,6 +18,8 @@ const Products = () => {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [products, setProducts] = useState(SAMPLE_PRODUCTS);
   const [newProduct, setNewProduct] = useState({ name: "", price: "", category: "Makanan", stock: "" });
+  const [productImage, setProductImage] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const headerColor = businessCategory === 'restoran'
     ? 'bg-restoran'
