@@ -1,19 +1,15 @@
-import { ReactNode, forwardRef } from "react";
+import { ReactNode } from "react";
 import BottomNav from "./BottomNav";
 
-const MobileLayout = forwardRef<HTMLDivElement, { children: ReactNode }>(
-  ({ children }, ref) => {
-    return (
-      <div ref={ref} className="min-h-screen max-w-lg mx-auto bg-background relative">
-        <div className="bottom-nav-safe">
-          {children}
-        </div>
-        <BottomNav />
+const MobileLayout = ({ children }: { children: ReactNode }) => {
+  return (
+    <div className="min-h-screen max-w-lg mx-auto bg-background relative">
+      <div className="bottom-nav-safe">
+        {children}
       </div>
-    );
-  }
-);
-
-MobileLayout.displayName = "MobileLayout";
+      <BottomNav />
+    </div>
+  );
+};
 
 export default MobileLayout;
