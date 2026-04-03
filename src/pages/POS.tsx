@@ -121,25 +121,28 @@ const POS = () => {
               <div className="p-3">
                 <p className="text-xs font-bold text-foreground line-clamp-1">{product.name}</p>
                 <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">{product.description}</p>
-                <div className="flex items-center justify-between mt-3 gap-2">
-                  <p className="text-sm font-extrabold text-foreground shrink-0">{formatRupiah(product.price)}</p>
+                <div className="flex items-center justify-between mt-3">
+                  <p className="text-xs font-extrabold text-foreground">{formatRupiah(product.price)}</p>
+                </div>
+                <div className="mt-2">
                   {inCart ? (
-                    <div className="flex items-center gap-2 shrink-0">
-                      <button onClick={() => updateCartQty(product.id, inCart.quantity - 1)} className="w-7 h-7 rounded-full bg-muted flex items-center justify-center">
-                        <Minus className="w-3 h-3" />
+                    <div className="flex items-center justify-center gap-3">
+                      <button onClick={() => updateCartQty(product.id, inCart.quantity - 1)} className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+                        <Minus className="w-3.5 h-3.5" />
                       </button>
-                      <span className="text-xs font-bold w-5 text-center">{inCart.quantity}</span>
-                      <button onClick={() => addToCart(product)} className="w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
-                        <Plus className="w-3 h-3" />
+                      <span className="text-sm font-bold w-5 text-center">{inCart.quantity}</span>
+                      <button onClick={() => addToCart(product)} className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
+                        <Plus className="w-3.5 h-3.5" />
                       </button>
                     </div>
                   ) : (
                     <Button
                       onClick={() => addToCart(product)}
                       variant="outline"
-                      className="h-8 px-3 text-[11px] rounded-full border-primary text-primary font-bold shrink-0"
+                      className="w-full h-9 text-xs rounded-full border-primary text-primary font-bold"
                     >
-                      + Tambah
+                      <Plus className="w-3.5 h-3.5 mr-1" />
+                      Tambah
                     </Button>
                   )}
                 </div>
