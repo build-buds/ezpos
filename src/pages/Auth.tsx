@@ -12,6 +12,7 @@ const Auth = () => {
   const [mode, setMode] = useState<"login" | "register">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [name, setName] = useState("");
 
   const goNext = () => {
@@ -28,9 +29,17 @@ const Auth = () => {
       toast.error("Email dan password wajib diisi");
       return;
     }
+    if (password.length < 6) {
+      toast.error("Password minimal 6 karakter");
+      return;
+    }
     if (mode === "register") {
       if (!name) {
         toast.error("Nama wajib diisi");
+        return;
+      }
+      if (password !== confirmPassword) {
+        toast.error("Konfirmasi password tidak cocok");
         return;
       }
       register(name, email, password);
@@ -98,6 +107,14 @@ const Auth = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
+          {mode === "register" && (
+            <Input
+              type="password"
+              placeholder="Konfirmasi password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
+          )}
           <Input
             type="password"
             placeholder="Password"
