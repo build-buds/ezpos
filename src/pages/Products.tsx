@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import MobileLayout from "@/components/MobileLayout";
 import { useAppState } from "@/contexts/AppContext";
 import { SAMPLE_PRODUCTS, PRODUCT_CATEGORIES, formatRupiah } from "@/data/products";
@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import { Plus, Search, Package, Edit2, X, UtensilsCrossed, Coffee, Cookie } from "lucide-react";
+import { Plus, Search, Edit2, X, UtensilsCrossed, Coffee, Cookie, ImagePlus } from "lucide-react";
 import { Product } from "@/types";
 import { toast } from "sonner";
 
@@ -18,6 +18,8 @@ const Products = () => {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [products, setProducts] = useState(SAMPLE_PRODUCTS);
   const [newProduct, setNewProduct] = useState({ name: "", price: "", category: "Makanan", stock: "" });
+  const [productImage, setProductImage] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const headerColor = businessCategory === 'restoran'
     ? 'bg-restoran'
@@ -54,6 +56,7 @@ const Products = () => {
       toast.success("Produk berhasil ditambahkan!");
     }
     setNewProduct({ name: "", price: "", category: "Makanan", stock: "" });
+    setProductImage(null);
     setEditingProduct(null);
     setShowAddForm(false);
   };
@@ -73,6 +76,16 @@ const Products = () => {
     setShowAddForm(false);
     setEditingProduct(null);
     setNewProduct({ name: "", price: "", category: "Makanan", stock: "" });
+    setProductImage(null);
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => setProductImage(reader.result as string);
+      reader.readAsDataURL(file);
+    }
   };
 
   return (
@@ -151,14 +164,40 @@ const Products = () => {
       {showAddForm && (
         <div className="fixed inset-0 z-50 flex flex-col">
           <div className="flex-1 bg-foreground/40" onClick={handleCloseForm} />
-          <div className="bg-card rounded-t-3xl max-w-lg mx-auto w-full animate-slide-up">
-            <div className="flex items-center justify-between px-5 py-4 border-b">
+          <div className="bg-card rounded-t-3xl max-w-lg mx-auto w-full animate-slide-up max-h-[85vh] flex flex-col">
+            <div className="flex items-center justify-between px-5 py-4 border-b shrink-0">
               <h2 className="text-lg font-bold">{editingProduct ? "Edit Produk" : "Tambah Produk"}</h2>
               <button onClick={handleCloseForm}>
                 <X className="w-5 h-5 text-muted-foreground" />
               </button>
             </div>
-            <div className="px-5 py-4 space-y-4">
+            <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4">
+              {/* Image Upload */}
+              <div className="space-y-1.5">
+                <Label className="text-xs font-semibold">Gambar Produk</Label>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleImageChange}
+                />
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="w-full h-28 rounded-xl border-2 border-dashed border-border bg-muted/50 flex flex-col items-center justify-center gap-2 hover:bg-muted transition-colors"
+                >
+                  {productImage ? (
+                    <img src={productImage} alt="Preview" className="w-full h-full object-cover rounded-xl" />
+                  ) : (
+                    <>
+                      <ImagePlus className="w-8 h-8 text-muted-foreground" />
+                      <span className="text-xs text-muted-foreground">Tap untuk upload gambar</span>
+                    </>
+                  )}
+                </button>
+              </div>
+
               <div className="space-y-1.5">
                 <Label className="text-xs font-semibold">Nama Produk *</Label>
                 <Input value={newProduct.name} onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })} placeholder="Nama produk" className="h-11 rounded-xl" />
@@ -173,6 +212,8 @@ const Products = () => {
                   <Input type="number" value={newProduct.stock} onChange={(e) => setNewProduct({ ...newProduct, stock: e.target.value })} placeholder="0" className="h-11 rounded-xl" />
                 </div>
               </div>
+            </div>
+            <div className="px-5 py-4 border-t shrink-0">
               <Button variant="cta" className="w-full h-12 text-sm" onClick={handleAdd} disabled={!newProduct.name || !newProduct.price}>
                 Simpan Produk
               </Button>
