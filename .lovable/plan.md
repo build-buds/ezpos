@@ -1,25 +1,56 @@
 
 
-# Rapikan Warning Dev — Sederhanakan App Wrapper
+# Splash Screen + Auth Simulasi + Persistent Login
 
-## Masalah
-1. **`TooltipProvider` tidak dipakai** — Tidak ada komponen di pages atau layout yang menggunakan Tooltip. Provider ini bisa dihapus dari `App.tsx`.
-2. **`forwardRef` di `MobileLayout` dan `BottomNav` tidak diperlukan** — Tidak ada parent yang secara eksplisit meneruskan ref ke komponen ini. `forwardRef` ditambahkan sebelumnya untuk menekan warning, tapi solusi yang lebih bersih adalah menghapusnya dan memastikan tidak ada ref yang diteruskan.
-3. **Dual Toaster** — App menggunakan `Toaster` (radix) dan `Sonner` sekaligus. Perlu konfirmasi mana yang benar-benar dipakai.
+## Alur Baru
 
-## Rencana
+```text
+Splash Screen (2 detik, logo Warung OS)
+        ↓
+Auth Page (Login / Register via Email+Password atau Google simulasi)
+        ↓
+Onboarding Category (pilih jenis bisnis) — hanya jika belum onboarding
+        ↓
+Dashboard
+```
 
-### Step 1: Hapus `TooltipProvider` dari App.tsx
-Hapus import dan wrapper `TooltipProvider` — tidak ada halaman yang memakai Tooltip.
+Saat user kembali ke app, data login tersimpan di `localStorage` → langsung masuk Dashboard.
 
-### Step 2: Sederhanakan `MobileLayout` dan `BottomNav`
-Ubah kembali ke function component biasa (tanpa `forwardRef`) karena tidak ada parent yang meneruskan ref.
+## Yang Dibuat / Diubah
 
-### Step 3: Audit Toaster usage
-Cek apakah `toast()` dari radix atau `sonner` yang dipakai di pages, lalu hapus yang tidak terpakai dari App.
+### 1. Halaman Splash Screen (`src/pages/SplashScreen.tsx`)
+- Tampilan full-screen dengan logo "Warung OS" (teks + ikon styled)
+- Animasi fade-in lalu auto-redirect setelah 2 detik
+- Jika sudah login (cek localStorage) → Dashboard
+- Jika belum → Auth page
 
-### File yang diubah
-- `src/App.tsx` — hapus TooltipProvider, mungkin hapus salah satu Toaster
-- `src/components/MobileLayout.tsx` — hapus forwardRef
-- `src/components/BottomNav.tsx` — hapus forwardRef
+### 2. Halaman Auth (`src/pages/Auth.tsx`)
+- Form login/register dengan tab toggle
+- Input: Email + Password
+- Tombol "Masuk dengan Google" (simulasi — langsung login)
+- Simpan info user ke localStorage
+- Setelah login: jika belum onboarding → `/onboarding`, jika sudah → `/dashboard`
+
+### 3. Update `AppContext.tsx`
+- Tambah state `user` (email, name) + `isLoggedIn`
+- Load/save state dari localStorage agar persistent
+- Tambah fungsi `login()`, `logout()`, `register()`
+
+### 4. Update `App.tsx`
+- Tambah route `/splash` dan `/auth`
+- Ubah `/` ke SplashScreen
+
+### 5. Update `Index.tsx`
+- Redirect logic: cek login dulu, lalu cek onboarding
+
+### 6. Update `Settings.tsx`
+- Tambah tombol "Logout" yang clear localStorage dan redirect ke `/auth`
+
+## File yang diubah
+- `src/pages/SplashScreen.tsx` — **baru**
+- `src/pages/Auth.tsx` — **baru**
+- `src/contexts/AppContext.tsx` — tambah user state + localStorage persistence
+- `src/App.tsx` — tambah routes
+- `src/pages/Index.tsx` — update redirect logic
+- `src/pages/Settings.tsx` — tambah logout
 
