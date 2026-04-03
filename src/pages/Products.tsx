@@ -140,7 +140,7 @@ const Products = () => {
                 </span>
               </div>
             </div>
-            <button className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+            <button onClick={() => handleEdit(product)} className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
               <Edit2 className="w-3.5 h-3.5 text-muted-foreground" />
             </button>
           </div>
