@@ -2,6 +2,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { AppProvider } from "@/contexts/AppContext";
+import SplashScreen from "./pages/SplashScreen";
+import Auth from "./pages/Auth";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import OnboardingCategory from "./pages/OnboardingCategory";
@@ -20,7 +22,9 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Index />} />
+          <Route path="/" element={<SplashScreen />} />
+          <Route path="/auth" element={<Auth />} />
+          <Route path="/home" element={<Index />} />
           <Route path="/onboarding" element={<OnboardingCategory />} />
           <Route path="/onboarding/setup" element={<OnboardingSetup />} />
           <Route path="/dashboard" element={<Dashboard />} />

@@ -16,8 +16,8 @@ const Settings = () => {
     : 'bg-primary';
 
   const handleLogout = () => {
-    setIsOnboarded(false);
-    navigate("/");
+    logout();
+    navigate("/auth", { replace: true });
   };
 
   const menuItems = [
