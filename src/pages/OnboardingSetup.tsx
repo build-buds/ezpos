@@ -30,10 +30,10 @@ const OnboardingSetup = () => {
     : 'bg-primary';
 
   const categoryLabel = businessCategory === 'warung'
-    ? '🛒 Warung / Kelontong'
+    ? 'Warung / Kelontong'
     : businessCategory === 'restoran'
-    ? '🍜 Restoran / Warung Makan'
-    : '📦 Online Shop / Reseller';
+    ? 'Restoran / Warung Makan'
+    : 'Online Shop / Reseller';
 
   const nameLabel = businessCategory === 'warung'
     ? 'Nama Warung'
