@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 const Settings = () => {
-  const { businessCategory, businessName, setIsOnboarded } = useAppState();
+  const { businessCategory, businessName, logout } = useAppState();
   const navigate = useNavigate();
 
   const headerColor = businessCategory === 'restoran'
@@ -16,8 +16,8 @@ const Settings = () => {
     : 'bg-primary';
 
   const handleLogout = () => {
-    setIsOnboarded(false);
-    navigate("/");
+    logout();
+    navigate("/auth", { replace: true });
   };
 
   const menuItems = [
