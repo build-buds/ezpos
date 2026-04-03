@@ -44,7 +44,7 @@ const Settings = () => {
 
       <div className="px-5 py-4 space-y-2">
         {menuItems.map((item) => (
-          <button key={item.label} className="w-full flex items-center gap-3 p-4 bg-card rounded-2xl card-shadow">
+          <button key={item.label} onClick={() => toast.info(`${item.label} — Fitur segera hadir!`)} className="w-full flex items-center gap-3 p-4 bg-card rounded-2xl card-shadow">
             <item.icon className="w-5 h-5 text-muted-foreground" />
             <div className="flex-1 text-left">
               <p className="text-sm font-semibold">{item.label}</p>
