@@ -162,7 +162,7 @@ const Dashboard = () => {
         {/* Online Shop specific: Financial Summary */}
         {businessCategory === 'onlineshop' && (
           <div className="bg-card rounded-2xl p-4 card-shadow">
-            <p className="text-sm font-semibold mb-3">💰 Ringkasan Finansial</p>
+            <p className="text-sm font-semibold mb-3">Ringkasan Finansial</p>
             <div className="space-y-2">
               <div className="flex justify-between">
                 <span className="text-sm text-muted-foreground">Modal Awal</span>
