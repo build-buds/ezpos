@@ -82,16 +82,16 @@ const OnboardingSetup = () => {
           <Label className="text-sm font-semibold">Metode Bayar Aktif</Label>
           <div className="space-y-3">
             <div className="flex items-center justify-between p-3 bg-card rounded-xl card-shadow">
-              <span className="text-sm font-medium">💵 Cash</span>
+              <span className="text-sm font-medium flex items-center gap-2"><Banknote className="w-4 h-4 text-muted-foreground" /> Cash</span>
               <Switch checked={paymentCash} onCheckedChange={setPaymentCash} />
             </div>
             <div className="flex items-center justify-between p-3 bg-card rounded-xl card-shadow">
-              <span className="text-sm font-medium">🏦 Transfer</span>
+              <span className="text-sm font-medium flex items-center gap-2"><Building2 className="w-4 h-4 text-muted-foreground" /> Transfer</span>
               <Switch checked={paymentTransfer} onCheckedChange={setPaymentTransfer} />
             </div>
             {businessCategory !== 'onlineshop' && (
               <div className="flex items-center justify-between p-3 bg-card rounded-xl card-shadow">
-                <span className="text-sm font-medium">📝 Bayar Nanti (Hutang)</span>
+                <span className="text-sm font-medium flex items-center gap-2"><FileText className="w-4 h-4 text-muted-foreground" /> Bayar Nanti (Hutang)</span>
                 <Switch checked={paymentBayarNanti} onCheckedChange={setPaymentBayarNanti} />
               </div>
             )}
