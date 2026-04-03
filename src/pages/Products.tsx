@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import MobileLayout from "@/components/MobileLayout";
 import { useAppState } from "@/contexts/AppContext";
 import { SAMPLE_PRODUCTS, PRODUCT_CATEGORIES, formatRupiah } from "@/data/products";
@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import { Plus, Search, Package, Edit2, X, UtensilsCrossed, Coffee, Cookie } from "lucide-react";
+import { Plus, Search, Edit2, X, UtensilsCrossed, Coffee, Cookie, ImagePlus } from "lucide-react";
 import { Product } from "@/types";
 import { toast } from "sonner";
 
