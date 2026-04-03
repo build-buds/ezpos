@@ -1,3 +1,4 @@
+import { forwardRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { LayoutDashboard, ShoppingCart, Package, FileText, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -11,7 +12,7 @@ const navItems = [
   { path: "/settings", label: "Lainnya", icon: Settings },
 ];
 
-const BottomNav = () => {
+const BottomNav = forwardRef<HTMLElement>((_, ref) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { businessCategory } = useAppState();
