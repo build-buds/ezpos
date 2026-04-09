@@ -4,7 +4,7 @@ import { BusinessCategory } from "@/types";
 import { ShoppingCart, UtensilsCrossed, Package } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const categories: { id: BusinessCategory; label: string; description: string; icon: typeof ShoppingCart; colorClass: string; bgClass: string }[] = [
+const categories: { id: BusinessCategory; label: string; description: string; icon: typeof ShoppingCart; colorClass: string; bgClass: string; comingSoon?: boolean }[] = [
   {
     id: "warung",
     label: "Warung / Kelontong",
@@ -12,6 +12,7 @@ const categories: { id: BusinessCategory; label: string; description: string; ic
     icon: ShoppingCart,
     colorClass: "text-primary border-primary",
     bgClass: "bg-warung-light",
+    comingSoon: true,
   },
   {
     id: "restoran",
@@ -28,6 +29,7 @@ const categories: { id: BusinessCategory; label: string; description: string; ic
     icon: Package,
     colorClass: "text-onlineshop border-onlineshop",
     bgClass: "bg-onlineshop-light",
+    comingSoon: true,
   },
 ];
 
