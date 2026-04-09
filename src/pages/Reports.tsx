@@ -2,7 +2,7 @@ import MobileLayout from "@/components/MobileLayout";
 import { useAppState } from "@/contexts/AppContext";
 import { formatRupiah } from "@/data/products";
 import { cn } from "@/lib/utils";
-import { TrendingUp, TrendingDown, BarChart3, Calendar } from "lucide-react";
+import { TrendingUp, TrendingDown, BarChart3 } from "lucide-react";
 import { useState } from "react";
 
 const periods = ["Hari Ini", "7 Hari", "Bulan Ini", "Tahun Ini"];
@@ -19,13 +19,13 @@ const Reports = () => {
 
   return (
     <MobileLayout>
-      <div className={cn("px-5 pt-10 pb-4 text-primary-foreground", headerColor)}>
-        <h1 className="text-lg font-bold">Laporan</h1>
+      <div className={cn("px-5 md:px-8 pt-10 pb-4 text-primary-foreground", headerColor)}>
+        <h1 className="text-lg md:text-xl font-bold">Laporan</h1>
         <p className="text-xs opacity-80">Ringkasan keuangan bisnis</p>
       </div>
 
       {/* Period Tabs */}
-      <div className="px-5 py-3 flex gap-2 overflow-x-auto scrollbar-none">
+      <div className="px-5 md:px-8 py-3 flex gap-2 overflow-x-auto scrollbar-none">
         {periods.map((p) => (
           <button
             key={p}
@@ -40,9 +40,9 @@ const Reports = () => {
         ))}
       </div>
 
-      <div className="px-5 space-y-4 pb-4">
+      <div className="px-5 md:px-8 space-y-4 pb-4">
         {/* Summary Cards */}
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-3 md:gap-4">
           <div className="bg-card rounded-2xl p-4 card-shadow">
             <div className="flex items-center gap-1.5 mb-2">
               <TrendingUp className="w-4 h-4 text-success" />
@@ -66,51 +66,54 @@ const Reports = () => {
           <p className="text-xs text-muted-foreground mt-1">24 transaksi selesai</p>
         </div>
 
-        {/* Payment Breakdown */}
-        <div className="bg-card rounded-2xl p-4 card-shadow">
-          <p className="text-sm font-semibold mb-3">Breakdown Metode Bayar</p>
-          <div className="space-y-2">
-            {[
-              { method: "Cash", amount: 850000, pct: 68 },
-              { method: "Transfer", amount: 300000, pct: 24 },
-              { method: "Bayar Nanti", amount: 100000, pct: 8 },
-            ].map((item) => (
-              <div key={item.method}>
-                <div className="flex justify-between text-xs mb-1">
-                  <span>{item.method}</span>
-                  <span className="font-bold">{formatRupiah(item.amount)}</span>
+        {/* Two-column on tablet */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Payment Breakdown */}
+          <div className="bg-card rounded-2xl p-4 card-shadow">
+            <p className="text-sm font-semibold mb-3">Breakdown Metode Bayar</p>
+            <div className="space-y-2">
+              {[
+                { method: "Cash", amount: 850000, pct: 68 },
+                { method: "Transfer", amount: 300000, pct: 24 },
+                { method: "Bayar Nanti", amount: 100000, pct: 8 },
+              ].map((item) => (
+                <div key={item.method}>
+                  <div className="flex justify-between text-xs mb-1">
+                    <span>{item.method}</span>
+                    <span className="font-bold">{formatRupiah(item.amount)}</span>
+                  </div>
+                  <div className="h-2 bg-muted rounded-full overflow-hidden">
+                    <div className={cn("h-full rounded-full", headerColor)} style={{ width: `${item.pct}%` }} />
+                  </div>
                 </div>
-                <div className="h-2 bg-muted rounded-full overflow-hidden">
-                  <div className={cn("h-full rounded-full", headerColor)} style={{ width: `${item.pct}%` }} />
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
 
-        {/* Top Products */}
-        <div className="bg-card rounded-2xl p-4 card-shadow">
-          <p className="text-sm font-semibold mb-3">Produk Terlaris</p>
-          <div className="space-y-2">
-            {[
-              { rank: 1, name: "Nasi Goreng Spesial", qty: 45, revenue: 1125000 },
-              { rank: 2, name: "Es Teh Manis", qty: 38, revenue: 190000 },
-              { rank: 3, name: "Ayam Geprek", qty: 30, revenue: 660000 },
-            ].map((item) => (
-              <div key={item.rank} className="flex items-center gap-3 py-2 border-b border-border last:border-0">
-                <span className={cn(
-                  "w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-primary-foreground",
-                  item.rank === 1 ? "bg-warning" : item.rank === 2 ? "bg-muted-foreground" : "bg-onlineshop"
-                )}>
-                  {item.rank}
-                </span>
-                <div className="flex-1">
-                  <p className="text-sm font-semibold">{item.name}</p>
-                  <p className="text-xs text-muted-foreground">{item.qty} terjual</p>
+          {/* Top Products */}
+          <div className="bg-card rounded-2xl p-4 card-shadow">
+            <p className="text-sm font-semibold mb-3">Produk Terlaris</p>
+            <div className="space-y-2">
+              {[
+                { rank: 1, name: "Nasi Goreng Spesial", qty: 45, revenue: 1125000 },
+                { rank: 2, name: "Es Teh Manis", qty: 38, revenue: 190000 },
+                { rank: 3, name: "Ayam Geprek", qty: 30, revenue: 660000 },
+              ].map((item) => (
+                <div key={item.rank} className="flex items-center gap-3 py-2 border-b border-border last:border-0">
+                  <span className={cn(
+                    "w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-primary-foreground",
+                    item.rank === 1 ? "bg-warning" : item.rank === 2 ? "bg-muted-foreground" : "bg-onlineshop"
+                  )}>
+                    {item.rank}
+                  </span>
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold">{item.name}</p>
+                    <p className="text-xs text-muted-foreground">{item.qty} terjual</p>
+                  </div>
+                  <p className="text-sm font-bold">{formatRupiah(item.revenue)}</p>
                 </div>
-                <p className="text-sm font-bold">{formatRupiah(item.revenue)}</p>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
 

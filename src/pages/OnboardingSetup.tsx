@@ -49,9 +49,9 @@ const OnboardingSetup = () => {
   };
 
   return (
-    <div className="min-h-screen max-w-lg mx-auto bg-background flex flex-col">
+    <div className="min-h-screen max-w-lg md:max-w-2xl mx-auto bg-background flex flex-col">
       {/* Header */}
-      <div className={cn("px-6 pt-10 pb-6 text-primary-foreground", headerColor)}>
+      <div className={cn("px-6 md:px-10 pt-10 pb-6 text-primary-foreground", headerColor)}>
         <button onClick={() => navigate("/")} className="flex items-center gap-2 text-sm opacity-80 mb-4">
           <ArrowLeft className="w-4 h-4" />
           Kembali
@@ -61,7 +61,7 @@ const OnboardingSetup = () => {
       </div>
 
       {/* Form */}
-      <div className="flex-1 px-6 py-6 space-y-5">
+      <div className="flex-1 px-6 md:px-10 py-6 space-y-5">
         <div className="space-y-2">
           <Label htmlFor="name" className="text-sm font-semibold">{nameLabel} *</Label>
           <Input id="name" value={name} onChange={(e) => setName(e.target.value)} placeholder={`Masukkan ${nameLabel.toLowerCase()}`} className="h-12 rounded-xl" />
