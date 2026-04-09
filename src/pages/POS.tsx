@@ -170,19 +170,21 @@ const POS = () => {
 
       {/* Cart Sheet */}
       {showCart && (
-        <div className="fixed inset-0 z-[60] flex flex-col">
-          <div className="flex-1 bg-foreground/40" onClick={() => setShowCart(false)} />
-          <div className="bg-card rounded-t-3xl max-h-[85vh] flex flex-col animate-slide-up max-w-lg md:max-w-2xl mx-auto w-full pb-20">
-            <div className="flex items-center justify-between px-5 py-4 border-b shrink-0">
+        <div className="fixed inset-0 z-[60] flex items-end justify-center bg-foreground/40" onClick={() => setShowCart(false)}>
+          <div
+            className="bg-card rounded-t-3xl max-h-[85vh] flex flex-col animate-slide-up w-full max-w-lg md:max-w-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between px-5 md:px-8 py-4 border-b shrink-0">
               <h2 className="text-lg font-bold">Keranjang</h2>
               <button onClick={() => setShowCart(false)}>
                 <X className="w-5 h-5 text-muted-foreground" />
               </button>
             </div>
-            <div className="flex-1 overflow-y-auto px-5 py-3 space-y-3">
+            <div className="flex-1 overflow-y-auto px-5 md:px-8 py-3 space-y-3">
               {cart.map((item) => (
                 <div key={item.product.id} className="flex items-center gap-3 py-2">
-                  <div className="w-12 h-12 bg-muted rounded-xl flex items-center justify-center">
+                  <div className="w-12 h-12 bg-muted rounded-xl flex items-center justify-center shrink-0">
                     {categoryIconSmall(item.product.category)}
                   </div>
                   <div className="flex-1 min-w-0">
@@ -202,7 +204,7 @@ const POS = () => {
                 </div>
               ))}
             </div>
-            <div className="border-t px-5 py-4 space-y-3 shrink-0">
+            <div className="border-t px-5 md:px-8 py-4 pb-8 space-y-3 shrink-0">
               <div className="flex justify-between">
                 <span className="text-base font-semibold">Total</span>
                 <span className="text-price">{formatRupiah(cartTotal)}</span>
@@ -226,18 +228,18 @@ const POS = () => {
                       <p className="text-2xl font-extrabold text-primary">{formatRupiah(change)}</p>
                     </div>
                   )}
-                  <div className="grid grid-cols-3 gap-2">
-                    <Button onClick={() => handleCheckout("Cash")} variant="cta" className="h-12 flex flex-col gap-0.5">
+                  <div className="grid grid-cols-3 gap-2 md:gap-3">
+                    <Button onClick={() => handleCheckout("Cash")} variant="cta" className="h-12 md:h-14 flex flex-col gap-0.5">
                       <Banknote className="w-4 h-4" />
-                      <span className="text-[10px]">Cash</span>
+                      <span className="text-[10px] md:text-xs">Cash</span>
                     </Button>
-                    <Button onClick={() => handleCheckout("Transfer")} variant="outline" className="h-12 flex flex-col gap-0.5">
+                    <Button onClick={() => handleCheckout("Transfer")} variant="outline" className="h-12 md:h-14 flex flex-col gap-0.5">
                       <Building2 className="w-4 h-4" />
-                      <span className="text-[10px]">Transfer</span>
+                      <span className="text-[10px] md:text-xs">Transfer</span>
                     </Button>
-                    <Button onClick={() => handleCheckout("Bayar Nanti")} variant="outline" className="h-12 flex flex-col gap-0.5">
+                    <Button onClick={() => handleCheckout("Bayar Nanti")} variant="outline" className="h-12 md:h-14 flex flex-col gap-0.5">
                       <Clock className="w-4 h-4" />
-                      <span className="text-[10px]">Nanti</span>
+                      <span className="text-[10px] md:text-xs">Nanti</span>
                     </Button>
                   </div>
                 </div>
