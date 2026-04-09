@@ -49,9 +49,9 @@ const OnboardingSetup = () => {
   };
 
   return (
-    <div className="min-h-screen max-w-lg mx-auto bg-background flex flex-col">
+    <div className="min-h-screen max-w-lg md:max-w-2xl mx-auto bg-background flex flex-col">
       {/* Header */}
-      <div className={cn("px-6 pt-10 pb-6 text-primary-foreground", headerColor)}>
+      <div className={cn("px-6 md:px-10 pt-10 pb-6 text-primary-foreground", headerColor)}>
         <button onClick={() => navigate("/")} className="flex items-center gap-2 text-sm opacity-80 mb-4">
           <ArrowLeft className="w-4 h-4" />
           Kembali
