@@ -33,6 +33,7 @@ const POS = () => {
   const [showCart, setShowCart] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
   const [amountPaid, setAmountPaid] = useState("");
+  const [pendingMethod, setPendingMethod] = useState<string | null>(null);
 
   const headerColor = businessCategory === 'restoran'
     ? 'bg-restoran'
