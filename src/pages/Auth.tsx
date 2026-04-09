@@ -69,7 +69,7 @@ const Auth = () => {
           <div className="w-14 h-14 rounded-2xl bg-primary flex items-center justify-center">
             <Store className="w-7 h-7 text-primary-foreground" />
           </div>
-          <h1 className="text-xl font-bold text-foreground">Warung OS</h1>
+          <h1 className="text-xl font-bold text-foreground">EASYPOS</h1>
         </div>
 
         {/* Tabs */}

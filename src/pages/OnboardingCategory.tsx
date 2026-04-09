@@ -45,7 +45,7 @@ const OnboardingCategory = () => {
       {/* Header */}
       <div className="px-6 pt-12 pb-6">
         <h1 className="text-2xl font-extrabold text-foreground">Selamat Datang di</h1>
-        <h1 className="text-3xl font-extrabold text-primary mt-1">Warung OS</h1>
+        <h1 className="text-3xl font-extrabold text-primary mt-1">EASYPOS</h1>
         <p className="text-muted-foreground mt-3 text-sm leading-relaxed">
           Pilih jenis bisnis kamu untuk pengalaman yang sesuai. Kasir, stok, laporan — semua disesuaikan untuk bisnismu.
         </p>

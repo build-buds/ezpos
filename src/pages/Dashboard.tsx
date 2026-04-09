@@ -32,7 +32,7 @@ const Dashboard = () => {
         <div className="flex items-center justify-between">
           <div>
             <p className="text-xs opacity-80">Selamat datang</p>
-            <h1 className="text-xl font-bold mt-0.5">{businessName || "Warung OS"}</h1>
+            <h1 className="text-xl font-bold mt-0.5">{businessName || "EASYPOS"}</h1>
           </div>
           <div className="w-10 h-10 rounded-full bg-primary-foreground/20 flex items-center justify-center">
             <CatIcon className="w-5 h-5" />
