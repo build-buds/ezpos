@@ -61,11 +61,13 @@ const OnboardingCategory = () => {
           return (
             <button
               key={cat.id}
-              onClick={() => handleSelect(cat.id)}
+              onClick={() => !cat.comingSoon && handleSelect(cat.id)}
+              disabled={cat.comingSoon}
               className={cn(
-                "w-full flex items-center gap-4 p-5 rounded-2xl border-2 transition-all duration-200",
-                "hover:scale-[1.02] active:scale-[0.98] card-shadow bg-card",
-                "border-transparent hover:border-current",
+                "w-full flex items-center gap-4 p-5 rounded-2xl border-2 transition-all duration-200 relative",
+                cat.comingSoon
+                  ? "opacity-50 cursor-not-allowed bg-muted border-transparent"
+                  : "hover:scale-[1.02] active:scale-[0.98] card-shadow bg-card border-transparent hover:border-current",
                 cat.colorClass
               )}
             >
@@ -76,7 +78,13 @@ const OnboardingCategory = () => {
                 <p className="font-bold text-foreground text-base">{cat.label}</p>
                 <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{cat.description}</p>
               </div>
-              <Icon className="w-5 h-5 opacity-40" />
+              {cat.comingSoon ? (
+                <span className="text-[10px] font-bold uppercase tracking-wider bg-accent text-accent-foreground px-2.5 py-1 rounded-full">
+                  Segera Hadir
+                </span>
+              ) : (
+                <Icon className="w-5 h-5 opacity-40" />
+              )}
             </button>
           );
         })}
