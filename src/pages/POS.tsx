@@ -49,16 +49,26 @@ const POS = () => {
 
   const change = amountPaid ? parseInt(amountPaid) - cartTotal : 0;
 
-  const handleCheckout = (method: string) => {
+  const handleSelectMethod = (method: string) => {
     if (method === "Cash" && (!amountPaid || parseInt(amountPaid) < cartTotal)) {
       toast.error("Nominal bayar kurang dari total!");
       return;
     }
-    toast.success(`Transaksi ${formatRupiah(cartTotal)} berhasil! (${method})`);
+    setPendingMethod(method);
+  };
+
+  const handleConfirmCheckout = () => {
+    if (!pendingMethod) return;
+    toast.success(`Transaksi ${formatRupiah(cartTotal)} berhasil! (${pendingMethod})`);
     clearCart();
     setShowCart(false);
     setShowCheckout(false);
     setAmountPaid("");
+    setPendingMethod(null);
+  };
+
+  const handleCancelConfirm = () => {
+    setPendingMethod(null);
   };
 
   return (
