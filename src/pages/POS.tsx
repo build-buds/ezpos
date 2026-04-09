@@ -63,9 +63,9 @@ const POS = () => {
   return (
     <MobileLayout>
       {/* Header */}
-      <div className={cn("px-5 pt-10 pb-4 text-primary-foreground", headerColor)}>
+      <div className={cn("px-5 md:px-8 pt-10 pb-4 text-primary-foreground", headerColor)}>
         <div className="flex items-center justify-between">
-          <h1 className="text-lg font-bold">Kasir</h1>
+          <h1 className="text-lg md:text-xl font-bold">Kasir</h1>
           <button
             onClick={() => setShowCart(true)}
             className="relative w-10 h-10 rounded-full bg-primary-foreground/20 flex items-center justify-center"
@@ -92,7 +92,7 @@ const POS = () => {
       </div>
 
       {/* Category Tabs */}
-      <div className="px-5 py-3 flex gap-2 overflow-x-auto scrollbar-none">
+      <div className="px-5 md:px-8 py-3 flex gap-2 overflow-x-auto scrollbar-none">
         {PRODUCT_CATEGORIES.map((cat) => (
           <button
             key={cat}
@@ -110,19 +110,19 @@ const POS = () => {
       </div>
 
       {/* Product Grid */}
-      <div className="px-5 pb-4 grid grid-cols-2 gap-3">
+      <div className="px-5 md:px-8 pb-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
         {filteredProducts.map((product) => {
           const inCart = cart.find((i) => i.product.id === product.id);
           return (
             <div key={product.id} className="bg-card rounded-2xl card-shadow overflow-hidden">
-              <div className="h-28 bg-muted flex items-center justify-center">
+              <div className="h-28 md:h-32 bg-muted flex items-center justify-center">
                 {categoryIcon(product.category)}
               </div>
               <div className="p-3">
-                <p className="text-xs font-bold text-foreground line-clamp-1">{product.name}</p>
+                <p className="text-xs md:text-sm font-bold text-foreground line-clamp-1">{product.name}</p>
                 <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">{product.description}</p>
                 <div className="flex items-center justify-between mt-3">
-                  <p className="text-xs font-extrabold text-foreground">{formatRupiah(product.price)}</p>
+                  <p className="text-xs md:text-sm font-extrabold text-foreground">{formatRupiah(product.price)}</p>
                 </div>
                 <div className="mt-2">
                   {inCart ? (
@@ -154,7 +154,7 @@ const POS = () => {
 
       {/* Cart floating bar */}
       {cart.length > 0 && !showCart && (
-        <div className="fixed bottom-20 left-1/2 -translate-x-1/2 w-[calc(100%-2.5rem)] max-w-[calc(480px-2.5rem)] z-40">
+        <div className="fixed bottom-20 left-1/2 -translate-x-1/2 w-[calc(100%-2.5rem)] max-w-lg md:max-w-xl z-40">
           <button
             onClick={() => setShowCart(true)}
             className={cn("w-full flex items-center justify-between px-5 py-3.5 rounded-2xl text-primary-foreground shadow-lg", headerColor)}
@@ -172,7 +172,7 @@ const POS = () => {
       {showCart && (
         <div className="fixed inset-0 z-[60] flex flex-col">
           <div className="flex-1 bg-foreground/40" onClick={() => setShowCart(false)} />
-          <div className="bg-card rounded-t-3xl max-h-[85vh] flex flex-col animate-slide-up max-w-lg mx-auto w-full pb-20">
+          <div className="bg-card rounded-t-3xl max-h-[85vh] flex flex-col animate-slide-up max-w-lg md:max-w-2xl mx-auto w-full pb-20">
             <div className="flex items-center justify-between px-5 py-4 border-b shrink-0">
               <h2 className="text-lg font-bold">Keranjang</h2>
               <button onClick={() => setShowCart(false)}>

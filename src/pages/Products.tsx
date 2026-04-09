@@ -91,10 +91,10 @@ const Products = () => {
   return (
     <MobileLayout>
       {/* Header */}
-      <div className={cn("px-5 pt-10 pb-4 text-primary-foreground", headerColor)}>
+      <div className={cn("px-5 md:px-8 pt-10 pb-4 text-primary-foreground", headerColor)}>
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-lg font-bold">Produk</h1>
+            <h1 className="text-lg md:text-xl font-bold">Produk</h1>
             <p className="text-xs opacity-80">{products.length} produk terdaftar</p>
           </div>
           <button
@@ -116,7 +116,7 @@ const Products = () => {
       </div>
 
       {/* Category Tabs */}
-      <div className="px-5 py-3 flex gap-2 overflow-x-auto scrollbar-none">
+      <div className="px-5 md:px-8 py-3 flex gap-2 overflow-x-auto scrollbar-none">
         {PRODUCT_CATEGORIES.map((cat) => (
           <button
             key={cat}
@@ -131,8 +131,8 @@ const Products = () => {
         ))}
       </div>
 
-      {/* Product List */}
-      <div className="px-5 pb-4 space-y-3">
+      {/* Product List — grid on tablet */}
+      <div className="px-5 md:px-8 pb-4 grid grid-cols-1 md:grid-cols-2 gap-3">
         {filtered.map((product) => (
           <div key={product.id} className="bg-card rounded-2xl card-shadow p-4 flex items-center gap-3">
             <div className="w-14 h-14 bg-muted rounded-xl flex items-center justify-center flex-shrink-0">
@@ -164,7 +164,7 @@ const Products = () => {
       {showAddForm && (
         <div className="fixed inset-0 z-50 flex flex-col">
           <div className="flex-1 bg-foreground/40" onClick={handleCloseForm} />
-          <div className="bg-card rounded-t-3xl max-w-lg mx-auto w-full animate-slide-up max-h-[85vh] flex flex-col">
+          <div className="bg-card rounded-t-3xl max-w-lg md:max-w-2xl mx-auto w-full animate-slide-up max-h-[85vh] flex flex-col">
             <div className="flex items-center justify-between px-5 py-4 border-b shrink-0">
               <h2 className="text-lg font-bold">{editingProduct ? "Edit Produk" : "Tambah Produk"}</h2>
               <button onClick={handleCloseForm}>

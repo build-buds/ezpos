@@ -41,18 +41,18 @@ const OnboardingCategory = () => {
   };
 
   return (
-    <div className="min-h-screen max-w-lg mx-auto bg-background flex flex-col">
+    <div className="min-h-screen max-w-lg md:max-w-2xl mx-auto bg-background flex flex-col">
       {/* Header */}
-      <div className="px-6 pt-12 pb-6">
-        <h1 className="text-2xl font-extrabold text-foreground">Selamat Datang di</h1>
-        <h1 className="text-3xl font-extrabold text-primary mt-1">EASYPOS</h1>
+      <div className="px-6 md:px-10 pt-12 pb-6">
+        <h1 className="text-2xl md:text-3xl font-extrabold text-foreground">Selamat Datang di</h1>
+        <h1 className="text-3xl md:text-4xl font-extrabold text-primary mt-1">EASYPOS</h1>
         <p className="text-muted-foreground mt-3 text-sm leading-relaxed">
           Pilih jenis bisnis kamu untuk pengalaman yang sesuai. Kasir, stok, laporan — semua disesuaikan untuk bisnismu.
         </p>
       </div>
 
       {/* Category Cards */}
-      <div className="flex-1 px-6 space-y-4 pb-12">
+      <div className="flex-1 px-6 md:px-10 space-y-4 pb-12">
         <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Pilih Kategori Bisnis</p>
         {categories.map((cat) => {
           const Icon = cat.icon;

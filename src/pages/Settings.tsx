@@ -29,8 +29,8 @@ const Settings = () => {
 
   return (
     <MobileLayout>
-      <div className={cn("px-5 pt-10 pb-6 text-primary-foreground", headerColor)}>
-        <h1 className="text-lg font-bold">Pengaturan</h1>
+      <div className={cn("px-5 md:px-8 pt-10 pb-6 text-primary-foreground", headerColor)}>
+        <h1 className="text-lg md:text-xl font-bold">Pengaturan</h1>
         <div className="flex items-center gap-3 mt-4">
           <div className="w-12 h-12 rounded-full bg-primary-foreground/20 flex items-center justify-center">
             <User className="w-6 h-6" />
@@ -42,7 +42,7 @@ const Settings = () => {
         </div>
       </div>
 
-      <div className="px-5 py-4 space-y-2">
+      <div className="px-5 md:px-8 py-4 grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3">
         {menuItems.map((item) => (
           <button key={item.label} onClick={() => toast.info(`${item.label} — Fitur segera hadir!`)} className="w-full flex items-center gap-3 p-4 bg-card rounded-2xl card-shadow">
             <item.icon className="w-5 h-5 text-muted-foreground" />
@@ -56,7 +56,7 @@ const Settings = () => {
 
         <button
           onClick={handleLogout}
-          className="w-full flex items-center gap-3 p-4 bg-card rounded-2xl card-shadow mt-4"
+          className="w-full flex items-center gap-3 p-4 bg-card rounded-2xl card-shadow md:col-span-2"
         >
           <LogOut className="w-5 h-5 text-destructive" />
           <span className="text-sm font-semibold text-destructive">Keluar</span>
