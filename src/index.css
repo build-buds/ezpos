@@ -15,8 +15,8 @@
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 10%;
 
-    /* Gojek Green as primary */
-    --primary: 127 100% 33%;
+    /* Cobalt Blue primary */
+    --primary: 217 84% 53%;
     --primary-foreground: 0 0% 100%;
 
     --secondary: 0 0% 96%;
@@ -25,14 +25,14 @@
     --muted: 0 0% 96%;
     --muted-foreground: 0 0% 45%;
 
-    --accent: 0 0% 96%;
+    /* Neon Yellow accent */
+    --accent: 71 100% 50%;
     --accent-foreground: 0 0% 10%;
 
-    /* Retail Red */
     --destructive: 354 85% 54%;
     --destructive-foreground: 0 0% 100%;
 
-    --success: 127 100% 33%;
+    --success: 142 72% 42%;
     --success-foreground: 0 0% 100%;
 
     --warning: 38 92% 50%;
@@ -40,21 +40,21 @@
 
     --border: 0 0% 90%;
     --input: 0 0% 90%;
-    --ring: 127 100% 33%;
+    --ring: 217 84% 53%;
 
     --radius: 0.75rem;
 
     /* Category colors */
-    --warung: 127 100% 33%;
-    --warung-light: 127 60% 95%;
+    --warung: 142 72% 42%;
+    --warung-light: 142 60% 95%;
     --restoran: 354 85% 54%;
     --restoran-light: 354 60% 95%;
-    --onlineshop: 358 100% 67%;
-    --onlineshop-light: 358 60% 95%;
+    --onlineshop: 330 80% 60%;
+    --onlineshop-light: 330 60% 95%;
 
-    /* CTA — Retail Red for order/action buttons */
-    --cta: 354 85% 54%;
-    --cta-foreground: 0 0% 100%;
+    /* CTA — Neon Yellow */
+    --cta: 71 100% 50%;
+    --cta-foreground: 0 0% 10%;
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 0 0% 26%;
@@ -63,7 +63,7 @@
     --sidebar-accent: 0 0% 96%;
     --sidebar-accent-foreground: 0 0% 10%;
     --sidebar-border: 0 0% 90%;
-    --sidebar-ring: 127 100% 33%;
+    --sidebar-ring: 217 84% 53%;
   }
 
   .dark {
@@ -73,27 +73,27 @@
     --card-foreground: 0 0% 98%;
     --popover: 0 0% 10%;
     --popover-foreground: 0 0% 98%;
-    --primary: 127 100% 40%;
+    --primary: 217 84% 58%;
     --primary-foreground: 0 0% 100%;
     --secondary: 0 0% 17%;
     --secondary-foreground: 0 0% 98%;
     --muted: 0 0% 17%;
     --muted-foreground: 0 0% 65%;
-    --accent: 0 0% 17%;
-    --accent-foreground: 0 0% 98%;
+    --accent: 71 100% 50%;
+    --accent-foreground: 0 0% 10%;
     --destructive: 354 85% 45%;
     --destructive-foreground: 0 0% 98%;
     --border: 0 0% 17%;
     --input: 0 0% 17%;
-    --ring: 127 100% 40%;
+    --ring: 217 84% 58%;
     --sidebar-background: 0 0% 10%;
     --sidebar-foreground: 0 0% 96%;
-    --sidebar-primary: 127 100% 48%;
+    --sidebar-primary: 217 84% 58%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 0 0% 16%;
     --sidebar-accent-foreground: 0 0% 96%;
     --sidebar-border: 0 0% 16%;
-    --sidebar-ring: 127 100% 40%;
+    --sidebar-ring: 217 84% 58%;
   }
 }
 
