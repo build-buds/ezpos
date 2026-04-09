@@ -36,7 +36,7 @@ const Settings = () => {
             <User className="w-6 h-6" />
           </div>
           <div>
-            <p className="text-base font-bold">{businessName || "Warungku"}</p>
+            <p className="text-base font-bold">{businessName || "EASYPOS"}</p>
             <p className="text-xs opacity-80">owner@email.com</p>
           </div>
         </div>

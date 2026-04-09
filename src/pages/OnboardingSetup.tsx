@@ -104,7 +104,7 @@ const OnboardingSetup = () => {
           variant="cta"
           className="w-full h-14 text-base mt-6"
         >
-          Mulai Gunakan Warung OS
+          Mulai Gunakan EASYPOS
         </Button>
       </div>
     </div>
