@@ -33,6 +33,7 @@ const POS = () => {
   const [showCart, setShowCart] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
   const [amountPaid, setAmountPaid] = useState("");
+  const [pendingMethod, setPendingMethod] = useState<string | null>(null);
 
   const headerColor = businessCategory === 'restoran'
     ? 'bg-restoran'
@@ -48,16 +49,26 @@ const POS = () => {
 
   const change = amountPaid ? parseInt(amountPaid) - cartTotal : 0;
 
-  const handleCheckout = (method: string) => {
+  const handleSelectMethod = (method: string) => {
     if (method === "Cash" && (!amountPaid || parseInt(amountPaid) < cartTotal)) {
       toast.error("Nominal bayar kurang dari total!");
       return;
     }
-    toast.success(`Transaksi ${formatRupiah(cartTotal)} berhasil! (${method})`);
+    setPendingMethod(method);
+  };
+
+  const handleConfirmCheckout = () => {
+    if (!pendingMethod) return;
+    toast.success(`Transaksi ${formatRupiah(cartTotal)} berhasil! (${pendingMethod})`);
     clearCart();
     setShowCart(false);
     setShowCheckout(false);
     setAmountPaid("");
+    setPendingMethod(null);
+  };
+
+  const handleCancelConfirm = () => {
+    setPendingMethod(null);
   };
 
   return (
@@ -228,20 +239,40 @@ const POS = () => {
                       <p className="text-2xl font-extrabold text-primary">{formatRupiah(change)}</p>
                     </div>
                   )}
-                  <div className="grid grid-cols-3 gap-2 md:gap-3">
-                    <Button onClick={() => handleCheckout("Cash")} variant="cta" className="h-12 md:h-14 flex flex-col gap-0.5">
-                      <Banknote className="w-4 h-4" />
-                      <span className="text-[10px] md:text-xs">Cash</span>
-                    </Button>
-                    <Button onClick={() => handleCheckout("Transfer")} variant="outline" className="h-12 md:h-14 flex flex-col gap-0.5">
-                      <Building2 className="w-4 h-4" />
-                      <span className="text-[10px] md:text-xs">Transfer</span>
-                    </Button>
-                    <Button onClick={() => handleCheckout("Bayar Nanti")} variant="outline" className="h-12 md:h-14 flex flex-col gap-0.5">
-                      <Clock className="w-4 h-4" />
-                      <span className="text-[10px] md:text-xs">Nanti</span>
-                    </Button>
-                  </div>
+
+                  {!pendingMethod ? (
+                    <div className={cn("grid gap-2 md:gap-3", businessCategory === 'restoran' ? "grid-cols-2" : "grid-cols-3")}>
+                      <Button onClick={() => handleSelectMethod("Cash")} variant="cta" className="h-12 md:h-14 flex flex-col gap-0.5">
+                        <Banknote className="w-4 h-4" />
+                        <span className="text-[10px] md:text-xs">Cash</span>
+                      </Button>
+                      <Button onClick={() => handleSelectMethod("Transfer")} variant="outline" className="h-12 md:h-14 flex flex-col gap-0.5">
+                        <Building2 className="w-4 h-4" />
+                        <span className="text-[10px] md:text-xs">Transfer</span>
+                      </Button>
+                      {businessCategory !== 'restoran' && (
+                        <Button onClick={() => handleSelectMethod("Bayar Nanti")} variant="outline" className="h-12 md:h-14 flex flex-col gap-0.5">
+                          <Clock className="w-4 h-4" />
+                          <span className="text-[10px] md:text-xs">Nanti</span>
+                        </Button>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="space-y-3 animate-fade-in">
+                      <div className="text-center p-3 bg-muted rounded-xl">
+                        <p className="text-xs text-muted-foreground">Metode Pembayaran</p>
+                        <p className="text-sm font-bold mt-0.5">{pendingMethod}</p>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <Button onClick={handleCancelConfirm} variant="outline" className="h-12 text-sm font-semibold">
+                          Batalkan
+                        </Button>
+                        <Button onClick={handleConfirmCheckout} variant="cta" className="h-12 text-sm font-semibold">
+                          Konfirmasi
+                        </Button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
