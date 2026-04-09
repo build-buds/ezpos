@@ -61,7 +61,7 @@ const OnboardingSetup = () => {
       </div>
 
       {/* Form */}
-      <div className="flex-1 px-6 py-6 space-y-5">
+      <div className="flex-1 px-6 md:px-10 py-6 space-y-5">
         <div className="space-y-2">
           <Label htmlFor="name" className="text-sm font-semibold">{nameLabel} *</Label>
           <Input id="name" value={name} onChange={(e) => setName(e.target.value)} placeholder={`Masukkan ${nameLabel.toLowerCase()}`} className="h-12 rounded-xl" />
