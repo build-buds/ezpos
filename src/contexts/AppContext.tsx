@@ -38,7 +38,19 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<SupaUser | null>(null);
   const [isAuthLoading, setIsAuthLoading] = useState(true);
   const [businessId, setBusinessId] = useState<string | null>(null);
-  const [businessCategory, setBusinessCategory] = useState<BusinessCategory | null>(null);
+  const [businessCategory, setBusinessCategoryState] = useState<BusinessCategory | null>(() => {
+    const saved = localStorage.getItem('ezpos_business_category');
+    return saved ? (saved as BusinessCategory) : null;
+  });
+
+  const setBusinessCategory = (cat: BusinessCategory) => {
+    setBusinessCategoryState(cat);
+    if (cat) {
+      localStorage.setItem('ezpos_business_category', cat);
+    } else {
+      localStorage.removeItem('ezpos_business_category');
+    }
+  };
   const [businessName, setBusinessName] = useState("");
   const [isOnboarded, setIsOnboarded] = useState(false);
   const [cart, setCart] = useState<CartItem[]>([]);
