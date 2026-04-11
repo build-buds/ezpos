@@ -175,7 +175,7 @@ const Products = () => {
       )}
 
       {showAddForm && (
-        <div className="fixed inset-0 z-50 flex flex-col">
+        <div className="fixed inset-0 z-[60] flex flex-col">
           <div className="flex-1 bg-foreground/40" onClick={handleCloseForm} />
           <div className="bg-card rounded-t-3xl max-w-lg md:max-w-2xl mx-auto w-full animate-slide-up max-h-[85vh] flex flex-col">
             <div className="flex items-center justify-between px-5 py-4 border-b shrink-0">
@@ -212,7 +212,7 @@ const Products = () => {
                 </div>
               </div>
             </div>
-            <div className="px-5 py-4 border-t shrink-0">
+            <div className="px-5 py-4 pb-6 border-t shrink-0">
               <Button variant="cta" className="w-full h-12 text-sm" onClick={handleAdd} disabled={!newProduct.name || !newProduct.price || saving}>
                 {saving ? "Menyimpan..." : "Simpan Produk"}
               </Button>
