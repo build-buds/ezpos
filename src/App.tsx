@@ -3,6 +3,8 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import OfflineBanner from "@/components/OfflineBanner";
 import { AppProvider } from "@/contexts/AppContext";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import PublicRoute from "@/components/PublicRoute";
 import SplashScreen from "./pages/SplashScreen";
 import Auth from "./pages/Auth";
 import Index from "./pages/Index";
@@ -25,15 +27,15 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<SplashScreen />} />
-          <Route path="/auth" element={<Auth />} />
+          <Route path="/auth" element={<PublicRoute><Auth /></PublicRoute>} />
           <Route path="/home" element={<Index />} />
-          <Route path="/onboarding" element={<OnboardingCategory />} />
-          <Route path="/onboarding/setup" element={<OnboardingSetup />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/pos" element={<POS />} />
-          <Route path="/products" element={<Products />} />
-          <Route path="/reports" element={<Reports />} />
-          <Route path="/settings" element={<Settings />} />
+          <Route path="/onboarding" element={<ProtectedRoute requireOnboarded={false}><OnboardingCategory /></ProtectedRoute>} />
+          <Route path="/onboarding/setup" element={<ProtectedRoute requireOnboarded={false}><OnboardingSetup /></ProtectedRoute>} />
+          <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path="/pos" element={<ProtectedRoute><POS /></ProtectedRoute>} />
+          <Route path="/products" element={<ProtectedRoute><Products /></ProtectedRoute>} />
+          <Route path="/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
+          <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
