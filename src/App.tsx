@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
+import OfflineBanner from "@/components/OfflineBanner";
 import { AppProvider } from "@/contexts/AppContext";
 import SplashScreen from "./pages/SplashScreen";
 import Auth from "./pages/Auth";
@@ -20,6 +21,7 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <AppProvider>
       <Sonner />
+      <OfflineBanner />
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<SplashScreen />} />

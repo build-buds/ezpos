@@ -21,8 +21,19 @@ export default defineConfig(({ mode }) => ({
       devOptions: { enabled: false },
       workbox: {
         navigateFallbackDenylist: [/^\/~oauth/],
+        runtimeCaching: [
+          {
+            urlPattern: /^https:\/\/fonts\.(?:googleapis|gstatic)\.com\/.*/i,
+            handler: "CacheFirst",
+            options: {
+              cacheName: "google-fonts",
+              expiration: { maxEntries: 10, maxAgeSeconds: 60 * 60 * 24 * 365 },
+            },
+          },
+        ],
+        offlineGoogleAnalytics: false,
       },
-      manifest: false, // we use public/manifest.json directly
+      manifest: false,
     }),
   ].filter(Boolean),
   resolve: {
