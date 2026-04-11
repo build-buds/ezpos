@@ -61,11 +61,10 @@ const OnboardingCategory = () => {
               onClick={() => !cat.comingSoon && handleSelect(cat.id)}
               disabled={cat.comingSoon}
               className={cn(
-                "w-full flex items-center gap-4 p-5 rounded-2xl border-2 transition-all duration-200 relative",
+                "w-full flex items-center gap-4 p-5 rounded-2xl border-2 transition-all duration-200 relative text-primary",
                 cat.comingSoon
                   ? "opacity-50 cursor-not-allowed bg-muted border-transparent"
-                  : "hover:scale-[1.02] active:scale-[0.98] card-shadow bg-card border-transparent hover:border-current",
-                cat.colorClass
+                  : "hover:scale-[1.02] active:scale-[0.98] card-shadow bg-card border-transparent hover:border-primary"
               )}
             >
               <div className={cn("w-14 h-14 rounded-xl flex items-center justify-center", cat.bgClass)}>
