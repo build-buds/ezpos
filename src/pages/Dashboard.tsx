@@ -1,4 +1,5 @@
 import MobileLayout from "@/components/MobileLayout";
+import InstallPrompt from "@/components/InstallPrompt";
 import { useAppState } from "@/contexts/AppContext";
 import { useTransactions } from "@/hooks/useTransactions";
 import { formatRupiah } from "@/data/products";
@@ -42,6 +43,7 @@ const Dashboard = () => {
       </div>
 
       <div className="px-5 md:px-8 -mt-3 space-y-4 pb-4">
+        <InstallPrompt />
         <div className="bg-card rounded-2xl p-5 card-shadow">
           <p className="text-xs text-muted-foreground font-medium">Omzet Hari Ini</p>
           {isLoading ? (
