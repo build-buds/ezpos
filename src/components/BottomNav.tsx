@@ -16,11 +16,7 @@ const BottomNav = () => {
   const location = useLocation();
   const { businessCategory } = useAppState();
 
-  const activeColor = businessCategory === 'restoran'
-    ? 'text-restoran'
-    : businessCategory === 'onlineshop'
-    ? 'text-onlineshop'
-    : 'text-primary';
+  const activeColor = 'text-primary';
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 bg-card border-t border-border">

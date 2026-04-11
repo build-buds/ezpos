@@ -9,11 +9,7 @@ const Settings = () => {
   const { businessCategory, businessName, logout } = useAppState();
   const navigate = useNavigate();
 
-  const headerColor = businessCategory === 'restoran'
-    ? 'bg-restoran'
-    : businessCategory === 'onlineshop'
-    ? 'bg-onlineshop'
-    : 'bg-primary';
+  const headerColor = 'bg-primary';
 
   const handleLogout = () => {
     logout();
@@ -58,8 +54,8 @@ const Settings = () => {
           onClick={handleLogout}
           className="w-full flex items-center gap-3 p-4 bg-card rounded-2xl card-shadow md:col-span-2"
         >
-          <LogOut className="w-5 h-5 text-destructive" />
-          <span className="text-sm font-semibold text-destructive">Keluar</span>
+          <LogOut className="w-5 h-5 text-muted-foreground" />
+          <span className="text-sm font-semibold text-foreground">Keluar</span>
         </button>
       </div>
     </MobileLayout>

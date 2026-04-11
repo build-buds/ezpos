@@ -23,11 +23,7 @@ const OnboardingSetup = () => {
     return null;
   }
 
-  const headerColor = businessCategory === 'restoran'
-    ? 'bg-restoran'
-    : businessCategory === 'onlineshop'
-    ? 'bg-onlineshop'
-    : 'bg-primary';
+  const headerColor = 'bg-primary';
 
   const categoryLabel = businessCategory === 'warung'
     ? 'Warung / Kelontong'

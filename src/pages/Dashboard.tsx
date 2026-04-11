@@ -12,11 +12,7 @@ const Dashboard = () => {
   const { businessCategory, businessName } = useAppState();
   const navigate = useNavigate();
 
-  const headerColor = businessCategory === 'restoran'
-    ? 'bg-restoran'
-    : businessCategory === 'onlineshop'
-    ? 'bg-onlineshop'
-    : 'bg-primary';
+  const headerColor = 'bg-primary';
 
   const categoryIcon = businessCategory === 'restoran'
     ? Utensils
@@ -60,7 +56,7 @@ const Dashboard = () => {
                 <div className="w-px h-8 bg-border" />
                 <div>
                   <p className="text-xs text-muted-foreground">Piutang</p>
-                  <p className="text-lg font-bold text-destructive">{formatRupiah(150000)}</p>
+                  <p className="text-lg font-bold text-warning">{formatRupiah(150000)}</p>
                 </div>
               </>
             )}
@@ -106,7 +102,7 @@ const Dashboard = () => {
               ].map((item) => (
                 <div key={item.name} className="flex items-center justify-between py-2 border-b border-border last:border-0">
                   <span className="text-sm">{item.name}</span>
-                  <span className="text-xs font-bold text-destructive bg-destructive/10 px-2 py-0.5 rounded-full">
+                  <span className="text-xs font-bold text-warning bg-warning/10 px-2 py-0.5 rounded-full">
                     Sisa {item.stock}
                   </span>
                 </div>
@@ -143,7 +139,7 @@ const Dashboard = () => {
           <div className="bg-card rounded-2xl p-4 card-shadow">
             <div className="flex items-center justify-between mb-3">
               <p className="text-sm font-semibold">Order Aktif</p>
-              <span className="text-xs font-bold text-primary-foreground bg-restoran px-2 py-0.5 rounded-full">3 order</span>
+              <span className="text-xs font-bold text-primary-foreground bg-primary px-2 py-0.5 rounded-full">3 order</span>
             </div>
             <div className="grid grid-cols-3 gap-2">
               {[
@@ -177,7 +173,7 @@ const Dashboard = () => {
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-muted-foreground">Pengeluaran</span>
-                <span className="text-sm font-bold text-destructive">{formatRupiah(320000)}</span>
+                <span className="text-sm font-bold text-foreground">{formatRupiah(320000)}</span>
               </div>
               <div className="border-t pt-2 flex justify-between">
                 <span className="text-sm font-semibold">Estimasi Laba</span>

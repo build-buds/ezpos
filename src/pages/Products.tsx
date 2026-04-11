@@ -21,11 +21,7 @@ const Products = () => {
   const [productImage, setProductImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const headerColor = businessCategory === 'restoran'
-    ? 'bg-restoran'
-    : businessCategory === 'onlineshop'
-    ? 'bg-onlineshop'
-    : 'bg-primary';
+  const headerColor = 'bg-primary';
 
   const filtered = products.filter((p) => {
     const matchCat = activeCategory === "Semua" || p.category === activeCategory;
@@ -146,7 +142,7 @@ const Products = () => {
                 <span className={cn(
                   "text-[10px] font-bold px-2 py-0.5 rounded-full",
                   product.stock <= (product.minStock || 5)
-                    ? "bg-destructive/10 text-destructive"
+                    ? "bg-warning/10 text-warning"
                     : "bg-success/10 text-success"
                 )}>
                   Stok: {product.stock}

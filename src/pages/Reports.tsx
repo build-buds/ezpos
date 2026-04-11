@@ -11,11 +11,7 @@ const Reports = () => {
   const { businessCategory } = useAppState();
   const [activePeriod, setActivePeriod] = useState("Hari Ini");
 
-  const headerColor = businessCategory === 'restoran'
-    ? 'bg-restoran'
-    : businessCategory === 'onlineshop'
-    ? 'bg-onlineshop'
-    : 'bg-primary';
+  const headerColor = 'bg-primary';
 
   return (
     <MobileLayout>
@@ -52,10 +48,10 @@ const Reports = () => {
           </div>
           <div className="bg-card rounded-2xl p-4 card-shadow">
             <div className="flex items-center gap-1.5 mb-2">
-              <TrendingDown className="w-4 h-4 text-destructive" />
+              <TrendingDown className="w-4 h-4 text-muted-foreground" />
               <p className="text-xs text-muted-foreground">Pengeluaran</p>
             </div>
-            <p className="text-xl font-extrabold text-destructive">{formatRupiah(320000)}</p>
+            <p className="text-xl font-extrabold text-foreground">{formatRupiah(320000)}</p>
           </div>
         </div>
 
@@ -102,7 +98,7 @@ const Reports = () => {
                 <div key={item.rank} className="flex items-center gap-3 py-2 border-b border-border last:border-0">
                   <span className={cn(
                     "w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-primary-foreground",
-                    item.rank === 1 ? "bg-warning" : item.rank === 2 ? "bg-muted-foreground" : "bg-onlineshop"
+                    item.rank === 1 ? "bg-warning" : item.rank === 2 ? "bg-muted-foreground" : "bg-primary"
                   )}>
                     {item.rank}
                   </span>
