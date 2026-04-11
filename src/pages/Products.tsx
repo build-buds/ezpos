@@ -201,6 +201,26 @@ const Products = () => {
                 <Label className="text-xs font-semibold">Nama Produk *</Label>
                 <Input value={newProduct.name} onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })} placeholder="Nama produk" className="h-11 rounded-xl" />
               </div>
+              <div className="space-y-1.5">
+                <Label className="text-xs font-semibold">Kategori *</Label>
+                <div className="flex gap-2 flex-wrap">
+                  {PRODUCT_CATEGORIES.filter(c => c !== "Semua").map((cat) => (
+                    <button
+                      key={cat}
+                      type="button"
+                      onClick={() => setNewProduct({ ...newProduct, category: cat })}
+                      className={cn(
+                        "px-4 py-2 rounded-xl text-xs font-semibold transition-colors border",
+                        newProduct.category === cat
+                          ? "bg-primary text-primary-foreground border-primary"
+                          : "bg-muted text-muted-foreground border-border"
+                      )}
+                    >
+                      {cat}
+                    </button>
+                  ))}
+                </div>
+              </div>
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
                   <Label className="text-xs font-semibold">Harga Jual *</Label>
