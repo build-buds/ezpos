@@ -45,7 +45,14 @@ export const useCreateTransaction = () => {
       if (!businessId) throw new Error("No business");
       const { data, error } = await supabase
         .from("transactions")
-        .insert({ ...tx, business_id: businessId })
+        .insert([{
+          business_id: businessId,
+          items: tx.items as any,
+          total: tx.total,
+          discount: tx.discount,
+          payment_method: tx.payment_method,
+          order_type: tx.order_type,
+        }])
         .select()
         .single();
       if (error) throw error;
