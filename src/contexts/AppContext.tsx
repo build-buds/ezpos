@@ -10,7 +10,7 @@ interface AppState {
   isAuthLoading: boolean;
   businessId: string | null;
   businessCategory: BusinessCategory | null;
-  setBusinessCategory: (cat: BusinessCategory) => void;
+  setBusinessCategory: (cat: BusinessCategory | null) => void;
   businessName: string;
   setBusinessName: (name: string) => void;
   isOnboarded: boolean;
