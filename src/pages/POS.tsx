@@ -35,11 +35,7 @@ const POS = () => {
   const [amountPaid, setAmountPaid] = useState("");
   const [pendingMethod, setPendingMethod] = useState<string | null>(null);
 
-  const headerColor = businessCategory === 'restoran'
-    ? 'bg-restoran'
-    : businessCategory === 'onlineshop'
-    ? 'bg-onlineshop'
-    : 'bg-primary';
+  const headerColor = 'bg-primary';
 
   const filteredProducts = SAMPLE_PRODUCTS.filter((p) => {
     const matchCat = activeCategory === "Semua" || p.category === activeCategory;
@@ -83,7 +79,7 @@ const POS = () => {
           >
             <ShoppingCart className="w-5 h-5" />
             {cart.length > 0 && (
-              <span className="absolute -top-1 -right-1 w-5 h-5 bg-destructive text-primary-foreground text-[10px] font-bold rounded-full flex items-center justify-center">
+              <span className="absolute -top-1 -right-1 w-5 h-5 bg-primary text-primary-foreground text-[10px] font-bold rounded-full flex items-center justify-center">
                 {cart.reduce((s, i) => s + i.quantity, 0)}
               </span>
             )}
