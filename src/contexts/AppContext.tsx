@@ -26,7 +26,7 @@ interface AppState {
   cartTotal: number;
 }
 
-const STORAGE_KEY = "easypos_state";
+const STORAGE_KEY = "ezpos_state";
 
 const loadState = () => {
   try {
