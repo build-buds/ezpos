@@ -1,5 +1,6 @@
 import MobileLayout from "@/components/MobileLayout";
 import InstallPrompt from "@/components/InstallPrompt";
+import NotificationBell from "@/components/NotificationBell";
 import { useAppState } from "@/contexts/AppContext";
 import { useTransactions } from "@/hooks/useTransactions";
 import { formatRupiah } from "@/data/products";
@@ -36,8 +37,11 @@ const Dashboard = () => {
             <p className="text-xs opacity-80">Selamat datang</p>
             <h1 className="text-xl md:text-2xl font-bold mt-0.5">{businessName || "EZPOS"}</h1>
           </div>
-          <div className="w-10 h-10 rounded-full bg-primary-foreground/20 flex items-center justify-center">
-            <CatIcon className="w-5 h-5" />
+          <div className="flex items-center gap-2">
+            <NotificationBell />
+            <div className="w-10 h-10 rounded-full bg-primary-foreground/20 flex items-center justify-center">
+              <CatIcon className="w-5 h-5" />
+            </div>
           </div>
         </div>
       </div>
