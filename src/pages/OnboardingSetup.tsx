@@ -65,14 +65,17 @@ const OnboardingSetup = () => {
 
       if (error) {
         toast.error("Gagal menyimpan data bisnis: " + error.message);
+        setLoading(false);
         return;
       }
 
       setBusinessId(data.id);
       setBusinessName(name);
       setIsOnboarded(true);
-      navigate("/dashboard");
-    } finally {
+      toast.success("Bisnis berhasil disimpan!");
+      navigate("/dashboard", { replace: true });
+    } catch (err: any) {
+      toast.error("Terjadi kesalahan jaringan. Coba lagi.");
       setLoading(false);
     }
   };
