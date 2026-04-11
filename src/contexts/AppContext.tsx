@@ -43,7 +43,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     return saved ? (saved as BusinessCategory) : null;
   });
 
-  const setBusinessCategory = (cat: BusinessCategory) => {
+  const setBusinessCategory = (cat: BusinessCategory | null) => {
     setBusinessCategoryState(cat);
     if (cat) {
       localStorage.setItem('ezpos_business_category', cat);
