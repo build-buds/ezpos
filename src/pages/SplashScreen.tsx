@@ -33,7 +33,7 @@ const SplashScreen = () => {
           <Store className="w-10 h-10 text-primary-foreground" />
         </div>
         <h1 className="text-3xl font-extrabold text-primary-foreground tracking-tight">
-          EASYPOS
+          EZPOS
         </h1>
         <p className="text-sm text-primary-foreground/70">Kelola usahamu lebih mudah</p>
       </div>

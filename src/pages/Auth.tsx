@@ -66,8 +66,8 @@ const Auth = () => {
       <div className="w-full max-w-sm md:max-w-md space-y-8">
         {/* Logo */}
          <div className="flex flex-col items-center gap-2">
-          <img src={logoImg} alt="EASYPOS Logo" className="w-14 h-14 md:w-16 md:h-16 rounded-2xl" />
-          <h1 className="text-xl md:text-2xl font-bold text-foreground">EASYPOS</h1>
+          <img src={logoImg} alt="EZPOS Logo" className="w-14 h-14 md:w-16 md:h-16 rounded-2xl" />
+          <h1 className="text-xl md:text-2xl font-bold text-foreground">EZPOS</h1>
         </div>
 
         {/* Tabs */}
