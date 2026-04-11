@@ -3,10 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 
 const Index = () => {
-  const { isLoggedIn, isOnboarded } = useAppState();
+  const { isLoggedIn, isOnboarded, isAuthLoading } = useAppState();
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (isAuthLoading) return;
     if (isLoggedIn && isOnboarded) {
       navigate("/dashboard", { replace: true });
     } else if (isLoggedIn) {
@@ -14,7 +15,7 @@ const Index = () => {
     } else {
       navigate("/auth", { replace: true });
     }
-  }, [isLoggedIn, isOnboarded, navigate]);
+  }, [isLoggedIn, isOnboarded, isAuthLoading, navigate]);
 
   return null;
 };

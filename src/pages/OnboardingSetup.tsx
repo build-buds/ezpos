@@ -1,22 +1,25 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppState } from "@/contexts/AppContext";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { ArrowLeft, Banknote, Building2, FileText } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 const OnboardingSetup = () => {
   const navigate = useNavigate();
-  const { businessCategory, setBusinessName, setIsOnboarded } = useAppState();
+  const { user, businessCategory, setBusinessName, setIsOnboarded, setBusinessId } = useAppState();
   const [name, setName] = useState("");
   const [address, setAddress] = useState("");
   const [phone, setPhone] = useState("");
   const [paymentCash, setPaymentCash] = useState(true);
   const [paymentTransfer, setPaymentTransfer] = useState(false);
   const [paymentBayarNanti, setPaymentBayarNanti] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   if (!businessCategory) {
     navigate("/");
@@ -37,16 +40,38 @@ const OnboardingSetup = () => {
     ? 'Nama Restoran'
     : 'Nama Toko';
 
-  const handleSubmit = () => {
-    if (!name || !phone) return;
-    setBusinessName(name);
-    setIsOnboarded(true);
-    navigate("/dashboard");
+  const handleSubmit = async () => {
+    if (!name || !phone || !user) return;
+    setLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from("businesses")
+        .insert({
+          owner_id: user.id,
+          name,
+          category: businessCategory,
+          address,
+          phone,
+        })
+        .select("id")
+        .single();
+
+      if (error) {
+        toast.error("Gagal menyimpan data bisnis: " + error.message);
+        return;
+      }
+
+      setBusinessId(data.id);
+      setBusinessName(name);
+      setIsOnboarded(true);
+      navigate("/dashboard");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="min-h-screen max-w-lg md:max-w-2xl mx-auto bg-background flex flex-col">
-      {/* Header */}
       <div className={cn("px-6 md:px-10 pt-10 pb-6 text-primary-foreground", headerColor)}>
         <button onClick={() => navigate("/")} className="flex items-center gap-2 text-sm opacity-80 mb-4">
           <ArrowLeft className="w-4 h-4" />
@@ -56,24 +81,20 @@ const OnboardingSetup = () => {
         <h1 className="text-xl font-bold mt-1">{categoryLabel}</h1>
       </div>
 
-      {/* Form */}
       <div className="flex-1 px-6 md:px-10 py-6 space-y-5">
         <div className="space-y-2">
           <Label htmlFor="name" className="text-sm font-semibold">{nameLabel} *</Label>
           <Input id="name" value={name} onChange={(e) => setName(e.target.value)} placeholder={`Masukkan ${nameLabel.toLowerCase()}`} className="h-12 rounded-xl" />
         </div>
-
         <div className="space-y-2">
-          <Label htmlFor="address" className="text-sm font-semibold">Alamat / Lokasi *</Label>
+          <Label htmlFor="address" className="text-sm font-semibold">Alamat / Lokasi</Label>
           <Input id="address" value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Jl. Contoh No. 123" className="h-12 rounded-xl" />
         </div>
-
         <div className="space-y-2">
           <Label htmlFor="phone" className="text-sm font-semibold">Nomor HP *</Label>
           <Input id="phone" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="08xxxxxxxxxx" className="h-12 rounded-xl" />
         </div>
 
-        {/* Payment Methods */}
         <div className="space-y-3">
           <Label className="text-sm font-semibold">Metode Bayar Aktif</Label>
           <div className="space-y-3">
@@ -96,11 +117,11 @@ const OnboardingSetup = () => {
 
         <Button
           onClick={handleSubmit}
-          disabled={!name || !phone}
+          disabled={!name || !phone || loading}
           variant="cta"
           className="w-full h-14 text-base mt-6"
         >
-          Mulai Gunakan EZPOS
+          {loading ? "Menyimpan..." : "Mulai Gunakan EZPOS"}
         </Button>
       </div>
     </div>
