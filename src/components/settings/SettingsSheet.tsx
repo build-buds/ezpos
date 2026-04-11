@@ -30,7 +30,7 @@ const SettingsSheet = ({ open, onClose, title, children, footer }: Props) => {
   if (!mounted) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col">
+    <div className="fixed inset-0 z-[60] flex flex-col">
       {/* Backdrop */}
       <div
         className={cn(
@@ -41,10 +41,10 @@ const SettingsSheet = ({ open, onClose, title, children, footer }: Props) => {
       />
 
       {/* Sheet */}
-      <div className="flex-1" />
+      <div className="flex-1 min-h-[10vh]" />
       <div
         className={cn(
-          "relative bg-card rounded-t-3xl w-full min-h-[50vh] max-h-[90vh] flex flex-col transition-transform duration-300 ease-out",
+          "relative bg-card rounded-t-3xl w-full max-h-[90vh] flex flex-col transition-transform duration-300 ease-out",
           "max-w-lg md:max-w-2xl mx-auto",
           visible ? "translate-y-0" : "translate-y-full"
         )}
