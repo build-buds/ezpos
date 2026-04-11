@@ -65,10 +65,8 @@ const Auth = () => {
     <div className="min-h-screen bg-background flex flex-col items-center justify-center px-6">
       <div className="w-full max-w-sm md:max-w-md space-y-8">
         {/* Logo */}
-        <div className="flex flex-col items-center gap-2">
-          <div className="w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-primary flex items-center justify-center">
-            <Store className="w-7 h-7 md:w-8 md:h-8 text-primary-foreground" />
-          </div>
+         <div className="flex flex-col items-center gap-2">
+          <img src={logoImg} alt="EASYPOS Logo" className="w-14 h-14 md:w-16 md:h-16 rounded-2xl" />
           <h1 className="text-xl md:text-2xl font-bold text-foreground">EASYPOS</h1>
         </div>
 
