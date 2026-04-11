@@ -173,7 +173,7 @@ const Dashboard = () => {
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-muted-foreground">Pengeluaran</span>
-                <span className="text-sm font-bold text-destructive">{formatRupiah(320000)}</span>
+                <span className="text-sm font-bold text-foreground">{formatRupiah(320000)}</span>
               </div>
               <div className="border-t pt-2 flex justify-between">
                 <span className="text-sm font-semibold">Estimasi Laba</span>
