@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { ArrowLeft, Banknote, Building2, FileText } from "lucide-react";
+import { ArrowLeft, Banknote, Building2, FileText, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
@@ -128,7 +128,13 @@ const OnboardingSetup = () => {
           variant="cta"
           className="w-full h-14 text-base mt-6"
         >
-          {loading ? "Menyimpan..." : "Mulai Gunakan EZPOS"}
+          {loading ? (
+            <><Loader2 className="w-5 h-5 animate-spin" /> Menyimpan...</>
+          ) : !user ? (
+            <><Loader2 className="w-5 h-5 animate-spin" /> Memuat sesi...</>
+          ) : (
+            "Mulai Gunakan EZPOS"
+          )}
         </Button>
       </div>
     </div>

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppState } from "@/contexts/AppContext";
+import { Loader2 } from "lucide-react";
 
 const SplashScreen = () => {
   const { isLoggedIn, isOnboarded, isAuthLoading } = useAppState();
@@ -28,10 +29,13 @@ const SplashScreen = () => {
 
   return (
     <div className="fixed inset-0 bg-primary flex flex-col items-center justify-center">
-        <div className={`flex flex-col items-center gap-6 transition-opacity duration-700 ${visible ? "opacity-100" : "opacity-0"}`}>
-          <img src="/logo.png" alt="EZPOS Logo" className="w-32 h-auto object-contain" />
-          <p className="text-sm text-primary-foreground/70">Kelola usahamu lebih mudah</p>
-        </div>
+      <div className={`flex flex-col items-center gap-6 transition-opacity duration-700 ${visible ? "opacity-100" : "opacity-0"}`}>
+        <img src="/logo.png" alt="EZPOS Logo" className="w-32 h-auto object-contain" />
+        <p className="text-sm text-primary-foreground/70">Kelola usahamu lebih mudah</p>
+        {isAuthLoading && (
+          <Loader2 className="w-6 h-6 text-primary-foreground/50 animate-spin mt-4" />
+        )}
+      </div>
     </div>
   );
 };
