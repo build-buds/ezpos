@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Switch } from "@/components/ui/switch";
-import { X, Package, AlertTriangle, Clock, TrendingUp } from "lucide-react";
+import { Package, AlertTriangle, Clock, TrendingUp } from "lucide-react";
+import SettingsSheet from "./SettingsSheet";
 
 interface Props {
   open: boolean;
@@ -20,8 +21,6 @@ const loadSettings = () => {
 const SettingsNotification = ({ open, onClose }: Props) => {
   const [settings, setSettings] = useState(loadSettings);
 
-  if (!open) return null;
-
   const toggle = (key: string) => {
     const updated = { ...settings, [key]: !settings[key] };
     setSettings(updated);
@@ -36,35 +35,28 @@ const SettingsNotification = ({ open, onClose }: Props) => {
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col">
-      <div className="flex-1 bg-foreground/40" onClick={onClose} />
-      <div className="bg-card rounded-t-3xl max-w-lg md:max-w-2xl mx-auto w-full animate-slide-up max-h-[85vh] flex flex-col">
-        <div className="flex items-center justify-between px-5 py-4 border-b shrink-0">
-          <h2 className="text-lg font-bold">Notifikasi</h2>
-          <button onClick={onClose}><X className="w-5 h-5 text-muted-foreground" /></button>
-        </div>
-        <div className="flex-1 overflow-y-auto px-5 py-5 space-y-3">
-          {items.map((item) => {
-            const Icon = item.icon;
-            return (
-              <div key={item.key} className="flex items-center justify-between p-4 bg-muted/50 rounded-xl">
-                <div className="flex items-center gap-3">
-                  <Icon className="w-5 h-5 text-muted-foreground" />
-                  <div>
-                    <p className="text-sm font-semibold">{item.label}</p>
-                    <p className="text-xs text-muted-foreground">{item.description}</p>
-                  </div>
+    <SettingsSheet open={open} onClose={onClose} title="Notifikasi">
+      <div className="space-y-3">
+        {items.map((item) => {
+          const Icon = item.icon;
+          return (
+            <div key={item.key} className="flex items-center justify-between p-4 bg-muted/50 rounded-xl gap-3">
+              <div className="flex items-center gap-3 min-w-0">
+                <Icon className="w-5 h-5 text-muted-foreground shrink-0" />
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold">{item.label}</p>
+                  <p className="text-xs text-muted-foreground leading-relaxed">{item.description}</p>
                 </div>
-                <Switch checked={settings[item.key]} onCheckedChange={() => toggle(item.key)} />
               </div>
-            );
-          })}
-          <p className="text-xs text-muted-foreground text-center pt-2">
-            Pengaturan notifikasi disimpan secara lokal di perangkat ini.
-          </p>
-        </div>
+              <Switch checked={settings[item.key]} onCheckedChange={() => toggle(item.key)} className="shrink-0" />
+            </div>
+          );
+        })}
+        <p className="text-xs text-muted-foreground text-center pt-2">
+          Pengaturan notifikasi disimpan secara lokal di perangkat ini.
+        </p>
       </div>
-    </div>
+    </SettingsSheet>
   );
 };
 
