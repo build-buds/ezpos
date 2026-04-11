@@ -21,10 +21,10 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <AppProvider>
-      <Sonner />
-      <OfflineBanner />
-      <BrowserRouter>
+    <BrowserRouter>
+      <AppProvider>
+        <Sonner />
+        <OfflineBanner />
         <Routes>
           <Route path="/" element={<SplashScreen />} />
           <Route path="/auth" element={<PublicRoute><Auth /></PublicRoute>} />
@@ -38,8 +38,8 @@ const App = () => (
           <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
           <Route path="*" element={<NotFound />} />
         </Routes>
-      </BrowserRouter>
-    </AppProvider>
+      </AppProvider>
+    </BrowserRouter>
   </QueryClientProvider>
 );
 
