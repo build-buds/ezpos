@@ -1,7 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Switch } from "@/components/ui/switch";
-import { Package, AlertTriangle, Clock, TrendingUp } from "lucide-react";
+import { Package, AlertTriangle, Clock, TrendingUp, Bell } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import SettingsSheet from "./SettingsSheet";
+import { useAppState } from "@/contexts/AppContext";
+import { subscribeToPush, unsubscribeFromPush, isPushSupported, getPushPermission } from "@/lib/pushNotifications";
+import { toast } from "sonner";
 
 interface Props {
   open: boolean;
@@ -19,12 +23,48 @@ const loadSettings = () => {
 };
 
 const SettingsNotification = ({ open, onClose }: Props) => {
+  const { user } = useAppState();
   const [settings, setSettings] = useState(loadSettings);
+  const [pushEnabled, setPushEnabled] = useState(false);
+  const [pushLoading, setPushLoading] = useState(false);
+  const pushSupported = isPushSupported();
+
+  useEffect(() => {
+    if (pushSupported) {
+      setPushEnabled(getPushPermission() === "granted");
+    }
+  }, [pushSupported]);
 
   const toggle = (key: string) => {
     const updated = { ...settings, [key]: !settings[key] };
     setSettings(updated);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+  };
+
+  const handlePushToggle = async () => {
+    if (!user) {
+      toast.error("Kamu harus login terlebih dahulu");
+      return;
+    }
+    setPushLoading(true);
+    try {
+      if (pushEnabled) {
+        await unsubscribeFromPush();
+        setPushEnabled(false);
+        toast.success("Push notification dinonaktifkan");
+      } else {
+        const success = await subscribeToPush(user.id);
+        if (success) {
+          setPushEnabled(true);
+          toast.success("Push notification diaktifkan!");
+        } else {
+          toast.error("Gagal mengaktifkan push notification. Pastikan kamu mengizinkan notifikasi.");
+        }
+      }
+    } catch {
+      toast.error("Terjadi kesalahan");
+    }
+    setPushLoading(false);
   };
 
   const items = [
@@ -37,6 +77,30 @@ const SettingsNotification = ({ open, onClose }: Props) => {
   return (
     <SettingsSheet open={open} onClose={onClose} title="Notifikasi">
       <div className="space-y-3">
+        {/* Push Notification Toggle */}
+        {pushSupported && (
+          <div className="p-4 bg-primary/5 border border-primary/20 rounded-xl">
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3 min-w-0">
+                <Bell className="w-5 h-5 text-primary shrink-0" />
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold">Push Notification</p>
+                  <p className="text-xs text-muted-foreground">Terima notifikasi meskipun app tidak dibuka</p>
+                </div>
+              </div>
+              <Button
+                size="sm"
+                variant={pushEnabled ? "outline" : "default"}
+                className="shrink-0 h-8 text-xs"
+                onClick={handlePushToggle}
+                disabled={pushLoading}
+              >
+                {pushLoading ? "..." : pushEnabled ? "Nonaktifkan" : "Aktifkan"}
+              </Button>
+            </div>
+          </div>
+        )}
+
         {items.map((item) => {
           const Icon = item.icon;
           return (
@@ -53,7 +117,7 @@ const SettingsNotification = ({ open, onClose }: Props) => {
           );
         })}
         <p className="text-xs text-muted-foreground text-center pt-2">
-          Pengaturan notifikasi disimpan secara lokal di perangkat ini.
+          Push notification hanya bekerja di versi published. Pengaturan lain disimpan lokal.
         </p>
       </div>
     </SettingsSheet>
