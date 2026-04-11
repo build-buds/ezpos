@@ -44,7 +44,7 @@ const SettingsSheet = ({ open, onClose, title, children, footer }: Props) => {
       <div className="flex-1" />
       <div
         className={cn(
-          "relative bg-card rounded-t-3xl w-full max-h-[90vh] flex flex-col transition-transform duration-300 ease-out",
+          "relative bg-card rounded-t-3xl w-full min-h-[50vh] max-h-[90vh] flex flex-col transition-transform duration-300 ease-out",
           "max-w-lg md:max-w-2xl mx-auto",
           visible ? "translate-y-0" : "translate-y-full"
         )}
