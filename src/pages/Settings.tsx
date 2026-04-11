@@ -6,13 +6,13 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 const Settings = () => {
-  const { businessCategory, businessName, logout } = useAppState();
+  const { businessCategory, businessName, user, logout } = useAppState();
   const navigate = useNavigate();
 
   const headerColor = 'bg-primary';
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     navigate("/auth", { replace: true });
   };
 
@@ -33,7 +33,7 @@ const Settings = () => {
           </div>
           <div>
             <p className="text-base font-bold">{businessName || "EZPOS"}</p>
-            <p className="text-xs opacity-80">owner@email.com</p>
+            <p className="text-xs opacity-80">{user?.email || "-"}</p>
           </div>
         </div>
       </div>

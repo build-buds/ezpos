@@ -1,19 +1,21 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppState } from "@/contexts/AppContext";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import logoImg from "@/assets/logo.png";
 import { toast } from "sonner";
 
 const Auth = () => {
-  const { login, register, isOnboarded } = useAppState();
+  const { isOnboarded } = useAppState();
   const navigate = useNavigate();
   const [mode, setMode] = useState<"login" | "register">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [name, setName] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const goNext = () => {
     if (isOnboarded) {
@@ -23,7 +25,7 @@ const Auth = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) {
       toast.error("Email dan password wajib diisi");
@@ -33,39 +35,60 @@ const Auth = () => {
       toast.error("Password minimal 6 karakter");
       return;
     }
-    if (mode === "register") {
-      if (!name) {
-        toast.error("Nama wajib diisi");
-        return;
+
+    setLoading(true);
+    try {
+      if (mode === "register") {
+        if (!name) {
+          toast.error("Nama wajib diisi");
+          setLoading(false);
+          return;
+        }
+        if (password !== confirmPassword) {
+          toast.error("Konfirmasi password tidak cocok");
+          setLoading(false);
+          return;
+        }
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: { full_name: name },
+            emailRedirectTo: window.location.origin,
+          },
+        });
+        if (error) {
+          toast.error(error.message);
+          return;
+        }
+        toast.success("Akun berhasil dibuat!");
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) {
+          toast.error("Email atau password salah");
+          return;
+        }
+        toast.success("Berhasil masuk!");
       }
-      if (password !== confirmPassword) {
-        toast.error("Konfirmasi password tidak cocok");
-        return;
-      }
-      register(name, email, password);
-      toast.success("Akun berhasil dibuat!");
-    } else {
-      const success = login(email, password);
-      if (!success) {
-        toast.error("Email atau password salah");
-        return;
-      }
-      toast.success("Berhasil masuk!");
+      goNext();
+    } finally {
+      setLoading(false);
     }
-    goNext();
   };
 
-  const handleGoogle = () => {
-    register("Pengguna Google", "user@gmail.com", "google");
-    toast.success("Masuk dengan Google berhasil!");
-    goNext();
+  const handleGoogle = async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo: window.location.origin },
+    });
+    if (error) toast.error(error.message);
   };
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center px-6">
       <div className="w-full max-w-sm md:max-w-md space-y-8">
         {/* Logo */}
-         <div className="flex flex-col items-center gap-2">
+        <div className="flex flex-col items-center gap-2">
           <img src={logoImg} alt="EZPOS Logo" className="w-14 h-14 md:w-16 md:h-16 rounded-2xl" />
           <h1 className="text-xl md:text-2xl font-bold text-foreground">EZPOS</h1>
         </div>
@@ -105,6 +128,12 @@ const Auth = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
+          <Input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
           {mode === "register" && (
             <Input
               type="password"
@@ -113,14 +142,8 @@ const Auth = () => {
               onChange={(e) => setConfirmPassword(e.target.value)}
             />
           )}
-          <Input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <Button type="submit" className="w-full" size="lg">
-            {mode === "login" ? "Masuk" : "Daftar"}
+          <Button type="submit" className="w-full" size="lg" disabled={loading}>
+            {loading ? "Memproses..." : mode === "login" ? "Masuk" : "Daftar"}
           </Button>
         </form>
 
