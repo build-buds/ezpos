@@ -22,13 +22,17 @@ const SettingsBusiness = ({ open, onClose }: Props) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!open || !businessId) return;
+    if (!open) return;
+    if (!businessId) {
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     supabase
       .from("businesses")
       .select("name, address, phone")
       .eq("id", businessId)
-      .single()
+      .maybeSingle()
       .then(({ data }) => {
         if (data) {
           setName(data.name);
