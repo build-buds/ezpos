@@ -43,49 +43,63 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [isOnboarded, setIsOnboarded] = useState(false);
   const [cart, setCart] = useState<CartItem[]>([]);
 
-  // Listen to auth state changes
+  const loadBusinessData = async (userId: string) => {
+    const { data: businesses } = await supabase
+      .from("businesses")
+      .select("id, name, category")
+      .eq("owner_id", userId)
+      .limit(1);
+
+    if (businesses && businesses.length > 0) {
+      const biz = businesses[0];
+      setBusinessId(biz.id);
+      setBusinessName(biz.name);
+      setBusinessCategory(biz.category as BusinessCategory);
+      setIsOnboarded(true);
+    } else {
+      setIsOnboarded(false);
+    }
+  };
+
   useEffect(() => {
+    let mounted = true;
+
+    // Restore session first
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      if (!mounted) return;
+      setSession(session);
+      setUser(session?.user ?? null);
+
+      if (session?.user) {
+        await loadBusinessData(session.user.id);
+      }
+
+      if (mounted) setIsAuthLoading(false);
+    });
+
+    // Handle subsequent auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
+      (_event, newSession) => {
+        if (!mounted) return;
+        setSession(newSession);
+        setUser(newSession?.user ?? null);
 
-        if (session?.user) {
-          // Check if user has a business (onboarded)
-          const { data: businesses } = await supabase
-            .from("businesses")
-            .select("id, name, category")
-            .eq("owner_id", session.user.id)
-            .limit(1);
-
-          if (businesses && businesses.length > 0) {
-            const biz = businesses[0];
-            setBusinessId(biz.id);
-            setBusinessName(biz.name);
-            setBusinessCategory(biz.category as BusinessCategory);
-            setIsOnboarded(true);
-          } else {
-            setIsOnboarded(false);
-          }
+        if (newSession?.user) {
+          // Fire-and-forget to avoid blocking
+          loadBusinessData(newSession.user.id);
         } else {
           setBusinessId(null);
           setBusinessName("");
           setBusinessCategory(null);
           setIsOnboarded(false);
         }
-
-        setIsAuthLoading(false);
       }
     );
 
-    // Initial session check
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      if (!session) setIsAuthLoading(false);
-    });
-
-    return () => subscription.unsubscribe();
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   const isLoggedIn = !!user;
