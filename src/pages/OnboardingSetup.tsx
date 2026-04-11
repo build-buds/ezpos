@@ -41,7 +41,14 @@ const OnboardingSetup = () => {
     : 'Nama Toko';
 
   const handleSubmit = async () => {
-    if (!name || !phone || !user) return;
+    if (!name || !phone) {
+      toast.error("Nama dan Nomor HP wajib diisi");
+      return;
+    }
+    if (!user) {
+      toast.error("Sesi login tidak ditemukan. Silakan login ulang.");
+      return;
+    }
     setLoading(true);
     try {
       const { data, error } = await supabase
@@ -117,7 +124,7 @@ const OnboardingSetup = () => {
 
         <Button
           onClick={handleSubmit}
-          disabled={!name || !phone || loading}
+          disabled={!name || !phone || loading || !user}
           variant="cta"
           className="w-full h-14 text-base mt-6"
         >
