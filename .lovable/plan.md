@@ -1,56 +1,81 @@
 
 
-# Splash Screen + Auth Simulasi + Persistent Login
+# Plan: Real Data dengan Supabase + Storage + Persiapan Publish
 
-## Alur Baru
+## Ringkasan
+
+Migrasi EZPOS dari data simulasi (localStorage + sample data) ke Supabase backend yang nyata menggunakan Lovable Cloud. Ini mencakup autentikasi real, database untuk produk & transaksi, storage untuk gambar produk, dan persiapan publish.
+
+## Arsitektur
 
 ```text
-Splash Screen (2 detik, logo Warung OS)
-        ↓
-Auth Page (Login / Register via Email+Password atau Google simulasi)
-        ↓
-Onboarding Category (pilih jenis bisnis) — hanya jika belum onboarding
-        ↓
-Dashboard
+Auth (Supabase Auth)  →  Database (products, transactions, businesses)
+                       →  Storage (product-images bucket)
+                       →  RLS policies per business
 ```
 
-Saat user kembali ke app, data login tersimpan di `localStorage` → langsung masuk Dashboard.
+## Langkah Implementasi
 
-## Yang Dibuat / Diubah
+### 1. Setup Lovable Cloud & Supabase
+- Enable Lovable Cloud (Supabase) untuk project ini
+- Setup autentikasi email + Google sign-in
 
-### 1. Halaman Splash Screen (`src/pages/SplashScreen.tsx`)
-- Tampilan full-screen dengan logo "Warung OS" (teks + ikon styled)
-- Animasi fade-in lalu auto-redirect setelah 2 detik
-- Jika sudah login (cek localStorage) → Dashboard
-- Jika belum → Auth page
+### 2. Database Schema (Migrasi SQL)
+Buat tabel-tabel berikut:
 
-### 2. Halaman Auth (`src/pages/Auth.tsx`)
-- Form login/register dengan tab toggle
-- Input: Email + Password
-- Tombol "Masuk dengan Google" (simulasi — langsung login)
-- Simpan info user ke localStorage
-- Setelah login: jika belum onboarding → `/onboarding`, jika sudah → `/dashboard`
+- **businesses** — id, owner_id (auth.users), name, category, created_at
+- **products** — id, business_id, name, description, price, cost_price, image_url, category, stock, min_stock, created_at
+- **transactions** — id, business_id, items (jsonb), total, discount, payment_method, order_type, status, created_at
+- **user_roles** — id, user_id, role (enum: admin, staff)
 
-### 3. Update `AppContext.tsx`
-- Tambah state `user` (email, name) + `isLoggedIn`
-- Load/save state dari localStorage agar persistent
-- Tambah fungsi `login()`, `logout()`, `register()`
+Semua tabel dengan RLS aktif, scoped ke business_id milik user.
 
-### 4. Update `App.tsx`
-- Tambah route `/splash` dan `/auth`
-- Ubah `/` ke SplashScreen
+### 3. Storage Bucket
+- Buat bucket `product-images` (public) untuk foto produk
+- RLS policy: authenticated users bisa upload/read
 
-### 5. Update `Index.tsx`
-- Redirect logic: cek login dulu, lalu cek onboarding
+### 4. Migrasi Auth (Auth.tsx)
+- Ganti login/register simulasi → `supabase.auth.signInWithPassword()` dan `supabase.auth.signUp()`
+- Ganti Google simulasi → `supabase.auth.signInWithOAuth({ provider: 'google' })`
+- Update AppContext untuk menggunakan `supabase.auth.onAuthStateChange()`
 
-### 6. Update `Settings.tsx`
-- Tambah tombol "Logout" yang clear localStorage dan redirect ke `/auth`
+### 5. Migrasi Data Layer
+- **Products**: Ganti `SAMPLE_PRODUCTS` dengan query ke tabel `products` via Supabase
+- **Transactions**: Simpan transaksi POS ke tabel `transactions`
+- **Dashboard**: Query real data (omzet hari ini, jumlah transaksi) dari `transactions`
+- **Reports**: Query agregasi dari `transactions` berdasarkan periode
 
-## File yang diubah
-- `src/pages/SplashScreen.tsx` — **baru**
-- `src/pages/Auth.tsx` — **baru**
-- `src/contexts/AppContext.tsx` — tambah user state + localStorage persistence
-- `src/App.tsx` — tambah routes
-- `src/pages/Index.tsx` — update redirect logic
-- `src/pages/Settings.tsx` — tambah logout
+### 6. Upload Gambar Produk
+- Update form tambah/edit produk di Products.tsx untuk upload ke Supabase Storage
+- Simpan public URL ke kolom `image_url` di tabel products
+
+### 7. Onboarding → Create Business Record
+- Saat onboarding selesai, insert ke tabel `businesses`
+- Simpan business_id di context untuk semua query selanjutnya
+
+### 8. Persiapan Publish
+- Set publish visibility ke public
+- Pastikan semua route handle auth state (redirect ke /auth jika belum login)
+
+## File yang Dibuat/Diubah
+
+- `supabase/migrations/001_initial_schema.sql` — schema lengkap
+- `supabase/migrations/002_storage.sql` — bucket + RLS
+- `src/integrations/supabase/client.ts` — Supabase client (auto-generated)
+- `src/contexts/AppContext.tsx` — migrasi ke Supabase auth + data
+- `src/pages/Auth.tsx` — real Supabase auth
+- `src/pages/Products.tsx` — CRUD via Supabase + image upload
+- `src/pages/POS.tsx` — simpan transaksi ke DB
+- `src/pages/Dashboard.tsx` — query real data
+- `src/pages/Reports.tsx` — query agregasi
+- `src/pages/OnboardingSetup.tsx` — insert business record
+- `src/hooks/useProducts.ts` — hook baru untuk query products
+- `src/hooks/useTransactions.ts` — hook baru untuk query transactions
+
+## Detail Teknis
+
+- Menggunakan `@tanstack/react-query` (sudah terinstall) untuk data fetching
+- RLS memastikan setiap user hanya akses data bisnis miliknya
+- Storage bucket public agar gambar produk bisa diakses tanpa auth
+- Auth state di-manage via `onAuthStateChange` listener
 
