@@ -4,31 +4,28 @@ import { BusinessCategory } from "@/types";
 import { ShoppingCart, UtensilsCrossed, Package } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const categories: { id: BusinessCategory; label: string; description: string; icon: typeof ShoppingCart; colorClass: string; bgClass: string; comingSoon?: boolean }[] = [
-  {
-    id: "warung",
-    label: "Warung / Kelontong",
-    description: "Toko kelontong, warung sembako, minimarket kecil",
-    icon: ShoppingCart,
-    colorClass: "text-primary border-primary",
-    bgClass: "bg-warung-light",
-    comingSoon: true,
-  },
+const categories: { id: BusinessCategory; label: string; description: string; icon: typeof ShoppingCart; bgClass: string; comingSoon?: boolean }[] = [
   {
     id: "restoran",
     label: "Restoran / Warung Makan",
     description: "Warung makan, restoran kecil, kedai kopi, food stall",
     icon: UtensilsCrossed,
-    colorClass: "text-restoran border-restoran",
-    bgClass: "bg-restoran-light",
+    bgClass: "bg-primary/10",
+  },
+  {
+    id: "warung",
+    label: "Warung / Kelontong",
+    description: "Toko kelontong, warung sembako, minimarket kecil",
+    icon: ShoppingCart,
+    bgClass: "bg-primary/10",
+    comingSoon: true,
   },
   {
     id: "onlineshop",
     label: "Online Shop / Reseller",
     description: "Jualan online via WA, Instagram, Tokopedia, Shopee",
     icon: Package,
-    colorClass: "text-onlineshop border-onlineshop",
-    bgClass: "bg-onlineshop-light",
+    bgClass: "bg-primary/10",
     comingSoon: true,
   },
 ];
@@ -64,11 +61,10 @@ const OnboardingCategory = () => {
               onClick={() => !cat.comingSoon && handleSelect(cat.id)}
               disabled={cat.comingSoon}
               className={cn(
-                "w-full flex items-center gap-4 p-5 rounded-2xl border-2 transition-all duration-200 relative",
+                "w-full flex items-center gap-4 p-5 rounded-2xl border-2 transition-all duration-200 relative text-primary",
                 cat.comingSoon
                   ? "opacity-50 cursor-not-allowed bg-muted border-transparent"
-                  : "hover:scale-[1.02] active:scale-[0.98] card-shadow bg-card border-transparent hover:border-current",
-                cat.colorClass
+                  : "hover:scale-[1.02] active:scale-[0.98] card-shadow bg-card border-transparent hover:border-primary"
               )}
             >
               <div className={cn("w-14 h-14 rounded-xl flex items-center justify-center", cat.bgClass)}>
