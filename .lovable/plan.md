@@ -1,56 +1,47 @@
 
+Tujuan: memperbaiki kegagalan “Gagal membuat checkout. Coba lagi nanti.” pada halaman Pricing.
 
-## Plan: Integrasi Polar.sh Payment Gateway untuk EZPOS
+Apa yang saya temukan:
+- Produk Polar untuk `EZPOS Pro` ada dan valid, jadi masalahnya kemungkinan bukan product ID.
+- Halaman `src/pages/Pricing.tsx` selalu menampilkan toast generik, jadi alasan gagal yang sebenarnya tersembunyi.
+- Backend function `supabase/functions/create-polar-checkout/index.ts` punya beberapa return awal untuk 401/400 tanpa logging.
+- Log function terbaru hanya menunjukkan boot/shutdown, tanpa error detail. Itu cocok dengan kasus function berhenti di jalur “silent return”, paling mungkin karena auth token tidak ikut/invalid.
+- Karena payload `productId` dan `successUrl` sudah diisi dari client, kandidat terkuat sekarang adalah masalah sesi login/token saat memanggil backend checkout.
 
-### Langkah-langkah Implementasi
+Rencana implementasi:
+1. Perjelas error di client
+- Ubah `src/pages/Pricing.tsx` agar membaca error backend yang sebenarnya, bukan selalu toast generik.
+- Tampilkan pesan yang lebih spesifik, mis. “Sesi login tidak valid, silakan login ulang” atau “Checkout gagal dibuat di backend”.
 
-#### 1. Hubungkan Polar MCP Connector
-- Connect Polar MCP ke project agar agent bisa membuat produk dan discount code langsung
+2. Validasi sesi sebelum buat checkout
+- Di `Pricing.tsx`, cek sesi aktif terlebih dahulu lewat auth client sebelum memanggil backend.
+- Jika user state ada tetapi access token kosong/stale, arahkan user login ulang daripada langsung invoke function.
 
-#### 2. Simpan POLAR_ACCESS_TOKEN
-- User perlu membuat Organization Access Token di Polar dashboard (Settings → Developer → Organization Access Tokens)
-- Simpan sebagai secret menggunakan `add_secret` tool
+3. Perkuat backend checkout function
+- Tambahkan logging untuk semua jalur gagal di `create-polar-checkout`, termasuk:
+  - header auth tidak ada
+  - user tidak valid
+  - body request tidak valid
+  - respons dari Polar gagal
+- Kembalikan respons error yang terstruktur agar client bisa menampilkan alasan real.
+- Sekalian rapikan validasi input (`productId`, `successUrl`) supaya 400/401/500 lebih mudah dibedakan.
 
-#### 3. Buat Produk di Polar via MCP
-- Paket **EZPOS Pro** - Rp 299.000/bulan (recurring monthly)
-- Benefit: Feature Flag "Pro Access" untuk gate fitur premium
+4. Sinkronkan auth state bila perlu
+- Jika saat implementasi terlihat ada mismatch antara `user` di context dan sesi auth aktual, saya akan rapikan `AppContext` supaya halaman checkout hanya jalan saat sesi benar-benar siap.
 
-#### 4. Buat Edge Function `create-polar-checkout`
-- Menerima `productId` dan `userId` dari client
-- Memanggil Polar API untuk membuat checkout session
-- Mengembalikan checkout URL
+5. Verifikasi end-to-end
+- Login dengan akun `Miepadeh2026@gmail.com`
+- Buka `/pricing`
+- Klik “Upgrade ke Pro”
+- Pastikan redirect ke checkout berhasil
+- Gunakan kode `EZPOSTEST100`
+- Pastikan kembali ke `/checkout/success` dan status pembayaran terbaca benar
 
-#### 5. Buat Edge Function `verify-polar-checkout`
-- Validasi status checkout (succeeded/failed/expired)
-- Update status langganan user di database
-
-#### 6. Migrasi Database
-- Tambah tabel `subscriptions` untuk tracking status langganan user (user_id, plan, status, polar_customer_id, expires_at)
-- RLS policy: user hanya bisa lihat subscription miliknya
-
-#### 7. Buat Halaman Pricing (`/pricing`)
-- 2 card: **Gratis** (outline) dan **Pro Rp 299.000/bln** (highlighted)
-- Fitur Gratis: 50 produk, 100 transaksi/bulan, 1 perangkat, laporan dasar
-- Fitur Pro: Unlimited produk & transaksi, 3 perangkat, laporan lengkap + export, manajemen stok lanjutan, dukungan prioritas
-- Tombol "Upgrade ke Pro" memanggil edge function → redirect ke Polar checkout
-
-#### 8. Buat Halaman Success (`/checkout/success`)
-- Validasi checkout via `verify-polar-checkout`
-- Tampilkan konfirmasi pembayaran
-
-#### 9. Update Routing & Navigation
-- Tambah route `/pricing` dan `/checkout/success` di `App.tsx`
-- Tambah link "Langganan" di halaman Settings
-
-#### 10. Buat Discount Code 100% untuk Testing
-- Polar tidak punya sandbox mode, jadi buat discount code via MCP untuk testing
-
-### File yang dibuat/diubah
-- **Buat**: `supabase/functions/create-polar-checkout/index.ts`
-- **Buat**: `supabase/functions/verify-polar-checkout/index.ts`
-- **Buat**: `src/pages/Pricing.tsx`
-- **Buat**: `src/pages/CheckoutSuccess.tsx`
-- **Edit**: `src/App.tsx` (tambah routes)
-- **Edit**: `src/pages/Settings.tsx` (tambah link langganan)
-- **Migrasi**: Tabel `subscriptions`
-
+Detail teknis:
+- File utama yang akan diubah:
+  - `src/pages/Pricing.tsx`
+  - `supabase/functions/create-polar-checkout/index.ts`
+- Mungkin ikut disentuh bila diperlukan:
+  - `src/contexts/AppContext.tsx`
+- Tidak terlihat perlu perubahan database untuk memperbaiki error create checkout ini.
+- Fokus utama perbaikan: auth token readiness + observability error.
