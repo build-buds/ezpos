@@ -1,51 +1,56 @@
 
 
-## Plan: Konversi EZPOS menjadi PWA
+## Plan: Integrasi Polar.sh Payment Gateway untuk EZPOS
 
-PWA akan membuat EZPOS bisa di-install ke home screen dan memiliki basic offline support. Fitur PWA (install, offline) **hanya bekerja di versi published**, bukan di preview editor Lovable.
+### Langkah-langkah Implementasi
 
-### Langkah-langkah:
+#### 1. Hubungkan Polar MCP Connector
+- Connect Polar MCP ke project agar agent bisa membuat produk dan discount code langsung
 
-**1. Buat `public/manifest.json`**
-- App name: "EZPOS", short_name: "EZPOS"
-- `display: "standalone"`, theme_color & background_color biru (#2563EB)
-- Icons: gunakan `logo.png` yang sudah ada (192x192 dan 512x512)
-- start_url: "/", scope: "/"
+#### 2. Simpan POLAR_ACCESS_TOKEN
+- User perlu membuat Organization Access Token di Polar dashboard (Settings → Developer → Organization Access Tokens)
+- Simpan sebagai secret menggunakan `add_secret` tool
 
-**2. Buat icon PWA** 
-- Salin `logo.png` ke `icon-192.png` dan `icon-512.png` di `public/`
+#### 3. Buat Produk di Polar via MCP
+- Paket **EZPOS Pro** - Rp 299.000/bulan (recurring monthly)
+- Benefit: Feature Flag "Pro Access" untuk gate fitur premium
 
-**3. Update `index.html`**
-- Tambah `<link rel="manifest" href="/manifest.json">`
-- Tambah meta tag: `theme-color`, `apple-mobile-web-app-capable`, `apple-mobile-web-app-status-bar-style`, apple-touch-icon
+#### 4. Buat Edge Function `create-polar-checkout`
+- Menerima `productId` dan `userId` dari client
+- Memanggil Polar API untuk membuat checkout session
+- Mengembalikan checkout URL
 
-**4. Install `vite-plugin-pwa` dan konfigurasi di `vite.config.ts`**
-- `registerType: "autoUpdate"`
-- `devOptions: { enabled: false }` — service worker hanya aktif di production
-- `navigateFallbackDenylist: [/^\/~oauth/]`
-- Manifest dan icon config
+#### 5. Buat Edge Function `verify-polar-checkout`
+- Validasi status checkout (succeeded/failed/expired)
+- Update status langganan user di database
 
-**5. Update `src/main.tsx`** — Tambah guard agar service worker TIDAK register di iframe/preview:
-```typescript
-const isInIframe = (() => {
-  try { return window.self !== window.top; } 
-  catch { return true; }
-})();
-const isPreviewHost = window.location.hostname.includes("id-preview--");
-if (isPreviewHost || isInIframe) {
-  navigator.serviceWorker?.getRegistrations().then(r => r.forEach(sw => sw.unregister()));
-}
-```
+#### 6. Migrasi Database
+- Tambah tabel `subscriptions` untuk tracking status langganan user (user_id, plan, status, polar_customer_id, expires_at)
+- RLS policy: user hanya bisa lihat subscription miliknya
 
-**6. Buat komponen `InstallPrompt`** 
-- Menangkap event `beforeinstallprompt` 
-- Menampilkan banner/tombol "Install EZPOS" yang muncul di dashboard
-- Untuk iOS: deteksi Safari dan tampilkan instruksi manual (Share → Add to Home Screen)
-- Banner bisa di-dismiss dan tidak muncul lagi (simpan di localStorage)
+#### 7. Buat Halaman Pricing (`/pricing`)
+- 2 card: **Gratis** (outline) dan **Pro Rp 299.000/bln** (highlighted)
+- Fitur Gratis: 50 produk, 100 transaksi/bulan, 1 perangkat, laporan dasar
+- Fitur Pro: Unlimited produk & transaksi, 3 perangkat, laporan lengkap + export, manajemen stok lanjutan, dukungan prioritas
+- Tombol "Upgrade ke Pro" memanggil edge function → redirect ke Polar checkout
 
-**7. Tambahkan `InstallPrompt` ke halaman Dashboard**
+#### 8. Buat Halaman Success (`/checkout/success`)
+- Validasi checkout via `verify-polar-checkout`
+- Tampilkan konfirmasi pembayaran
 
-### Catatan penting:
-- Service worker dan install prompt **hanya bekerja di versi deployed/published**, bukan di preview Lovable
-- Tidak akan mengganggu development di editor
+#### 9. Update Routing & Navigation
+- Tambah route `/pricing` dan `/checkout/success` di `App.tsx`
+- Tambah link "Langganan" di halaman Settings
+
+#### 10. Buat Discount Code 100% untuk Testing
+- Polar tidak punya sandbox mode, jadi buat discount code via MCP untuk testing
+
+### File yang dibuat/diubah
+- **Buat**: `supabase/functions/create-polar-checkout/index.ts`
+- **Buat**: `supabase/functions/verify-polar-checkout/index.ts`
+- **Buat**: `src/pages/Pricing.tsx`
+- **Buat**: `src/pages/CheckoutSuccess.tsx`
+- **Edit**: `src/App.tsx` (tambah routes)
+- **Edit**: `src/pages/Settings.tsx` (tambah link langganan)
+- **Migrasi**: Tabel `subscriptions`
 
