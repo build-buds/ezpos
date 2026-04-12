@@ -1,14 +1,25 @@
 import { ReactNode } from "react";
 import BottomNav from "./BottomNav";
+import DesktopSidebar from "./DesktopSidebar";
 
 const MobileLayout = ({ children }: { children: ReactNode }) => {
   return (
-    <div className="min-h-screen max-w-lg md:max-w-3xl lg:max-w-5xl mx-auto bg-background relative">
-      <div className="bottom-nav-safe">
-        {children}
+    <>
+      <DesktopSidebar />
+      <div className="min-h-screen bg-background relative lg:ml-60">
+        {/* Mobile/Tablet: constrained width, bottom nav padding */}
+        <div className="lg:hidden max-w-lg md:max-w-3xl mx-auto">
+          <div className="bottom-nav-safe">
+            {children}
+          </div>
+        </div>
+        {/* Desktop: full width content */}
+        <div className="hidden lg:block">
+          {children}
+        </div>
+        <BottomNav />
       </div>
-      <BottomNav />
-    </div>
+    </>
   );
 };
 
