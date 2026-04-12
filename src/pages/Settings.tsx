@@ -1,8 +1,9 @@
 import { useState } from "react";
 import MobileLayout from "@/components/MobileLayout";
 import { useAppState } from "@/contexts/AppContext";
+import { useSubscription } from "@/hooks/useSubscription";
 import { cn } from "@/lib/utils";
-import { User, Store, Bell, Palette, LogOut, ChevronRight, Crown } from "lucide-react";
+import { User, Store, Bell, Palette, LogOut, ChevronRight, Crown, CheckCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import SettingsProfile from "@/components/settings/SettingsProfile";
 import SettingsBusiness from "@/components/settings/SettingsBusiness";
@@ -11,10 +12,11 @@ import SettingsAppearance from "@/components/settings/SettingsAppearance";
 
 const Settings = () => {
   const { businessName, user, logout } = useAppState();
+  const { data: subscription } = useSubscription();
   const navigate = useNavigate();
   const [activeSheet, setActiveSheet] = useState<string | null>(null);
 
-  const headerColor = 'bg-primary';
+  const isPro = subscription?.plan === "pro" && subscription?.status === "active";
 
   const handleLogout = async () => {
     await logout();
@@ -30,7 +32,7 @@ const Settings = () => {
 
   return (
     <MobileLayout>
-      <div className={cn("px-5 md:px-8 pt-10 pb-6 text-primary-foreground", headerColor)}>
+      <div className={cn("px-5 md:px-8 pt-10 pb-6 text-primary-foreground bg-primary")}>
         <h1 className="text-lg md:text-xl font-bold">Pengaturan</h1>
         <div className="flex items-center gap-3 mt-4">
           <div className="w-12 h-12 rounded-full bg-primary-foreground/20 flex items-center justify-center">
@@ -59,17 +61,37 @@ const Settings = () => {
           </button>
         ))}
 
-        <button
-          onClick={() => navigate("/pricing")}
-          className="w-full flex items-center gap-3 p-4 bg-primary/10 rounded-2xl card-shadow"
-        >
-          <Crown className="w-5 h-5 text-primary" />
-          <div className="flex-1 text-left">
-            <p className="text-sm font-semibold text-primary">Upgrade ke Pro</p>
-            <p className="text-xs text-muted-foreground">Rp 299.000/bulan</p>
+        {isPro ? (
+          <div className="w-full flex items-center gap-3 p-4 bg-primary/10 rounded-2xl card-shadow">
+            <Crown className="w-5 h-5 text-primary" />
+            <div className="flex-1 text-left">
+              <div className="flex items-center gap-2">
+                <p className="text-sm font-semibold text-primary">EZPOS Pro</p>
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary text-primary-foreground text-[10px] font-bold">
+                  <CheckCircle className="w-3 h-3" />
+                  Aktif
+                </span>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                {subscription?.expires_at
+                  ? `Berlaku hingga ${new Date(subscription.expires_at).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}`
+                  : "Langganan aktif"}
+              </p>
+            </div>
           </div>
-          <ChevronRight className="w-4 h-4 text-primary" />
-        </button>
+        ) : (
+          <button
+            onClick={() => navigate("/pricing")}
+            className="w-full flex items-center gap-3 p-4 bg-primary/10 rounded-2xl card-shadow"
+          >
+            <Crown className="w-5 h-5 text-primary" />
+            <div className="flex-1 text-left">
+              <p className="text-sm font-semibold text-primary">Upgrade ke Pro</p>
+              <p className="text-xs text-muted-foreground">Rp 299.000/bulan</p>
+            </div>
+            <ChevronRight className="w-4 h-4 text-primary" />
+          </button>
+        )}
 
         <button
           onClick={handleLogout}

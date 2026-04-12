@@ -4,9 +4,10 @@ import MobileLayout from "@/components/MobileLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, ArrowLeft, Crown, Zap } from "lucide-react";
+import { Check, ArrowLeft, Crown, Zap, CheckCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAppState } from "@/contexts/AppContext";
+import { useSubscription } from "@/hooks/useSubscription";
 import { toast } from "sonner";
 
 const POLAR_PRODUCT_ID = "b5ab8339-8495-488b-b487-0a4502740459";
@@ -62,6 +63,8 @@ const createPolarCheckout = async (accessToken: string, payload: { productId: st
 const Pricing = () => {
   const navigate = useNavigate();
   const { user } = useAppState();
+  const { data: subscription } = useSubscription();
+  const isPro = subscription?.plan === "pro" && subscription?.status === "active";
   const [loading, setLoading] = useState(false);
 
   const handleUpgrade = async () => {
@@ -155,7 +158,7 @@ const Pricing = () => {
               </div>
             ))}
             <Button variant="outline" className="w-full mt-4" disabled>
-              Paket Saat Ini
+              {isPro ? "Paket Sebelumnya" : "Paket Saat Ini"}
             </Button>
           </CardContent>
         </Card>
@@ -183,9 +186,16 @@ const Pricing = () => {
                 <span>{f}</span>
               </div>
             ))}
-            <Button className="w-full mt-4" onClick={handleUpgrade} disabled={loading}>
-              {loading ? "Memproses..." : "Upgrade ke Pro"}
-            </Button>
+            {isPro ? (
+              <Button className="w-full mt-4 bg-primary/10 text-primary" disabled>
+                <CheckCircle className="w-4 h-4 mr-2" />
+                Paket Aktif
+              </Button>
+            ) : (
+              <Button className="w-full mt-4" onClick={handleUpgrade} disabled={loading}>
+                {loading ? "Memproses..." : "Upgrade ke Pro"}
+              </Button>
+            )}
           </CardContent>
         </Card>
       </div>

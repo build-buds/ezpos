@@ -2,21 +2,27 @@ import { useState, useRef } from "react";
 import MobileLayout from "@/components/MobileLayout";
 import { useAppState } from "@/contexts/AppContext";
 import { useProducts, useAddProduct, useUpdateProduct } from "@/hooks/useProducts";
+import { useIsPro } from "@/hooks/useSubscription";
 import { PRODUCT_CATEGORIES, formatRupiah } from "@/data/products";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import { Plus, Search, Edit2, X, UtensilsCrossed, Coffee, Cookie, ImagePlus, Loader2 } from "lucide-react";
+import { Plus, Search, Edit2, X, UtensilsCrossed, Coffee, Cookie, ImagePlus, Loader2, Lock } from "lucide-react";
 import { Product } from "@/types";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
+
+const FREE_PRODUCT_LIMIT = 50;
 
 const Products = () => {
   const { businessId } = useAppState();
   const { data: products = [], isLoading } = useProducts();
+  const isPro = useIsPro();
   const addProduct = useAddProduct();
   const updateProduct = useUpdateProduct();
+  const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState("Semua");
   const [showAddForm, setShowAddForm] = useState(false);
@@ -28,6 +34,8 @@ const Products = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const headerColor = 'bg-primary';
+
+  const isAtProductLimit = !isPro && products.length >= FREE_PRODUCT_LIMIT;
 
   const filtered = products.filter((p) => {
     const matchCat = activeCategory === "Semua" || p.category === activeCategory;
@@ -42,6 +50,14 @@ const Products = () => {
     if (error) { toast.error("Gagal upload gambar"); return null; }
     const { data: { publicUrl } } = supabase.storage.from("product-images").getPublicUrl(path);
     return publicUrl;
+  };
+
+  const handleOpenAddForm = () => {
+    if (isAtProductLimit) {
+      toast.error(`Batas ${FREE_PRODUCT_LIMIT} produk tercapai. Upgrade ke Pro untuk unlimited produk.`);
+      return;
+    }
+    setShowAddForm(true);
   };
 
   const handleAdd = async () => {
@@ -118,10 +134,12 @@ const Products = () => {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-lg md:text-xl font-bold">Produk</h1>
-            <p className="text-xs opacity-80">{products.length} produk terdaftar</p>
+            <p className="text-xs opacity-80">
+              {products.length}{!isPro ? `/${FREE_PRODUCT_LIMIT}` : ""} produk terdaftar
+            </p>
           </div>
-          <button onClick={() => setShowAddForm(true)} className="w-10 h-10 rounded-full bg-primary-foreground/20 flex items-center justify-center">
-            <Plus className="w-5 h-5" />
+          <button onClick={handleOpenAddForm} className="w-10 h-10 rounded-full bg-primary-foreground/20 flex items-center justify-center">
+            {isAtProductLimit ? <Lock className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
           </button>
         </div>
         <div className="relative mt-3">
@@ -129,6 +147,20 @@ const Products = () => {
           <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Cari produk..." className="pl-10 h-10 rounded-xl bg-primary-foreground/20 border-0 text-primary-foreground placeholder:text-primary-foreground/60" />
         </div>
       </div>
+
+      {!isPro && (
+        <div className="px-5 md:px-8 pt-3">
+          <button
+            onClick={() => navigate("/pricing")}
+            className="w-full flex items-center justify-between p-3 bg-primary/10 rounded-xl text-xs"
+          >
+            <span className="text-muted-foreground">
+              Paket Gratis: <strong>{products.length}/{FREE_PRODUCT_LIMIT}</strong> produk
+            </span>
+            <span className="text-primary font-bold">Upgrade →</span>
+          </button>
+        </div>
+      )}
 
       <div className="px-5 md:px-8 py-3 flex gap-2 overflow-x-auto scrollbar-none">
         {PRODUCT_CATEGORIES.map((cat) => (
