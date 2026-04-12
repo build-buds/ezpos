@@ -8,6 +8,7 @@ interface AppState {
   session: Session | null;
   isLoggedIn: boolean;
   isAuthLoading: boolean;
+  isBusinessDataLoaded: boolean;
   businessId: string | null;
   businessCategory: BusinessCategory | null;
   setBusinessCategory: (cat: BusinessCategory | null) => void;
@@ -37,6 +38,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<SupaUser | null>(null);
   const [isAuthLoading, setIsAuthLoading] = useState(true);
+  const [isBusinessDataLoaded, setIsBusinessDataLoaded] = useState(false);
   const [businessId, setBusinessId] = useState<string | null>(null);
   const [businessCategory, setBusinessCategoryState] = useState<BusinessCategory | null>(() => {
     const saved = localStorage.getItem('ezpos_business_category');
@@ -56,6 +58,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [cart, setCart] = useState<CartItem[]>([]);
 
   const loadBusinessData = async (userId: string) => {
+    setIsBusinessDataLoaded(false);
     const { data: businesses } = await supabase
       .from("businesses")
       .select("id, name, category")
@@ -71,25 +74,12 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     } else {
       setIsOnboarded(false);
     }
+    setIsBusinessDataLoaded(true);
   };
 
   useEffect(() => {
     let mounted = true;
 
-    // Restore session first
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      if (!mounted) return;
-      setSession(session);
-      setUser(session?.user ?? null);
-
-      if (session?.user) {
-        await loadBusinessData(session.user.id);
-      }
-
-      if (mounted) setIsAuthLoading(false);
-    });
-
-    // Handle subsequent auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (_event, newSession) => {
         if (!mounted) return;
@@ -97,16 +87,30 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         setUser(newSession?.user ?? null);
 
         if (newSession?.user) {
-          // Fire-and-forget to avoid blocking
           loadBusinessData(newSession.user.id);
         } else {
           setBusinessId(null);
           setBusinessName("");
           setBusinessCategory(null);
           setIsOnboarded(false);
+          setIsBusinessDataLoaded(true);
         }
       }
     );
+
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      if (!mounted) return;
+      setSession(session);
+      setUser(session?.user ?? null);
+
+      if (session?.user) {
+        await loadBusinessData(session.user.id);
+      } else {
+        setIsBusinessDataLoaded(true);
+      }
+
+      if (mounted) setIsAuthLoading(false);
+    });
 
     return () => {
       mounted = false;
@@ -125,6 +129,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     setBusinessName("");
     setBusinessId(null);
     setCart([]);
+    setIsBusinessDataLoaded(false);
   };
 
   const addToCart = (product: Product) => {
@@ -162,7 +167,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   return (
     <AppContext.Provider
       value={{
-        user, session, isLoggedIn, isAuthLoading,
+        user, session, isLoggedIn, isAuthLoading, isBusinessDataLoaded,
         businessId, setBusinessId,
         businessCategory, setBusinessCategory,
         businessName, setBusinessName,

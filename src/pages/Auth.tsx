@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppState } from "@/contexts/AppContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -9,7 +9,7 @@ import logoImg from "@/assets/logo.png";
 import { toast } from "sonner";
 
 const Auth = () => {
-  const { isOnboarded } = useAppState();
+  const { isOnboarded, isLoggedIn, isBusinessDataLoaded } = useAppState();
   const navigate = useNavigate();
   const [mode, setMode] = useState<"login" | "register">("login");
   const [email, setEmail] = useState("");
@@ -17,14 +17,20 @@ const Auth = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
+  const [waitingForAuth, setWaitingForAuth] = useState(false);
 
-  const goNext = () => {
-    if (isOnboarded) {
-      navigate("/dashboard", { replace: true });
-    } else {
-      navigate("/onboarding", { replace: true });
+  // Navigate after login + business data loaded
+  useEffect(() => {
+    if (waitingForAuth && isLoggedIn && isBusinessDataLoaded) {
+      if (isOnboarded) {
+        navigate("/dashboard", { replace: true });
+      } else {
+        navigate("/onboarding", { replace: true });
+      }
+      setWaitingForAuth(false);
+      setLoading(false);
     }
-  };
+  }, [waitingForAuth, isLoggedIn, isBusinessDataLoaded, isOnboarded, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,19 +66,22 @@ const Auth = () => {
         });
         if (error) {
           toast.error(error.message);
+          setLoading(false);
           return;
         }
         toast.success("Akun berhasil dibuat!");
+        setWaitingForAuth(true);
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) {
           toast.error("Email atau password salah");
+          setLoading(false);
           return;
         }
         toast.success("Berhasil masuk!");
+        setWaitingForAuth(true);
       }
-      goNext();
-    } finally {
+    } catch {
       setLoading(false);
     }
   };
@@ -86,19 +95,17 @@ const Auth = () => {
       return;
     }
     if (result.redirected) return;
-    goNext();
+    // PublicRoute will handle redirect after auth state updates
   };
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center px-6">
       <div className="w-full max-w-sm md:max-w-md space-y-8">
-        {/* Logo */}
         <div className="flex flex-col items-center gap-2">
           <img src={logoImg} alt="EZPOS Logo" className="w-14 h-14 md:w-16 md:h-16 rounded-2xl" />
           <h1 className="text-xl md:text-2xl font-bold text-foreground">EZPOS</h1>
         </div>
 
-        {/* Tabs */}
         <div className="flex rounded-xl bg-muted p-1">
           <button
             onClick={() => setMode("login")}
@@ -118,48 +125,26 @@ const Auth = () => {
           </button>
         </div>
 
-        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           {mode === "register" && (
-            <Input
-              placeholder="Nama lengkap"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
+            <Input placeholder="Nama lengkap" value={name} onChange={(e) => setName(e.target.value)} />
           )}
-          <Input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <Input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+          <Input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <Input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
           {mode === "register" && (
-            <Input
-              type="password"
-              placeholder="Konfirmasi password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-            />
+            <Input type="password" placeholder="Konfirmasi password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
           )}
           <Button type="submit" className="w-full" size="lg" disabled={loading}>
             {loading ? "Memproses..." : mode === "login" ? "Masuk" : "Daftar"}
           </Button>
         </form>
 
-        {/* Divider */}
         <div className="flex items-center gap-3">
           <div className="flex-1 h-px bg-border" />
           <span className="text-xs text-muted-foreground">atau</span>
           <div className="flex-1 h-px bg-border" />
         </div>
 
-        {/* Google */}
         <Button variant="outline" className="w-full" size="lg" onClick={handleGoogle}>
           <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
             <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
