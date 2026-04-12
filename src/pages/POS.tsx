@@ -180,6 +180,7 @@ const POS = () => {
           )}
         </div>
       )}
+      </div>
 
       {cart.length > 0 && !showCart && (
         <div className="fixed bottom-20 left-1/2 -translate-x-1/2 w-[calc(100%-2.5rem)] max-w-lg md:max-w-xl z-40">
