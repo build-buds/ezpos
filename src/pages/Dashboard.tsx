@@ -45,11 +45,11 @@ const Dashboard = () => {
 
   return (
     <MobileLayout>
-      <div className={cn("px-5 md:px-8 pt-10 pb-6 text-primary-foreground", headerColor)}>
+      <div className={cn("px-5 md:px-8 lg:px-10 pt-10 lg:pt-8 pb-6 text-primary-foreground", headerColor)}>
         <div className="flex items-center justify-between">
           <div>
             <p className="text-xs opacity-80">Selamat datang</p>
-            <h1 className="text-xl md:text-2xl font-bold mt-0.5">{businessName || "EZPOS"}</h1>
+            <h1 className="text-xl md:text-2xl lg:text-3xl font-bold mt-0.5">{businessName || "EZPOS"}</h1>
           </div>
           <div className="flex items-center gap-2">
             <NotificationBell />
@@ -60,7 +60,7 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <div className="px-5 md:px-8 -mt-3 space-y-4 pb-4">
+      <div className="px-5 md:px-8 lg:px-10 -mt-3 space-y-4 lg:space-y-6 pb-4 lg:max-w-6xl">
         <InstallPrompt />
         <div className="bg-card rounded-2xl p-5 card-shadow">
           <p className="text-xs text-muted-foreground font-medium">Omzet Hari Ini</p>
@@ -84,16 +84,16 @@ const Dashboard = () => {
           )}
         </div>
 
-        <div className="grid grid-cols-4 gap-3 md:gap-4">
+        <div className="grid grid-cols-4 lg:grid-cols-4 gap-3 md:gap-4">
           {[
             { icon: ShoppingCart, label: "Kasir", path: "/pos" },
             { icon: Package, label: "Produk", path: "/products" },
             { icon: Users, label: "Hutang", path: "/reports" },
             { icon: FileText, label: "Laporan", path: "/reports" },
           ].map((action) => (
-            <button key={action.label} onClick={() => navigate(action.path)} className="flex flex-col items-center gap-1.5 p-3 md:p-4 bg-card rounded-2xl card-shadow hover:scale-105 transition-transform">
-              <action.icon className="w-6 h-6 md:w-7 md:h-7 text-primary" />
-              <span className="text-[11px] md:text-xs font-semibold text-foreground">{action.label}</span>
+            <button key={action.label} onClick={() => navigate(action.path)} className="flex flex-col items-center gap-1.5 p-3 md:p-4 lg:p-5 bg-card rounded-2xl card-shadow hover:scale-105 transition-transform">
+              <action.icon className="w-6 h-6 md:w-7 md:h-7 lg:w-8 lg:h-8 text-primary" />
+              <span className="text-[11px] md:text-xs lg:text-sm font-semibold text-foreground">{action.label}</span>
             </button>
           ))}
         </div>
