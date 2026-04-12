@@ -60,7 +60,7 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <div className="px-5 md:px-8 lg:px-10 -mt-3 space-y-4 lg:space-y-6 pb-4">
+      <div className="px-5 md:px-8 lg:px-10 -mt-3 space-y-4 lg:space-y-6 pb-4 lg:max-w-5xl lg:mx-auto">
         <InstallPrompt />
         <div className="bg-card rounded-2xl p-5 card-shadow">
           <p className="text-xs text-muted-foreground font-medium">Omzet Hari Ini</p>
