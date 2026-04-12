@@ -1,0 +1,79 @@
+import { useEffect, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import MobileLayout from "@/components/MobileLayout";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { CheckCircle, XCircle, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+
+const CheckoutSuccess = () => {
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const [status, setStatus] = useState<"loading" | "succeeded" | "failed">("loading");
+
+  useEffect(() => {
+    const checkoutId = searchParams.get("checkout_id");
+    if (!checkoutId) {
+      setStatus("failed");
+      return;
+    }
+
+    const verify = async () => {
+      try {
+        const { data, error } = await supabase.functions.invoke("verify-polar-checkout", {
+          body: { checkoutId },
+        });
+
+        if (error) throw error;
+        setStatus(data?.status === "succeeded" ? "succeeded" : "failed");
+      } catch {
+        setStatus("failed");
+      }
+    };
+
+    verify();
+  }, [searchParams]);
+
+  return (
+    <MobileLayout>
+      <div className="flex items-center justify-center min-h-[80vh] px-5">
+        <Card className="w-full max-w-sm">
+          <CardContent className="pt-6 text-center space-y-4">
+            {status === "loading" && (
+              <>
+                <Loader2 className="w-12 h-12 mx-auto text-primary animate-spin" />
+                <p className="text-sm text-muted-foreground">Memverifikasi pembayaran...</p>
+              </>
+            )}
+            {status === "succeeded" && (
+              <>
+                <CheckCircle className="w-12 h-12 mx-auto text-primary" />
+                <h2 className="text-lg font-bold">Pembayaran Berhasil!</h2>
+                <p className="text-sm text-muted-foreground">
+                  Selamat! Anda sekarang menggunakan EZPOS Pro.
+                </p>
+                <Button className="w-full" onClick={() => navigate("/dashboard")}>
+                  Ke Dashboard
+                </Button>
+              </>
+            )}
+            {status === "failed" && (
+              <>
+                <XCircle className="w-12 h-12 mx-auto text-destructive" />
+                <h2 className="text-lg font-bold">Pembayaran Gagal</h2>
+                <p className="text-sm text-muted-foreground">
+                  Terjadi kesalahan. Silakan coba lagi.
+                </p>
+                <Button className="w-full" onClick={() => navigate("/pricing")}>
+                  Coba Lagi
+                </Button>
+              </>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    </MobileLayout>
+  );
+};
+
+export default CheckoutSuccess;
