@@ -198,6 +198,7 @@ const Products = () => {
         </div>
       </div>
 
+      <div className="lg:max-w-5xl lg:mx-auto">
       {!isPro && (
         <div className="px-5 md:px-8 lg:px-10 pt-3">
           <button
@@ -260,6 +261,7 @@ const Products = () => {
           )}
         </div>
       )}
+      </div>
 
       {showAddForm && (
         <div className="fixed inset-0 z-[60] flex flex-col">

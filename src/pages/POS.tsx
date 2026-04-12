@@ -114,6 +114,7 @@ const POS = () => {
         </div>
       </div>
 
+      <div className="lg:max-w-5xl lg:mx-auto">
       {!isPro && (
         <div className="px-5 md:px-8 lg:px-10 pt-3">
           <button
@@ -179,6 +180,7 @@ const POS = () => {
           )}
         </div>
       )}
+      </div>
 
       {cart.length > 0 && !showCart && (
         <div className="fixed bottom-20 left-1/2 -translate-x-1/2 w-[calc(100%-2.5rem)] max-w-lg md:max-w-xl z-40">

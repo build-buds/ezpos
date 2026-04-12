@@ -14,7 +14,7 @@ const MobileLayout = ({ children }: { children: ReactNode }) => {
           </div>
         </div>
         {/* Desktop: full width content */}
-        <div className="hidden lg:block max-w-5xl mx-auto">
+        <div className="hidden lg:block">
           {children}
         </div>
         <BottomNav />

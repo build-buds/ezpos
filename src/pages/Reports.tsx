@@ -55,6 +55,7 @@ const Reports = () => {
         <p className="text-xs opacity-80">Ringkasan keuangan bisnis</p>
       </div>
 
+      <div className="lg:max-w-5xl lg:mx-auto">
       {!isPro && (
         <div className="px-5 md:px-8 lg:px-10 pt-3">
           <button
@@ -163,6 +164,7 @@ const Reports = () => {
           </div>
         </div>
       )}
+      </div>
     </MobileLayout>
   );
 };
