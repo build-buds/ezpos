@@ -32,7 +32,7 @@ const Settings = () => {
 
   return (
     <MobileLayout>
-      <div className={cn("px-5 md:px-8 pt-10 pb-6 text-primary-foreground bg-primary")}>
+      <div className={cn("px-5 md:px-8 lg:px-10 pt-10 lg:pt-8 pb-6 text-primary-foreground bg-primary")}>
         <h1 className="text-lg md:text-xl font-bold">Pengaturan</h1>
         <div className="flex items-center gap-3 mt-4">
           <div className="w-12 h-12 rounded-full bg-primary-foreground/20 flex items-center justify-center">
@@ -45,7 +45,7 @@ const Settings = () => {
         </div>
       </div>
 
-      <div className="px-5 md:px-8 py-4 grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3">
+      <div className="px-5 md:px-8 lg:px-10 py-4 grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3 lg:max-w-4xl">
         {menuItems.map((item) => (
           <button
             key={item.key}
