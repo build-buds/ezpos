@@ -45,7 +45,7 @@ const Settings = () => {
         </div>
       </div>
 
-      <div className="px-5 md:px-8 lg:px-10 py-4 grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3 lg:max-w-4xl">
+      <div className="px-5 md:px-8 lg:px-10 py-4 grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3">
         {menuItems.map((item) => (
           <button
             key={item.key}
