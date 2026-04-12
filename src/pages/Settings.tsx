@@ -2,7 +2,7 @@ import { useState } from "react";
 import MobileLayout from "@/components/MobileLayout";
 import { useAppState } from "@/contexts/AppContext";
 import { cn } from "@/lib/utils";
-import { User, Store, Bell, Palette, LogOut, ChevronRight } from "lucide-react";
+import { User, Store, Bell, Palette, LogOut, ChevronRight, Crown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import SettingsProfile from "@/components/settings/SettingsProfile";
 import SettingsBusiness from "@/components/settings/SettingsBusiness";
@@ -58,6 +58,18 @@ const Settings = () => {
             <ChevronRight className="w-4 h-4 text-muted-foreground" />
           </button>
         ))}
+
+        <button
+          onClick={() => navigate("/pricing")}
+          className="w-full flex items-center gap-3 p-4 bg-primary/10 rounded-2xl card-shadow"
+        >
+          <Crown className="w-5 h-5 text-primary" />
+          <div className="flex-1 text-left">
+            <p className="text-sm font-semibold text-primary">Upgrade ke Pro</p>
+            <p className="text-xs text-muted-foreground">Rp 299.000/bulan</p>
+          </div>
+          <ChevronRight className="w-4 h-4 text-primary" />
+        </button>
 
         <button
           onClick={handleLogout}
