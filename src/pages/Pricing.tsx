@@ -41,21 +41,36 @@ const Pricing = () => {
 
     setLoading(true);
     try {
+      // Verify we have a valid session with access token
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.access_token) {
+        toast.error("Sesi login tidak valid. Silakan login ulang.");
+        navigate("/auth");
+        return;
+      }
+
       const successUrl = `${window.location.origin}/checkout/success?checkout_id={CHECKOUT_ID}`;
 
       const { data, error } = await supabase.functions.invoke("create-polar-checkout", {
         body: { productId: POLAR_PRODUCT_ID, successUrl },
       });
 
-      if (error) throw error;
+      if (error) {
+        // supabase.functions.invoke wraps non-2xx as FunctionsHttpError
+        const msg = data?.error || error.message || "Unknown error";
+        console.error("Checkout function error:", msg);
+        toast.error(msg);
+        return;
+      }
+
       if (data?.url) {
         window.location.href = data.url;
       } else {
-        throw new Error("No checkout URL returned");
+        toast.error("Tidak ada URL checkout dari server.");
       }
     } catch (error: any) {
       console.error("Checkout error:", error);
-      toast.error("Gagal membuat checkout. Coba lagi nanti.");
+      toast.error(error.message || "Gagal membuat checkout. Coba lagi nanti.");
     } finally {
       setLoading(false);
     }

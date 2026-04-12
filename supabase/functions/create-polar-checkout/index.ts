@@ -6,6 +6,13 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+function jsonResponse(body: Record<string, unknown>, status = 200) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { ...corsHeaders, "Content-Type": "application/json" },
+  });
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -14,7 +21,8 @@ serve(async (req) => {
   try {
     const POLAR_ACCESS_TOKEN = Deno.env.get("POLAR_ACCESS_TOKEN");
     if (!POLAR_ACCESS_TOKEN) {
-      throw new Error("POLAR_ACCESS_TOKEN is not configured");
+      console.error("POLAR_ACCESS_TOKEN is not configured");
+      return jsonResponse({ error: "Payment service not configured" }, 500);
     }
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
@@ -22,11 +30,11 @@ serve(async (req) => {
 
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) {
-      return new Response(JSON.stringify({ error: "Not authenticated" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      console.error("No Authorization header provided");
+      return jsonResponse({ error: "Not authenticated. Please log in again." }, 401);
     }
+
+    console.log("Auth header present, verifying user...");
 
     const supabase = createClient(supabaseUrl, supabaseKey, {
       global: { headers: { Authorization: authHeader } },
@@ -34,19 +42,27 @@ serve(async (req) => {
 
     const { data: { user }, error: userError } = await supabase.auth.getUser();
     if (userError || !user) {
-      return new Response(JSON.stringify({ error: "Invalid user" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      console.error("User verification failed:", userError?.message ?? "No user returned");
+      return jsonResponse({ error: "Invalid session. Please log in again." }, 401);
     }
 
-    const { productId, successUrl } = await req.json();
-    if (!productId || !successUrl) {
-      return new Response(JSON.stringify({ error: "productId and successUrl are required" }), {
-        status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+    console.log("User verified:", user.id);
+
+    let body: Record<string, unknown>;
+    try {
+      body = await req.json();
+    } catch {
+      console.error("Invalid JSON body");
+      return jsonResponse({ error: "Invalid request body" }, 400);
     }
+
+    const { productId, successUrl } = body as { productId?: string; successUrl?: string };
+    if (!productId || !successUrl) {
+      console.error("Missing fields - productId:", !!productId, "successUrl:", !!successUrl);
+      return jsonResponse({ error: "productId and successUrl are required" }, 400);
+    }
+
+    console.log("Creating Polar checkout for product:", productId);
 
     const response = await fetch("https://api.polar.sh/v1/checkouts/", {
       method: "POST",
@@ -62,22 +78,17 @@ serve(async (req) => {
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
-      console.error("Polar checkout error:", errorData);
-      throw new Error(`Polar API error: ${response.status}`);
+      const errorData = await response.text();
+      console.error("Polar API error:", response.status, errorData);
+      return jsonResponse({ error: `Checkout service error (${response.status})` }, 502);
     }
 
     const checkout = await response.json();
+    console.log("Checkout created successfully:", checkout.id);
 
-    return new Response(JSON.stringify({ url: checkout.url }), {
-      status: 200,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    return jsonResponse({ url: checkout.url });
   } catch (error) {
-    console.error("Error creating checkout:", error);
-    return new Response(JSON.stringify({ error: error.message }), {
-      status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    console.error("Unexpected error:", error);
+    return jsonResponse({ error: error.message || "Internal server error" }, 500);
   }
 });
