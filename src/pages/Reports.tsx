@@ -8,10 +8,13 @@ import { TrendingUp, TrendingDown, BarChart3, Loader2, Lock } from "lucide-react
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const periods = ["Hari Ini", "7 Hari", "Bulan Ini", "Tahun Ini"];
+const allPeriods = ["Hari Ini", "7 Hari", "Bulan Ini", "Tahun Ini"];
 
 const Reports = () => {
   const { businessCategory } = useAppState();
+  const isPro = useIsPro();
+  const navigate = useNavigate();
+  const periods = isPro ? allPeriods : ["Hari Ini"];
   const [activePeriod, setActivePeriod] = useState("Hari Ini");
   const { data: transactions = [], isLoading } = useTransactions(
     activePeriod === "Hari Ini" ? "today" : undefined
