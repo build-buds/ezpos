@@ -180,7 +180,7 @@ const Products = () => {
 
   return (
     <MobileLayout>
-      <div className={cn("px-5 md:px-8 pt-10 pb-4 text-primary-foreground", headerColor)}>
+      <div className={cn("px-5 md:px-8 lg:px-10 pt-10 lg:pt-8 pb-4 text-primary-foreground", headerColor)}>
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-lg md:text-xl font-bold">Produk</h1>
@@ -199,7 +199,7 @@ const Products = () => {
       </div>
 
       {!isPro && (
-        <div className="px-5 md:px-8 pt-3">
+        <div className="px-5 md:px-8 lg:px-10 pt-3">
           <button
             onClick={() => navigate("/pricing")}
             className="w-full flex items-center justify-between p-3 bg-primary/10 rounded-xl text-xs"
@@ -212,7 +212,7 @@ const Products = () => {
         </div>
       )}
 
-      <div className="px-5 md:px-8 py-3 flex gap-2 overflow-x-auto scrollbar-none">
+      <div className="px-5 md:px-8 lg:px-10 py-3 flex gap-2 overflow-x-auto scrollbar-none">
         {PRODUCT_CATEGORIES.map((cat) => (
           <button key={cat} onClick={() => setActiveCategory(cat)} className={cn("px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-colors", activeCategory === cat ? cn("text-primary-foreground", headerColor) : "bg-muted text-muted-foreground")}>
             {cat}
@@ -225,7 +225,7 @@ const Products = () => {
           <Loader2 className="w-6 h-6 animate-spin text-primary" />
         </div>
       ) : (
-        <div className="px-5 md:px-8 pb-4 grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div className="px-5 md:px-8 lg:px-10 pb-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
           {filtered.map((product) => (
             <div key={product.id} className="bg-card rounded-2xl card-shadow p-4 flex items-center gap-3">
               <div className="w-14 h-14 bg-muted rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden">
