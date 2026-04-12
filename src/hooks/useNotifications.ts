@@ -41,31 +41,56 @@ export const useNotifications = () => {
 
   // Realtime subscription
   useEffect(() => {
-    if (!user) return;
+    if (!user?.id) return;
 
-    const channel = supabase.channel(`notifications-${user.id}`);
-    
-    channel.on(
-      "postgres_changes",
-      {
-        event: "INSERT",
-        schema: "public",
-        table: "notifications",
-        filter: `user_id=eq.${user.id}`,
-      },
-      (payload) => {
-        const newNotif = payload.new as unknown as Notification;
-        setNotifications((prev) => [newNotif, ...prev]);
-        setUnreadCount((prev) => prev + 1);
-      }
-    );
-    
-    channel.subscribe();
+    let isCancelled = false;
+    let activeChannel: ReturnType<typeof supabase.channel> | null = null;
+    const topicPrefix = `notifications-${user.id}`;
+
+    const setupChannel = async () => {
+      const existingChannels = supabase
+        .getChannels()
+        .filter((channel) => channel.topic.startsWith(`realtime:${topicPrefix}`));
+
+      await Promise.all(existingChannels.map((channel) => supabase.removeChannel(channel)));
+
+      if (isCancelled) return;
+
+      const channel = supabase.channel(`${topicPrefix}-${crypto.randomUUID()}`);
+      activeChannel = channel;
+
+      channel.on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "notifications",
+          filter: `user_id=eq.${user.id}`,
+        },
+        (payload) => {
+          const newNotif = payload.new as unknown as Notification;
+          setNotifications((prev) => {
+            if (prev.some((notif) => notif.id === newNotif.id)) return prev;
+            return [newNotif, ...prev];
+          });
+          if (!newNotif.read) {
+            setUnreadCount((prev) => prev + 1);
+          }
+        }
+      );
+
+      channel.subscribe();
+    };
+
+    void setupChannel();
 
     return () => {
-      supabase.removeChannel(channel);
+      isCancelled = true;
+      if (activeChannel) {
+        void supabase.removeChannel(activeChannel);
+      }
     };
-  }, [user]);
+  }, [user?.id]);
 
   const markAsRead = async (id: string) => {
     await supabase.from("notifications").update({ read: true }).eq("id", id);
