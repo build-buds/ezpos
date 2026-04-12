@@ -88,7 +88,7 @@ const Auth = () => {
       return;
     }
     if (result.redirected) return;
-    goNext();
+    // PublicRoute will handle redirect after auth state updates
   };
 
   return (
