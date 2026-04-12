@@ -20,9 +20,7 @@ const DesktopSidebar = () => {
   return (
     <aside className="hidden lg:flex flex-col w-60 min-h-screen bg-card border-r border-border fixed left-0 top-0 z-40">
       <div className="flex items-center gap-3 px-5 py-6 border-b border-border">
-        <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center overflow-hidden">
-          <img src={brandIcon} alt="EZPOS" className="w-6 h-6 object-contain" />
-        </div>
+        <img src={brandIcon} alt="EZPOS" className="w-9 h-9 object-contain" />
         <div className="min-w-0">
           <p className="text-sm font-bold text-foreground truncate">{businessName || "EZPOS"}</p>
           <p className="text-[10px] text-muted-foreground">Point of Sale</p>
