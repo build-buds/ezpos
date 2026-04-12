@@ -63,6 +63,8 @@ const createPolarCheckout = async (accessToken: string, payload: { productId: st
 const Pricing = () => {
   const navigate = useNavigate();
   const { user } = useAppState();
+  const { data: subscription } = useSubscription();
+  const isPro = subscription?.plan === "pro" && subscription?.status === "active";
   const [loading, setLoading] = useState(false);
 
   const handleUpgrade = async () => {
