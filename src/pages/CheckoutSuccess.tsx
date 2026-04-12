@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import MobileLayout from "@/components/MobileLayout";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { CheckCircle, XCircle, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -25,14 +24,21 @@ const CheckoutSuccess = () => {
         });
 
         if (error) throw error;
-        setStatus(data?.status === "succeeded" ? "succeeded" : "failed");
+
+        if (data?.status === "succeeded") {
+          setStatus("succeeded");
+          // Auto-redirect to dashboard after 2 seconds
+          setTimeout(() => navigate("/dashboard", { replace: true }), 2000);
+        } else {
+          setStatus("failed");
+        }
       } catch {
         setStatus("failed");
       }
     };
 
     verify();
-  }, [searchParams]);
+  }, [searchParams, navigate]);
 
   return (
     <MobileLayout>
@@ -50,11 +56,8 @@ const CheckoutSuccess = () => {
                 <CheckCircle className="w-12 h-12 mx-auto text-primary" />
                 <h2 className="text-lg font-bold">Pembayaran Berhasil!</h2>
                 <p className="text-sm text-muted-foreground">
-                  Selamat! Anda sekarang menggunakan EZPOS Pro.
+                  Selamat! Anda sekarang menggunakan EZPOS Pro. Mengalihkan ke dashboard...
                 </p>
-                <Button className="w-full" onClick={() => navigate("/dashboard")}>
-                  Ke Dashboard
-                </Button>
               </>
             )}
             {status === "failed" && (
@@ -64,9 +67,12 @@ const CheckoutSuccess = () => {
                 <p className="text-sm text-muted-foreground">
                   Terjadi kesalahan. Silakan coba lagi.
                 </p>
-                <Button className="w-full" onClick={() => navigate("/pricing")}>
+                <button
+                  onClick={() => navigate("/pricing")}
+                  className="w-full h-10 rounded-lg bg-primary text-primary-foreground text-sm font-semibold"
+                >
                   Coba Lagi
-                </Button>
+                </button>
               </>
             )}
           </CardContent>

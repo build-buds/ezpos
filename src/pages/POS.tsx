@@ -2,13 +2,17 @@ import { useState } from "react";
 import MobileLayout from "@/components/MobileLayout";
 import { useAppState } from "@/contexts/AppContext";
 import { useProducts } from "@/hooks/useProducts";
-import { useCreateTransaction } from "@/hooks/useTransactions";
+import { useCreateTransaction, useTransactions } from "@/hooks/useTransactions";
+import { useIsPro } from "@/hooks/useSubscription";
 import { PRODUCT_CATEGORIES, formatRupiah } from "@/data/products";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Search, Minus, Plus, ShoppingCart, X, Banknote, Building2, Clock, UtensilsCrossed, Coffee, Cookie, Loader2 } from "lucide-react";
+import { Search, Minus, Plus, ShoppingCart, X, Banknote, Building2, Clock, UtensilsCrossed, Coffee, Cookie, Loader2, Lock } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
+
+const FREE_TRANSACTION_LIMIT = 100;
 
 const categoryIcon = (cat: string) => {
   switch (cat) {
@@ -31,7 +35,10 @@ const categoryIconSmall = (cat: string) => {
 const POS = () => {
   const { businessCategory, cart, addToCart, updateCartQty, removeFromCart, clearCart, cartTotal } = useAppState();
   const { data: products = [], isLoading } = useProducts();
+  const { data: monthTransactions = [] } = useTransactions("month");
+  const isPro = useIsPro();
   const createTransaction = useCreateTransaction();
+  const navigate = useNavigate();
   const [activeCategory, setActiveCategory] = useState("Semua");
   const [search, setSearch] = useState("");
   const [showCart, setShowCart] = useState(false);
@@ -40,6 +47,7 @@ const POS = () => {
   const [pendingMethod, setPendingMethod] = useState<string | null>(null);
 
   const headerColor = 'bg-primary';
+  const isAtTransactionLimit = !isPro && monthTransactions.length >= FREE_TRANSACTION_LIMIT;
 
   const filteredProducts = products.filter((p) => {
     const matchCat = activeCategory === "Semua" || p.category === activeCategory;
@@ -59,6 +67,12 @@ const POS = () => {
 
   const handleConfirmCheckout = async () => {
     if (!pendingMethod) return;
+
+    if (isAtTransactionLimit) {
+      toast.error(`Batas ${FREE_TRANSACTION_LIMIT} transaksi/bulan tercapai. Upgrade ke Pro untuk unlimited.`);
+      return;
+    }
+
     const paymentMap: Record<string, string> = { "Cash": "cash", "Transfer": "transfer", "Bayar Nanti": "bayar_nanti" };
     try {
       await createTransaction.mutateAsync({
@@ -99,6 +113,24 @@ const POS = () => {
           <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Cari produk..." className="pl-10 h-10 rounded-xl bg-primary-foreground/20 border-0 text-primary-foreground placeholder:text-primary-foreground/60" />
         </div>
       </div>
+
+      {!isPro && (
+        <div className="px-5 md:px-8 pt-3">
+          <button
+            onClick={() => navigate("/pricing")}
+            className="w-full flex items-center justify-between p-3 bg-primary/10 rounded-xl text-xs"
+          >
+            <span className="text-muted-foreground">
+              Transaksi bulan ini: <strong>{monthTransactions.length}/{FREE_TRANSACTION_LIMIT}</strong>
+            </span>
+            {isAtTransactionLimit ? (
+              <span className="text-destructive font-bold flex items-center gap-1"><Lock className="w-3 h-3" /> Penuh</span>
+            ) : (
+              <span className="text-primary font-bold">Upgrade →</span>
+            )}
+          </button>
+        </div>
+      )}
 
       <div className="px-5 md:px-8 py-3 flex gap-2 overflow-x-auto scrollbar-none">
         {PRODUCT_CATEGORIES.map((cat) => (
