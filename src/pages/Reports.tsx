@@ -164,6 +164,7 @@ const Reports = () => {
           </div>
         </div>
       )}
+      </div>
     </MobileLayout>
   );
 };
