@@ -40,10 +40,29 @@ const Reports = () => {
         <p className="text-xs opacity-80">Ringkasan keuangan bisnis</p>
       </div>
 
+      {!isPro && (
+        <div className="px-5 md:px-8 pt-3">
+          <button
+            onClick={() => navigate("/pricing")}
+            className="w-full flex items-center justify-between p-3 bg-primary/10 rounded-xl text-xs"
+          >
+            <span className="text-muted-foreground flex items-center gap-1">
+              <Lock className="w-3 h-3" /> Laporan dasar saja (Paket Gratis)
+            </span>
+            <span className="text-primary font-bold">Upgrade →</span>
+          </button>
+        </div>
+      )}
+
       <div className="px-5 md:px-8 py-3 flex gap-2 overflow-x-auto scrollbar-none">
         {periods.map((p) => (
           <button key={p} onClick={() => setActivePeriod(p)} className={cn("px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-colors", activePeriod === p ? cn("text-primary-foreground", headerColor) : "bg-muted text-muted-foreground")}>
             {p}
+          </button>
+        ))}
+        {!isPro && allPeriods.filter(p => !periods.includes(p)).map((p) => (
+          <button key={p} disabled className="px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap bg-muted text-muted-foreground/40 flex items-center gap-1">
+            <Lock className="w-3 h-3" />{p}
           </button>
         ))}
       </div>
