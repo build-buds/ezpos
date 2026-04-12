@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppState } from "@/contexts/AppContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -9,7 +9,7 @@ import logoImg from "@/assets/logo.png";
 import { toast } from "sonner";
 
 const Auth = () => {
-  const { isOnboarded } = useAppState();
+  const { isOnboarded, isLoggedIn } = useAppState();
   const navigate = useNavigate();
   const [mode, setMode] = useState<"login" | "register">("login");
   const [email, setEmail] = useState("");
@@ -17,14 +17,24 @@ const Auth = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
+  const [waitingForAuth, setWaitingForAuth] = useState(false);
 
-  const goNext = () => {
-    if (isOnboarded) {
-      navigate("/dashboard", { replace: true });
-    } else {
-      navigate("/onboarding", { replace: true });
+  // Watch for auth state changes and navigate accordingly
+  useEffect(() => {
+    if (waitingForAuth && isLoggedIn) {
+      // Give time for business data to load
+      const timer = setTimeout(() => {
+        if (isOnboarded) {
+          navigate("/dashboard", { replace: true });
+        } else {
+          navigate("/onboarding", { replace: true });
+        }
+        setWaitingForAuth(false);
+        setLoading(false);
+      }, 500);
+      return () => clearTimeout(timer);
     }
-  };
+  }, [waitingForAuth, isLoggedIn, isOnboarded, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,21 +70,23 @@ const Auth = () => {
         });
         if (error) {
           toast.error(error.message);
+          setLoading(false);
           return;
         }
-        toast.success("Akun berhasil dibuat! Silakan login.");
-        setMode("login");
-        setPassword("");
-        setConfirmPassword("");
+        toast.success("Akun berhasil dibuat!");
+        // After signup with auto-confirm, user is logged in automatically
+        setWaitingForAuth(true);
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) {
           toast.error("Email atau password salah");
+          setLoading(false);
           return;
         }
         toast.success("Berhasil masuk!");
+        setWaitingForAuth(true);
       }
-    } finally {
+    } catch {
       setLoading(false);
     }
   };
@@ -88,7 +100,7 @@ const Auth = () => {
       return;
     }
     if (result.redirected) return;
-    // PublicRoute will handle redirect after auth state updates
+    // After OAuth, PublicRoute will handle redirect
   };
 
   return (
