@@ -4,9 +4,10 @@ import MobileLayout from "@/components/MobileLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, ArrowLeft, Crown, Zap } from "lucide-react";
+import { Check, ArrowLeft, Crown, Zap, CheckCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAppState } from "@/contexts/AppContext";
+import { useSubscription } from "@/hooks/useSubscription";
 import { toast } from "sonner";
 
 const POLAR_PRODUCT_ID = "b5ab8339-8495-488b-b487-0a4502740459";

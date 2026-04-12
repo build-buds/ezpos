@@ -20,6 +20,11 @@ export const useTransactions = (period?: string) => {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         query = query.gte("created_at", today.toISOString());
+      } else if (period === "month") {
+        const firstOfMonth = new Date();
+        firstOfMonth.setDate(1);
+        firstOfMonth.setHours(0, 0, 0, 0);
+        query = query.gte("created_at", firstOfMonth.toISOString());
       }
 
       const { data, error } = await query;
