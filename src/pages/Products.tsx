@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import MobileLayout from "@/components/MobileLayout";
 import { useAppState } from "@/contexts/AppContext";
-import { useProducts, useAddProduct, useUpdateProduct } from "@/hooks/useProducts";
+import { useProducts, useAddProduct, useUpdateProduct, useDeleteProduct } from "@/hooks/useProducts";
 import { useIsPro } from "@/hooks/useSubscription";
 import { PRODUCT_CATEGORIES, formatRupiah } from "@/data/products";
 import { supabase } from "@/integrations/supabase/client";
@@ -9,10 +9,48 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import { Plus, Search, Edit2, X, UtensilsCrossed, Coffee, Cookie, ImagePlus, Loader2, Lock } from "lucide-react";
+import { Plus, Search, Edit2, X, UtensilsCrossed, Coffee, Cookie, ImagePlus, Loader2, Lock, Trash2 } from "lucide-react";
 import { Product } from "@/types";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+
+const compressImage = (file: File, maxSizeKB = 500): Promise<File> => {
+  return new Promise((resolve) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      const canvas = document.createElement("canvas");
+      const MAX_DIM = 1024;
+      let w = img.width, h = img.height;
+      if (w > MAX_DIM || h > MAX_DIM) {
+        const ratio = Math.min(MAX_DIM / w, MAX_DIM / h);
+        w = Math.round(w * ratio);
+        h = Math.round(h * ratio);
+      }
+      canvas.width = w;
+      canvas.height = h;
+      const ctx = canvas.getContext("2d")!;
+      ctx.drawImage(img, 0, 0, w, h);
+
+      let quality = 0.85;
+      const tryCompress = () => {
+        canvas.toBlob((blob) => {
+          if (!blob) { resolve(file); return; }
+          if (blob.size > maxSizeKB * 1024 && quality > 0.1) {
+            quality -= 0.1;
+            tryCompress();
+          } else {
+            resolve(new File([blob], file.name, { type: "image/jpeg" }));
+          }
+        }, "image/jpeg", quality);
+      };
+      tryCompress();
+    };
+    img.onerror = () => resolve(file);
+    img.src = url;
+  });
+};
 
 const FREE_PRODUCT_LIMIT = 50;
 
@@ -22,6 +60,7 @@ const Products = () => {
   const isPro = useIsPro();
   const addProduct = useAddProduct();
   const updateProduct = useUpdateProduct();
+  const deleteProduct = useDeleteProduct();
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState("Semua");
@@ -118,13 +157,24 @@ const Products = () => {
     setImageFile(null);
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleDelete = async (product: Product) => {
+    if (!confirm(`Hapus produk "${product.name}"?`)) return;
+    try {
+      await deleteProduct.mutateAsync(product.id);
+      toast.success("Produk berhasil dihapus!");
+    } catch (err: any) {
+      toast.error(err.message || "Gagal menghapus produk");
+    }
+  };
+
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setImageFile(file);
+      const compressed = await compressImage(file);
+      setImageFile(compressed);
       const reader = new FileReader();
       reader.onloadend = () => setProductImage(reader.result as string);
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(compressed);
     }
   };
 
@@ -180,7 +230,7 @@ const Products = () => {
             <div key={product.id} className="bg-card rounded-2xl card-shadow p-4 flex items-center gap-3">
               <div className="w-14 h-14 bg-muted rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden">
                 {product.image ? (
-                  <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+                  <img src={product.image} alt={product.name} className="w-14 h-14 object-cover" />
                 ) : product.category === "Makanan" ? <UtensilsCrossed className="w-6 h-6 text-muted-foreground" /> : product.category === "Minuman" ? <Coffee className="w-6 h-6 text-muted-foreground" /> : <Cookie className="w-6 h-6 text-muted-foreground" />}
               </div>
               <div className="flex-1 min-w-0">
@@ -193,9 +243,14 @@ const Products = () => {
                   </span>
                 </div>
               </div>
-              <button onClick={() => handleEdit(product)} className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
-                <Edit2 className="w-3.5 h-3.5 text-muted-foreground" />
-              </button>
+              <div className="flex flex-col gap-1.5">
+                <button onClick={() => handleEdit(product)} className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+                  <Edit2 className="w-3.5 h-3.5 text-muted-foreground" />
+                </button>
+                <button onClick={() => handleDelete(product)} className="w-8 h-8 rounded-full bg-destructive/10 flex items-center justify-center">
+                  <Trash2 className="w-3.5 h-3.5 text-destructive" />
+                </button>
+              </div>
             </div>
           ))}
           {filtered.length === 0 && !isLoading && (
