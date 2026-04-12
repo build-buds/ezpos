@@ -1,7 +1,8 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { LayoutDashboard, ShoppingCart, Package, FileText, Settings, Store } from "lucide-react";
+import { LayoutDashboard, ShoppingCart, Package, FileText, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAppState } from "@/contexts/AppContext";
+import brandIcon from "@/assets/logo.png";
 
 const navItems = [
   { path: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -19,8 +20,8 @@ const DesktopSidebar = () => {
   return (
     <aside className="hidden lg:flex flex-col w-60 min-h-screen bg-card border-r border-border fixed left-0 top-0 z-40">
       <div className="flex items-center gap-3 px-5 py-6 border-b border-border">
-        <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center">
-          <Store className="w-5 h-5 text-primary-foreground" />
+        <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center overflow-hidden">
+          <img src={brandIcon} alt="EZPOS" className="w-6 h-6 object-contain" />
         </div>
         <div className="min-w-0">
           <p className="text-sm font-bold text-foreground truncate">{businessName || "EZPOS"}</p>
