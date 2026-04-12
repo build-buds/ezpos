@@ -2,7 +2,8 @@ import MobileLayout from "@/components/MobileLayout";
 import InstallPrompt from "@/components/InstallPrompt";
 import NotificationBell from "@/components/NotificationBell";
 import { useAppState } from "@/contexts/AppContext";
-import { useTransactions } from "@/hooks/useTransactions";
+import { useTransactions, useLast7DaysRevenue } from "@/hooks/useTransactions";
+import { useProducts } from "@/hooks/useProducts";
 import { formatRupiah } from "@/data/products";
 import { cn } from "@/lib/utils";
 import {
@@ -14,6 +15,8 @@ import { useNavigate } from "react-router-dom";
 const Dashboard = () => {
   const { businessCategory, businessName } = useAppState();
   const { data: todayTx = [], isLoading } = useTransactions("today");
+  const { data: last7Days = [] } = useLast7DaysRevenue();
+  const { data: products = [] } = useProducts();
   const navigate = useNavigate();
 
   const headerColor = 'bg-primary';
@@ -28,6 +31,17 @@ const Dashboard = () => {
   const todayRevenue = todayTx.reduce((sum, tx) => sum + (tx.total || 0), 0);
   const txCount = todayTx.length;
   const avgTx = txCount > 0 ? Math.round(todayRevenue / txCount) : 0;
+
+  const lowStockProducts = products.filter(p => p.stock <= (p.minStock || 5));
+
+  // Calculate chart bar heights from real data
+  const maxRevenue = Math.max(...last7Days.map(d => d.revenue), 1);
+  const chartBars = last7Days.map((d, i) => ({
+    height: Math.max(Math.round((d.revenue / maxRevenue) * 100), d.revenue > 0 ? 8 : 3),
+    label: d.label,
+    isToday: i === last7Days.length - 1,
+    revenue: d.revenue,
+  }));
 
   return (
     <MobileLayout>
@@ -96,7 +110,16 @@ const Dashboard = () => {
               </button>
             </div>
             <div className="space-y-2">
-              <p className="text-xs text-muted-foreground">Data akan muncul dari produk yang stoknya rendah</p>
+              {lowStockProducts.length === 0 ? (
+                <p className="text-xs text-muted-foreground">Semua produk stoknya aman 👍</p>
+              ) : (
+                lowStockProducts.slice(0, 3).map((p) => (
+                  <div key={p.id} className="flex items-center justify-between text-xs">
+                    <span className="text-foreground font-medium truncate flex-1">{p.name}</span>
+                    <span className="text-warning font-bold ml-2">Stok: {p.stock}</span>
+                  </div>
+                ))
+              )}
             </div>
           </div>
 
@@ -108,12 +131,17 @@ const Dashboard = () => {
               </div>
             </div>
             <div className="flex items-end justify-between gap-2 h-24">
-              {[65, 40, 80, 55, 90, 70, 100].map((h, i) => (
+              {chartBars.length > 0 ? chartBars.map((bar, i) => (
                 <div key={i} className="flex-1 flex flex-col items-center gap-1">
-                  <div className={cn("w-full rounded-t-md", headerColor)} style={{ height: `${h}%`, opacity: i === 6 ? 1 : 0.5 }} />
-                  <span className="text-[9px] text-muted-foreground">{["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"][i]}</span>
+                  <div
+                    className={cn("w-full rounded-t-md", headerColor)}
+                    style={{ height: `${bar.height}%`, opacity: bar.isToday ? 1 : 0.5 }}
+                  />
+                  <span className="text-[9px] text-muted-foreground">{bar.label}</span>
                 </div>
-              ))}
+              )) : (
+                <p className="text-xs text-muted-foreground w-full text-center">Belum ada data</p>
+              )}
             </div>
           </div>
         </div>
