@@ -91,14 +91,13 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
 
     // Handle subsequent auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, newSession) => {
+      async (_event, newSession) => {
         if (!mounted) return;
         setSession(newSession);
         setUser(newSession?.user ?? null);
 
         if (newSession?.user) {
-          // Fire-and-forget to avoid blocking
-          loadBusinessData(newSession.user.id);
+          await loadBusinessData(newSession.user.id);
         } else {
           setBusinessId(null);
           setBusinessName("");
