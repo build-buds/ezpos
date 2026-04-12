@@ -62,7 +62,10 @@ const Auth = () => {
           toast.error(error.message);
           return;
         }
-        toast.success("Akun berhasil dibuat!");
+        toast.success("Akun berhasil dibuat! Silakan login.");
+        setMode("login");
+        setPassword("");
+        setConfirmPassword("");
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) {
@@ -71,7 +74,6 @@ const Auth = () => {
         }
         toast.success("Berhasil masuk!");
       }
-      goNext();
     } finally {
       setLoading(false);
     }
