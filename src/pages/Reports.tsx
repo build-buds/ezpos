@@ -85,7 +85,7 @@ const Reports = () => {
       {isLoading ? (
         <div className="flex items-center justify-center py-12"><Loader2 className="w-6 h-6 animate-spin text-primary" /></div>
       ) : (
-        <div className="px-5 md:px-8 lg:px-10 space-y-4 lg:space-y-6 pb-4 lg:max-w-6xl">
+        <div className="px-5 md:px-8 lg:px-10 space-y-4 lg:space-y-6 pb-4">
           <div className="grid grid-cols-3 gap-3 md:gap-4">
             <div className="bg-card rounded-2xl p-4 card-shadow">
               <div className="flex items-center gap-1.5 mb-2">
