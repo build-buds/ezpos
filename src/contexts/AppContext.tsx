@@ -76,7 +76,30 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     let mounted = true;
 
-    // Restore session first
+    // Set up auth state listener FIRST
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (_event, newSession) => {
+        if (!mounted) return;
+        setSession(newSession);
+        setUser(newSession?.user ?? null);
+
+        if (newSession?.user) {
+          // Use setTimeout to avoid blocking the auth callback
+          setTimeout(() => {
+            if (mounted) {
+              loadBusinessData(newSession.user.id);
+            }
+          }, 0);
+        } else {
+          setBusinessId(null);
+          setBusinessName("");
+          setBusinessCategory(null);
+          setIsOnboarded(false);
+        }
+      }
+    );
+
+    // Then restore session
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (!mounted) return;
       setSession(session);
@@ -88,24 +111,6 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
 
       if (mounted) setIsAuthLoading(false);
     });
-
-    // Handle subsequent auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event, newSession) => {
-        if (!mounted) return;
-        setSession(newSession);
-        setUser(newSession?.user ?? null);
-
-        if (newSession?.user) {
-          await loadBusinessData(newSession.user.id);
-        } else {
-          setBusinessId(null);
-          setBusinessName("");
-          setBusinessCategory(null);
-          setIsOnboarded(false);
-        }
-      }
-    );
 
     return () => {
       mounted = false;
