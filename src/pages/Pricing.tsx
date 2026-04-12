@@ -158,7 +158,7 @@ const Pricing = () => {
               </div>
             ))}
             <Button variant="outline" className="w-full mt-4" disabled>
-              Paket Saat Ini
+              {isPro ? "Paket Sebelumnya" : "Paket Saat Ini"}
             </Button>
           </CardContent>
         </Card>
@@ -186,9 +186,16 @@ const Pricing = () => {
                 <span>{f}</span>
               </div>
             ))}
-            <Button className="w-full mt-4" onClick={handleUpgrade} disabled={loading}>
-              {loading ? "Memproses..." : "Upgrade ke Pro"}
-            </Button>
+            {isPro ? (
+              <Button className="w-full mt-4 bg-primary/10 text-primary" disabled>
+                <CheckCircle className="w-4 h-4 mr-2" />
+                Paket Aktif
+              </Button>
+            ) : (
+              <Button className="w-full mt-4" onClick={handleUpgrade} disabled={loading}>
+                {loading ? "Memproses..." : "Upgrade ke Pro"}
+              </Button>
+            )}
           </CardContent>
         </Card>
       </div>
