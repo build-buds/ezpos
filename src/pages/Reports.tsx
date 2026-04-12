@@ -1,10 +1,12 @@
 import MobileLayout from "@/components/MobileLayout";
 import { useAppState } from "@/contexts/AppContext";
 import { useTransactions } from "@/hooks/useTransactions";
+import { useIsPro } from "@/hooks/useSubscription";
 import { formatRupiah } from "@/data/products";
 import { cn } from "@/lib/utils";
-import { TrendingUp, TrendingDown, BarChart3, Loader2 } from "lucide-react";
+import { TrendingUp, TrendingDown, BarChart3, Loader2, Lock } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const periods = ["Hari Ini", "7 Hari", "Bulan Ini", "Tahun Ini"];
 
