@@ -11,6 +11,12 @@ import { toast } from "sonner";
 
 const POLAR_PRODUCT_ID = "b5ab8339-8495-488b-b487-0a4502740459";
 
+type CheckoutResponse = {
+  url?: string;
+  error?: string;
+  code?: string;
+};
+
 const freePlanFeatures = [
   "50 produk",
   "100 transaksi/bulan",
@@ -27,6 +33,32 @@ const proPlanFeatures = [
   "Dukungan prioritas",
 ];
 
+const createPolarCheckout = async (accessToken: string, payload: { productId: string; successUrl: string }) => {
+  const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-polar-checkout`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify(payload),
+  });
+
+  let result: CheckoutResponse | null = null;
+
+  try {
+    result = (await response.json()) as CheckoutResponse;
+  } catch {
+    result = null;
+  }
+
+  return {
+    ok: response.ok,
+    status: response.status,
+    result,
+  };
+};
+
 const Pricing = () => {
   const navigate = useNavigate();
   const { user } = useAppState();
@@ -41,9 +73,20 @@ const Pricing = () => {
 
     setLoading(true);
     try {
-      // Verify we have a valid session with access token
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.access_token) {
+      let accessToken = session?.access_token;
+
+      if (!accessToken) {
+        const { data: refreshData, error: refreshError } = await supabase.auth.refreshSession();
+
+        if (refreshError) {
+          console.error("Failed to refresh session before checkout:", refreshError);
+        }
+
+        accessToken = refreshData.session?.access_token;
+      }
+
+      if (!accessToken) {
         toast.error("Sesi login tidak valid. Silakan login ulang.");
         navigate("/auth");
         return;
@@ -51,26 +94,31 @@ const Pricing = () => {
 
       const successUrl = `${window.location.origin}/checkout/success?checkout_id={CHECKOUT_ID}`;
 
-      const { data, error } = await supabase.functions.invoke("create-polar-checkout", {
-        body: { productId: POLAR_PRODUCT_ID, successUrl },
+      const { ok, status, result } = await createPolarCheckout(accessToken, {
+        productId: POLAR_PRODUCT_ID,
+        successUrl,
       });
 
-      if (error) {
-        // supabase.functions.invoke wraps non-2xx as FunctionsHttpError
-        const msg = data?.error || error.message || "Unknown error";
-        console.error("Checkout function error:", msg);
-        toast.error(msg);
+      if (!ok) {
+        const message = result?.error || `Checkout service error (${status})`;
+        console.error("Checkout function error:", { status, result });
+        toast.error(message);
+
+        if (status === 401) {
+          navigate("/auth");
+        }
+
         return;
       }
 
-      if (data?.url) {
-        window.location.href = data.url;
+      if (result?.url) {
+        window.location.href = result.url;
       } else {
         toast.error("Tidak ada URL checkout dari server.");
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error("Checkout error:", error);
-      toast.error(error.message || "Gagal membuat checkout. Coba lagi nanti.");
+      toast.error(error instanceof Error ? error.message : "Gagal membuat checkout. Coba lagi nanti.");
     } finally {
       setLoading(false);
     }
