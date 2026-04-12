@@ -43,23 +43,24 @@ export const useNotifications = () => {
   useEffect(() => {
     if (!user) return;
 
-    const channel = supabase
-      .channel("notifications-realtime")
-      .on(
-        "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "notifications",
-          filter: `user_id=eq.${user.id}`,
-        },
-        (payload) => {
-          const newNotif = payload.new as unknown as Notification;
-          setNotifications((prev) => [newNotif, ...prev]);
-          setUnreadCount((prev) => prev + 1);
-        }
-      )
-      .subscribe();
+    const channel = supabase.channel(`notifications-${user.id}`);
+    
+    channel.on(
+      "postgres_changes",
+      {
+        event: "INSERT",
+        schema: "public",
+        table: "notifications",
+        filter: `user_id=eq.${user.id}`,
+      },
+      (payload) => {
+        const newNotif = payload.new as unknown as Notification;
+        setNotifications((prev) => [newNotif, ...prev]);
+        setUnreadCount((prev) => prev + 1);
+      }
+    );
+    
+    channel.subscribe();
 
     return () => {
       supabase.removeChannel(channel);
