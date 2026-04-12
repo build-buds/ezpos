@@ -198,7 +198,7 @@ const Products = () => {
         </div>
       </div>
 
-      {!isPro && (
+      <div className="lg:max-w-5xl lg:mx-auto">
         <div className="px-5 md:px-8 lg:px-10 pt-3">
           <button
             onClick={() => navigate("/pricing")}
