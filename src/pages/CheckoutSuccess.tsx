@@ -35,7 +35,7 @@ const CheckoutSuccess = () => {
   }, [searchParams]);
 
   return (
-    <MobileLayout hideBottomNav>
+    <MobileLayout>
       <div className="flex items-center justify-center min-h-[80vh] px-5">
         <Card className="w-full max-w-sm">
           <CardContent className="pt-6 text-center space-y-4">
@@ -47,7 +47,7 @@ const CheckoutSuccess = () => {
             )}
             {status === "succeeded" && (
               <>
-                <CheckCircle className="w-12 h-12 mx-auto text-green-500" />
+                <CheckCircle className="w-12 h-12 mx-auto text-primary" />
                 <h2 className="text-lg font-bold">Pembayaran Berhasil!</h2>
                 <p className="text-sm text-muted-foreground">
                   Selamat! Anda sekarang menggunakan EZPOS Pro.

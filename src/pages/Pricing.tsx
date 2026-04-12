@@ -62,7 +62,7 @@ const Pricing = () => {
   };
 
   return (
-    <MobileLayout hideBottomNav>
+    <MobileLayout>
       <div className="bg-primary px-5 md:px-8 pt-10 pb-6 text-primary-foreground">
         <button onClick={() => navigate(-1)} className="flex items-center gap-1 mb-4 opacity-80">
           <ArrowLeft className="w-4 h-4" />
