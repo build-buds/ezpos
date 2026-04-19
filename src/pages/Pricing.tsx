@@ -176,7 +176,7 @@ const Pricing = () => {
               <CardTitle className="text-base">Pro</CardTitle>
             </div>
             <p className="text-2xl font-bold mt-2">
-              Rp 299.000<span className="text-sm font-normal text-muted-foreground">/bulan</span>
+              Rp 500.000<span className="text-sm font-normal text-muted-foreground">/bulan</span>
             </p>
           </CardHeader>
           <CardContent className="space-y-2">
