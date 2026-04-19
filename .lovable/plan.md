@@ -1,68 +1,44 @@
 
-User ingin reset integrasi DOKU dan mulai ulang khusus untuk sandbox. Saya perlu hapus implementasi DOKU saat ini dan setup ulang dengan fokus sandbox.
 
-Yang ada sekarang:
-- 2 edge functions: create-doku-checkout, doku-notification
-- 5 secrets DOKU sudah terset
-- UI: Pricing dialog 2 metode bayar, CheckoutSuccess polling
-- supabase/config.toml block doku-notification
+## Root Cause
+DOKU rejects every signature because `DOKU_SECRET_KEY` holds the wrong credential type:
+- Current value prefix: `doku_key_...` (49 chars) → this is the **Public Key / SDK Key** (used by frontend Jokul JS widget)
+- Required: **Secret Key** from Dashboard → Integrations → **API Keys** (used for HMAC-SHA256 server signature)
 
-Strategi reset: hapus semua DOKU code, lalu rebuild bersih dengan fokus sandbox-only. Hardcode endpoint sandbox, simplify, dan dokumentasi sandbox-spesifik.
+The signing algorithm in `create-doku-checkout/index.ts` is correct (verified against DOKU non-SNAP signature spec: `Client-Id` + `Request-Id` + `Request-Timestamp` + `Request-Target` + `Digest`, joined by `\n`, signed HMAC-SHA256, base64). No code change needed — only the secret value.
 
-## Plan: Reset & Setup Ulang DOKU (Sandbox-Only)
+## Fix Plan
 
-### Step 1: Hapus Integrasi DOKU Lama
-- Hapus folder `supabase/functions/create-doku-checkout/`
-- Hapus folder `supabase/functions/doku-notification/`
-- Hapus block `[functions.doku-notification]` di `supabase/config.toml`
-- Revert `Pricing.tsx`: hapus dialog pilihan metode, kembali ke 1 tombol Polar saja
-- Revert `CheckoutSuccess.tsx`: hapus polling DOKU
-- Hapus secrets via tool: `DOKU_CLIENT_ID`, `DOKU_SECRET_KEY`, `DOKU_PUBLIC_KEY`, `DOKU_PRIVATE_KEY`, `DOKU_ENV`
+**Step 1 — User retrieves correct Secret Key from DOKU Sandbox**
+1. Login to https://sandbox.doku.com
+2. Sidebar → **Integrations** → **API Keys**
+3. Look for the row labeled **"Secret Key"** (NOT "Public Key" / NOT "SDK Key" / NOT "Jokul Key")
+4. Copy the full string — it should look like a long random alphanumeric (often 40-64 chars), and crucially it should **NOT** start with `doku_key_`
+5. Also copy the **Client ID** while you're there (looks like `BRN-XXXX-XXXXXXXXXXX`) to make sure both come from the same row/product
 
-### Step 2: Konfirmasi Kredensial Sandbox Baru
-Saya minta ulang **3 secrets sandbox saja** (lebih simpel — `DOKU_PRIVATE_KEY` & `DOKU_ENV` tidak perlu lagi karena hardcode sandbox):
-- `DOKU_CLIENT_ID` — dari DOKU **sandbox** dashboard
-- `DOKU_SECRET_KEY` — dari DOKU **sandbox** dashboard
-- `DOKU_PUBLIC_KEY` — DOKU sandbox public key (untuk verifikasi webhook)
+**Step 2 — Update the secret in Lovable Cloud**
+After plan approval, I will:
+1. Use the secrets tool to ask you to paste the correct `DOKU_SECRET_KEY`
+2. Optionally re-confirm `DOKU_CLIENT_ID` to ensure both are from the same Checkout product row
+3. No edge function code changes required (signature algorithm is already correct per DOKU spec)
+4. No redeploy needed (secrets are read at runtime)
 
-### Step 3: Bangun Ulang Edge Functions (Sandbox-Hardcoded)
+**Step 3 — Re-test**
+1. You click "Upgrade ke Pro" → DOKU button on `/pricing`
+2. I'll check `create-doku-checkout` logs:
+   - Verify `secretKeyPrefix` is no longer `doku_key`
+   - Verify response is 200 with a payment URL
+3. If signature is valid, you'll be redirected to DOKU sandbox payment page
+4. Continue end-to-end test with payment simulator → webhook → subscription update
 
-**`create-doku-checkout`** (auth required)
-- Hardcode `baseUrl = "https://api-sandbox.doku.com"`
-- Tetap pakai DOKU Checkout API v1 dengan signature HMAC-SHA256
-- Generate invoice: `EZPOS-{userIdPrefix}-{timestamp}`
-- Return payment URL ke client
+## What If Dashboard Only Shows "doku_key_..." Style Keys?
 
-**`doku-notification`** (public webhook, `verify_jwt = false`)
-- Verifikasi signature DOKU dari header
-- Parse invoice → temukan user → upsert subscription jadi Pro 30 hari
-- Logging detail untuk memudahkan debug sandbox
+If the only credential available in your DOKU sandbox dashboard is the `doku_key_...` format, that means your account is provisioned for the **Jokul Checkout JS / Frontend SDK** product, not the **Server-side Checkout API** (`/checkout/v1/payment`). In that case we have two options:
+- **(A)** Contact DOKU support to enable the **Checkout API** product on your sandbox account → unlocks proper Client ID + Secret Key pair
+- **(B)** Pivot the integration to use the **Jokul Checkout JS widget** on the frontend instead of server-to-server API calls (a bigger refactor)
 
-### Step 4: Update UI
+I recommend trying **(A)** first since the rest of the integration is already built for the server-side flow.
 
-**`Pricing.tsx`**
-- Tambah lagi Dialog pilih metode bayar (Polar vs DOKU)
-- Tandai DOKU dengan badge **"Sandbox"** kuning supaya jelas mode test
+## Summary
+No code changes. Just need the correct `DOKU_SECRET_KEY` value. After approval I'll request the new secret value via the secrets tool, then we re-test immediately.
 
-**`CheckoutSuccess.tsx`**
-- Polling subscription status setelah redirect dari DOKU
-
-### Step 5: Panduan Setup Sandbox (Setelah Implementasi)
-
-Saya akan beri panduan lengkap:
-1. Login https://sandbox.doku.com
-2. Daftarkan webhook URL: `https://geepcyqmgracqsvqgeks.supabase.co/functions/v1/doku-notification`
-3. Test transaksi pakai VA dummy sandbox
-4. Cek logs `doku-notification`
-
-### Tidak Diubah
-- Polar tetap utuh (bisa test tetap berfungsi)
-- Tabel `subscriptions` tetap sama
-- Hooks & state management tidak berubah
-
-### Catatan
-Setelah Anda approve, saya akan:
-1. Hapus kode DOKU lama
-2. Hapus 5 secret DOKU lama  
-3. Minta 3 secret sandbox baru via tool
-4. Build ulang edge functions + UI
