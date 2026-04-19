@@ -3,12 +3,13 @@ import MobileLayout from "@/components/MobileLayout";
 import { useAppState } from "@/contexts/AppContext";
 import { useSubscription } from "@/hooks/useSubscription";
 import { cn } from "@/lib/utils";
-import { User, Store, Bell, Palette, LogOut, ChevronRight, Crown, CheckCircle } from "lucide-react";
+import { User, Store, Bell, Palette, LogOut, ChevronRight, Crown, CheckCircle, QrCode } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import SettingsProfile from "@/components/settings/SettingsProfile";
 import SettingsBusiness from "@/components/settings/SettingsBusiness";
 import SettingsNotification from "@/components/settings/SettingsNotification";
 import SettingsAppearance from "@/components/settings/SettingsAppearance";
+import SettingsDigitalMenu from "@/components/settings/SettingsDigitalMenu";
 
 const Settings = () => {
   const { businessName, user, logout } = useAppState();
@@ -26,6 +27,7 @@ const Settings = () => {
   const menuItems = [
     { key: "profile", icon: User, label: "Profil Akun", description: "Email, nama, foto profil" },
     { key: "business", icon: Store, label: "Pengaturan Bisnis", description: "Nama, alamat, metode bayar" },
+    { key: "digital-menu", icon: QrCode, label: "Menu Digital & QR", description: "Publish menu, tema, cetak QR PDF" },
     { key: "notification", icon: Bell, label: "Notifikasi", description: "Stok kritis, hutang jatuh tempo" },
     { key: "appearance", icon: Palette, label: "Tampilan", description: "Tema, bahasa" },
   ];
@@ -104,6 +106,7 @@ const Settings = () => {
 
       <SettingsProfile open={activeSheet === "profile"} onClose={() => setActiveSheet(null)} />
       <SettingsBusiness open={activeSheet === "business"} onClose={() => setActiveSheet(null)} />
+      <SettingsDigitalMenu open={activeSheet === "digital-menu"} onClose={() => setActiveSheet(null)} />
       <SettingsNotification open={activeSheet === "notification"} onClose={() => setActiveSheet(null)} />
       <SettingsAppearance open={activeSheet === "appearance"} onClose={() => setActiveSheet(null)} />
     </MobileLayout>

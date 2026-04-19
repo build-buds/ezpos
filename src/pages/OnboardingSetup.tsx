@@ -9,6 +9,7 @@ import { Switch } from "@/components/ui/switch";
 import { ArrowLeft, Banknote, Building2, FileText, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { generateSlug } from "@/lib/slug";
 
 const OnboardingSetup = () => {
   const navigate = useNavigate();
@@ -59,6 +60,7 @@ const OnboardingSetup = () => {
           category: businessCategory,
           address,
           phone,
+          slug: generateSlug(name),
         })
         .select("id")
         .single();
