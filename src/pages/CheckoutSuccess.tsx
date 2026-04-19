@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import MobileLayout from "@/components/MobileLayout";
 import { Card, CardContent } from "@/components/ui/card";
-import { CheckCircle, XCircle, Loader2, Clock } from "lucide-react";
+import { CheckCircle, XCircle, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
-type Status = "loading" | "succeeded" | "failed" | "pending_doku";
+type Status = "loading" | "succeeded" | "failed";
 
 const CheckoutSuccess = () => {
   const [searchParams] = useSearchParams();
@@ -14,7 +14,6 @@ const CheckoutSuccess = () => {
 
   useEffect(() => {
     const checkoutId = searchParams.get("checkout_id");
-    const invoice = searchParams.get("invoice");
     const failed = searchParams.get("status") === "failed";
 
     if (failed) {
@@ -22,33 +21,6 @@ const CheckoutSuccess = () => {
       return;
     }
 
-    // DOKU flow: webhook activates the subscription server-side
-    if (invoice && !checkoutId) {
-      setStatus("pending_doku");
-      // Poll subscription for ~60s to auto-redirect once webhook lands
-      let attempts = 0;
-      const interval = setInterval(async () => {
-        attempts++;
-        const { data: { user } } = await supabase.auth.getUser();
-        if (user) {
-          const { data: sub } = await supabase
-            .from("subscriptions")
-            .select("plan, status")
-            .eq("user_id", user.id)
-            .maybeSingle();
-          if (sub?.plan === "pro" && sub?.status === "active") {
-            setStatus("succeeded");
-            clearInterval(interval);
-            setTimeout(() => navigate("/dashboard", { replace: true }), 1500);
-            return;
-          }
-        }
-        if (attempts >= 30) clearInterval(interval);
-      }, 2000);
-      return () => clearInterval(interval);
-    }
-
-    // Polar flow
     if (!checkoutId) {
       setStatus("failed");
       return;
@@ -82,17 +54,6 @@ const CheckoutSuccess = () => {
               <>
                 <Loader2 className="w-12 h-12 mx-auto text-primary animate-spin" />
                 <p className="text-sm text-muted-foreground">Memverifikasi pembayaran...</p>
-              </>
-            )}
-            {status === "pending_doku" && (
-              <>
-                <Clock className="w-12 h-12 mx-auto text-primary" />
-                <h2 className="text-lg font-bold">Pembayaran Sedang Diproses</h2>
-                <p className="text-sm text-muted-foreground">
-                  Setelah pembayaran berhasil di DOKU, akun Anda akan otomatis di-upgrade ke Pro dalam 1-2 menit.
-                  Halaman ini akan refresh secara otomatis.
-                </p>
-                <Loader2 className="w-5 h-5 mx-auto text-muted-foreground animate-spin" />
               </>
             )}
             {status === "succeeded" && (
