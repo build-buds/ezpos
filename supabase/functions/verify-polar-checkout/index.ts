@@ -60,6 +60,18 @@ serve(async (req) => {
 
     const checkout = await response.json();
 
+    // SECURITY: ensure this checkout was created for the calling user
+    const checkoutOwner =
+      checkout.external_customer_id ||
+      checkout.customer?.external_id ||
+      checkout.metadata?.user_id;
+    if (!checkoutOwner || checkoutOwner !== user.id) {
+      return new Response(
+        JSON.stringify({ error: "Checkout does not belong to this user" }),
+        { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     if (checkout.status === "succeeded") {
       // Use service role to insert/update subscription
       const adminClient = createClient(supabaseUrl, serviceRoleKey);
