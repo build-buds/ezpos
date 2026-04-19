@@ -4,7 +4,14 @@ import MobileLayout from "@/components/MobileLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, ArrowLeft, Crown, Zap, CheckCircle } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Check, ArrowLeft, Crown, Zap, CheckCircle, CreditCard, Wallet } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAppState } from "@/contexts/AppContext";
 import { useSubscription } from "@/hooks/useSubscription";
@@ -15,7 +22,7 @@ const POLAR_PRODUCT_ID = "b5ab8339-8495-488b-b487-0a4502740459";
 type CheckoutResponse = {
   url?: string;
   error?: string;
-  code?: string;
+  invoice?: string;
 };
 
 const freePlanFeatures = [
@@ -34,30 +41,31 @@ const proPlanFeatures = [
   "Dukungan prioritas",
 ];
 
-const createPolarCheckout = async (accessToken: string, payload: { productId: string; successUrl: string }) => {
-  const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-polar-checkout`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-      Authorization: `Bearer ${accessToken}`,
+const callEdgeFunction = async (
+  fnName: string,
+  accessToken: string,
+  payload: Record<string, unknown>,
+) => {
+  const response = await fetch(
+    `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/${fnName}`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify(payload),
     },
-    body: JSON.stringify(payload),
-  });
+  );
 
   let result: CheckoutResponse | null = null;
-
   try {
     result = (await response.json()) as CheckoutResponse;
   } catch {
     result = null;
   }
-
-  return {
-    ok: response.ok,
-    status: response.status,
-    result,
-  };
+  return { ok: response.ok, status: response.status, result };
 };
 
 const Pricing = () => {
@@ -65,65 +73,90 @@ const Pricing = () => {
   const { user } = useAppState();
   const { data: subscription } = useSubscription();
   const isPro = subscription?.plan === "pro" && subscription?.status === "active";
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<null | "polar" | "doku">(null);
+  const [methodOpen, setMethodOpen] = useState(false);
 
-  const handleUpgrade = async () => {
+  const ensureToken = async (): Promise<string | null> => {
+    const { data: { session } } = await supabase.auth.getSession();
+    let accessToken = session?.access_token;
+    if (!accessToken) {
+      const { data: refreshData } = await supabase.auth.refreshSession();
+      accessToken = refreshData.session?.access_token;
+    }
+    if (!accessToken) {
+      toast.error("Sesi login tidak valid. Silakan login ulang.");
+      navigate("/auth");
+      return null;
+    }
+    return accessToken;
+  };
+
+  const openMethodPicker = () => {
     if (!user) {
       toast.error("Silakan login terlebih dahulu");
       navigate("/auth");
       return;
     }
+    setMethodOpen(true);
+  };
 
-    setLoading(true);
+  const handlePolar = async () => {
+    setLoading("polar");
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      let accessToken = session?.access_token;
-
-      if (!accessToken) {
-        const { data: refreshData, error: refreshError } = await supabase.auth.refreshSession();
-
-        if (refreshError) {
-          console.error("Failed to refresh session before checkout:", refreshError);
-        }
-
-        accessToken = refreshData.session?.access_token;
-      }
-
-      if (!accessToken) {
-        toast.error("Sesi login tidak valid. Silakan login ulang.");
-        navigate("/auth");
-        return;
-      }
+      const accessToken = await ensureToken();
+      if (!accessToken) return;
 
       const successUrl = `${window.location.origin}/checkout/success?checkout_id={CHECKOUT_ID}`;
-
-      const { ok, status, result } = await createPolarCheckout(accessToken, {
-        productId: POLAR_PRODUCT_ID,
-        successUrl,
-      });
+      const { ok, status, result } = await callEdgeFunction(
+        "create-polar-checkout",
+        accessToken,
+        { productId: POLAR_PRODUCT_ID, successUrl },
+      );
 
       if (!ok) {
-        const message = result?.error || `Checkout service error (${status})`;
-        console.error("Checkout function error:", { status, result });
-        toast.error(message);
-
-        if (status === 401) {
-          navigate("/auth");
-        }
-
+        toast.error(result?.error || `Checkout error (${status})`);
+        if (status === 401) navigate("/auth");
         return;
       }
-
       if (result?.url) {
         window.location.href = result.url;
       } else {
         toast.error("Tidak ada URL checkout dari server.");
       }
     } catch (error) {
-      console.error("Checkout error:", error);
-      toast.error(error instanceof Error ? error.message : "Gagal membuat checkout. Coba lagi nanti.");
+      toast.error(error instanceof Error ? error.message : "Gagal membuat checkout.");
     } finally {
-      setLoading(false);
+      setLoading(null);
+    }
+  };
+
+  const handleDoku = async () => {
+    setLoading("doku");
+    try {
+      const accessToken = await ensureToken();
+      if (!accessToken) return;
+
+      const successUrl = `${window.location.origin}/checkout/success`;
+      const { ok, status, result } = await callEdgeFunction(
+        "create-doku-checkout",
+        accessToken,
+        { successUrl },
+      );
+
+      if (!ok) {
+        toast.error(result?.error || `DOKU checkout error (${status})`);
+        if (status === 401) navigate("/auth");
+        return;
+      }
+      if (result?.url) {
+        window.location.href = result.url;
+      } else {
+        toast.error("Tidak ada URL pembayaran dari DOKU.");
+      }
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Gagal membuat pembayaran DOKU.");
+    } finally {
+      setLoading(null);
     }
   };
 
@@ -192,13 +225,63 @@ const Pricing = () => {
                 Paket Aktif
               </Button>
             ) : (
-              <Button className="w-full mt-4" onClick={handleUpgrade} disabled={loading}>
-                {loading ? "Memproses..." : "Upgrade ke Pro"}
+              <Button className="w-full mt-4" onClick={openMethodPicker} disabled={loading !== null}>
+                Upgrade ke Pro
               </Button>
             )}
           </CardContent>
         </Card>
       </div>
+
+      <Dialog open={methodOpen} onOpenChange={setMethodOpen}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Pilih Metode Pembayaran</DialogTitle>
+            <DialogDescription>
+              Bayar Rp 500.000 untuk EZPOS Pro selama 1 bulan.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3 mt-2">
+            <button
+              onClick={handleDoku}
+              disabled={loading !== null}
+              className="w-full flex items-center gap-3 rounded-lg border-2 border-border hover:border-primary p-4 text-left transition-colors disabled:opacity-50"
+            >
+              <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                <Wallet className="w-5 h-5 text-primary" />
+              </div>
+              <div className="flex-1">
+                <p className="font-semibold text-sm">DOKU</p>
+                <p className="text-xs text-muted-foreground">
+                  Virtual Account, E-Wallet, QRIS
+                </p>
+              </div>
+              {loading === "doku" && (
+                <span className="text-xs text-muted-foreground">Memproses...</span>
+              )}
+            </button>
+
+            <button
+              onClick={handlePolar}
+              disabled={loading !== null}
+              className="w-full flex items-center gap-3 rounded-lg border-2 border-border hover:border-primary p-4 text-left transition-colors disabled:opacity-50"
+            >
+              <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                <CreditCard className="w-5 h-5 text-primary" />
+              </div>
+              <div className="flex-1">
+                <p className="font-semibold text-sm">Kartu Internasional</p>
+                <p className="text-xs text-muted-foreground">
+                  Visa, Mastercard via Polar
+                </p>
+              </div>
+              {loading === "polar" && (
+                <span className="text-xs text-muted-foreground">Memproses...</span>
+              )}
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </MobileLayout>
   );
 };
