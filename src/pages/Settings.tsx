@@ -27,7 +27,7 @@ const Settings = () => {
   const menuItems = [
     { key: "profile", icon: User, label: "Profil Akun", description: "Email, nama, foto profil" },
     { key: "business", icon: Store, label: "Pengaturan Bisnis", description: "Nama, alamat, metode bayar" },
-    { key: "digital-menu", icon: QrCode, label: "Menu Digital & QR", description: "Publish menu, tema, cetak QR PDF" },
+    { key: "digital-menu", icon: QrCode, label: "Menu Digital", description: "Publish menu, tema, cetak QR PDF" },
     { key: "notification", icon: Bell, label: "Notifikasi", description: "Stok kritis, hutang jatuh tempo" },
     { key: "appearance", icon: Palette, label: "Tampilan", description: "Tema, bahasa" },
   ];
