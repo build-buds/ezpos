@@ -32,33 +32,50 @@ interface MenuProduct {
 
 type ThemeStyle = {
   bg: string;
+  bgPattern?: string;
   card: string;
   text: string;
   muted: string;
   flat?: boolean;
 };
 
+// Subtle SVG patterns as data URIs — kept low-opacity so accent color stays focal
+const patterns = {
+  // Light dots for classic
+  dots: `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24'><circle cx='2' cy='2' r='1' fill='%23000000' opacity='0.06'/></svg>")`,
+  // Diagonal cross-hatch for warm (tradisional/rustic feel)
+  hatch: `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='20' height='20'><path d='M0 20L20 0' stroke='%238B6F47' stroke-width='0.5' opacity='0.15'/><path d='M-5 5L5 -5M15 25L25 15' stroke='%238B6F47' stroke-width='0.5' opacity='0.15'/></svg>")`,
+  // Grid for modern (tech/elegant)
+  grid: `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32'><path d='M32 0H0V32' fill='none' stroke='%23ffffff' stroke-width='0.5' opacity='0.06'/></svg>")`,
+  // Thin horizontal lines for minimal (paper/notebook feel)
+  lines: `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='8' height='8'><path d='M0 4H8' stroke='%23000000' stroke-width='0.3' opacity='0.05'/></svg>")`,
+};
+
 const themeStyles: Record<string, ThemeStyle> = {
   classic: {
     bg: "bg-white",
+    bgPattern: patterns.dots,
     card: "bg-white border border-gray-200",
     text: "text-gray-900",
     muted: "text-gray-500",
   },
   warm: {
     bg: "bg-[#FBF6EE]",
+    bgPattern: patterns.hatch,
     card: "bg-white border border-[#E8DCC4]",
     text: "text-[#3B2A1A]",
     muted: "text-[#8B6F47]",
   },
   modern: {
     bg: "bg-[#0F0F10]",
+    bgPattern: patterns.grid,
     card: "bg-[#1A1A1C] border border-[#2A2A2E]",
     text: "text-white",
     muted: "text-gray-400",
   },
   minimal: {
     bg: "bg-white",
+    bgPattern: patterns.lines,
     card: "border-b border-gray-200",
     text: "text-gray-900",
     muted: "text-gray-500",
@@ -144,7 +161,10 @@ const PublicMenu = () => {
   }, {});
 
   return (
-    <div className={`min-h-screen ${theme.bg} ${theme.text}`}>
+    <div
+      className={`min-h-screen ${theme.bg} ${theme.text}`}
+      style={theme.bgPattern ? { backgroundImage: theme.bgPattern } : undefined}
+    >
       {/* Header */}
       <header
         className="px-6 pt-10 pb-8 text-white"
