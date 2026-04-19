@@ -89,7 +89,7 @@ const Settings = () => {
             <Crown className="w-5 h-5 text-primary" />
             <div className="flex-1 text-left">
               <p className="text-sm font-semibold text-primary">Upgrade ke Pro</p>
-              <p className="text-xs text-muted-foreground">Rp 299.000/bulan</p>
+              <p className="text-xs text-muted-foreground">Rp 500.000/bulan</p>
             </div>
             <ChevronRight className="w-4 h-4 text-primary" />
           </button>
