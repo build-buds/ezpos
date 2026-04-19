@@ -20,9 +20,16 @@ export type Database = {
           category: string
           created_at: string
           id: string
+          menu_accent_color: string
+          menu_description: string | null
+          menu_enabled: boolean
+          menu_logo_url: string | null
+          menu_theme: string
+          menu_title: string | null
           name: string
           owner_id: string
           phone: string | null
+          slug: string | null
           updated_at: string
         }
         Insert: {
@@ -30,9 +37,16 @@ export type Database = {
           category: string
           created_at?: string
           id?: string
+          menu_accent_color?: string
+          menu_description?: string | null
+          menu_enabled?: boolean
+          menu_logo_url?: string | null
+          menu_theme?: string
+          menu_title?: string | null
           name: string
           owner_id: string
           phone?: string | null
+          slug?: string | null
           updated_at?: string
         }
         Update: {
@@ -40,9 +54,16 @@ export type Database = {
           category?: string
           created_at?: string
           id?: string
+          menu_accent_color?: string
+          menu_description?: string | null
+          menu_enabled?: boolean
+          menu_logo_url?: string | null
+          menu_theme?: string
+          menu_title?: string | null
           name?: string
           owner_id?: string
           phone?: string | null
+          slug?: string | null
           updated_at?: string
         }
         Relationships: []
