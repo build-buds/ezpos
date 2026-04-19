@@ -1,7 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2, Store, UtensilsCrossed } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface BusinessData {
   id: string;
@@ -23,10 +30,40 @@ interface MenuProduct {
   image_url: string | null;
 }
 
-const themeStyles: Record<string, { bg: string; card: string; text: string; muted: string }> = {
-  classic: { bg: "bg-white", card: "bg-white border border-gray-200", text: "text-gray-900", muted: "text-gray-500" },
-  warm: { bg: "bg-[#FBF6EE]", card: "bg-white border border-[#E8DCC4]", text: "text-[#3B2A1A]", muted: "text-[#8B6F47]" },
-  modern: { bg: "bg-[#0F0F10]", card: "bg-[#1A1A1C] border border-[#2A2A2E]", text: "text-white", muted: "text-gray-400" },
+type ThemeStyle = {
+  bg: string;
+  card: string;
+  text: string;
+  muted: string;
+  flat?: boolean;
+};
+
+const themeStyles: Record<string, ThemeStyle> = {
+  classic: {
+    bg: "bg-white",
+    card: "bg-white border border-gray-200",
+    text: "text-gray-900",
+    muted: "text-gray-500",
+  },
+  warm: {
+    bg: "bg-[#FBF6EE]",
+    card: "bg-white border border-[#E8DCC4]",
+    text: "text-[#3B2A1A]",
+    muted: "text-[#8B6F47]",
+  },
+  modern: {
+    bg: "bg-[#0F0F10]",
+    card: "bg-[#1A1A1C] border border-[#2A2A2E]",
+    text: "text-white",
+    muted: "text-gray-400",
+  },
+  minimal: {
+    bg: "bg-white",
+    card: "border-b border-gray-200",
+    text: "text-gray-900",
+    muted: "text-gray-500",
+    flat: true,
+  },
 };
 
 const PublicMenu = () => {
@@ -34,6 +71,7 @@ const PublicMenu = () => {
   const [loading, setLoading] = useState(true);
   const [business, setBusiness] = useState<BusinessData | null>(null);
   const [products, setProducts] = useState<MenuProduct[]>([]);
+  const [activeCategory, setActiveCategory] = useState<string>("all");
 
   useEffect(() => {
     if (!slug) return;
@@ -63,6 +101,12 @@ const PublicMenu = () => {
     })();
   }, [slug]);
 
+  const categories = useMemo(() => {
+    const set = new Set<string>();
+    products.forEach((p) => set.add(p.category || "Lainnya"));
+    return Array.from(set);
+  }, [products]);
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -85,8 +129,14 @@ const PublicMenu = () => {
 
   const theme = themeStyles[business.menu_theme] || themeStyles.classic;
   const accent = business.menu_accent_color || "#2563EB";
+  const isDark = business.menu_theme === "modern";
 
-  const grouped = products.reduce<Record<string, MenuProduct[]>>((acc, p) => {
+  const filteredProducts =
+    activeCategory === "all"
+      ? products
+      : products.filter((p) => (p.category || "Lainnya") === activeCategory);
+
+  const grouped = filteredProducts.reduce<Record<string, MenuProduct[]>>((acc, p) => {
     const key = p.category || "Lainnya";
     if (!acc[key]) acc[key] = [];
     acc[key].push(p);
@@ -125,6 +175,41 @@ const PublicMenu = () => {
         </div>
       </header>
 
+      {/* Category Filter */}
+      {categories.length > 0 && (
+        <div
+          className={`sticky top-0 z-10 ${theme.bg} px-4 py-3 border-b ${
+            isDark ? "border-[#2A2A2E]" : "border-gray-200/70"
+          }`}
+        >
+          <div className="max-w-2xl mx-auto">
+            <Select value={activeCategory} onValueChange={setActiveCategory}>
+              <SelectTrigger
+                className={`h-11 rounded-xl text-sm font-medium ${
+                  isDark
+                    ? "bg-[#1A1A1C] border-[#2A2A2E] text-white"
+                    : "bg-white"
+                }`}
+                style={{ borderColor: activeCategory !== "all" ? accent : undefined }}
+              >
+                <SelectValue placeholder="Pilih kategori" />
+              </SelectTrigger>
+              <SelectContent className={isDark ? "bg-[#1A1A1C] border-[#2A2A2E] text-white" : ""}>
+                <SelectItem value="all">Semua Kategori ({products.length})</SelectItem>
+                {categories.map((cat) => {
+                  const count = products.filter((p) => (p.category || "Lainnya") === cat).length;
+                  return (
+                      <SelectItem key={cat} value={cat}>
+                      {cat} ({count})
+                    </SelectItem>
+                  );
+                })}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+      )}
+
       {/* Menu */}
       <main className="max-w-2xl mx-auto px-4 py-6 space-y-8">
         {Object.keys(grouped).length === 0 ? (
@@ -138,17 +223,23 @@ const PublicMenu = () => {
               >
                 {category}
               </h2>
-              <div className="space-y-3">
-                {items.map((item) => (
+              <div className={theme.flat ? "" : "space-y-3"}>
+                {items.map((item, idx) => (
                   <div
                     key={item.id}
-                    className={`${theme.card} rounded-2xl p-3 flex gap-3 items-start`}
+                    className={`${theme.card} ${
+                      theme.flat
+                        ? `py-4 flex gap-3 items-start ${idx === items.length - 1 ? "border-b-0" : ""}`
+                        : "rounded-2xl p-3 flex gap-3 items-start"
+                    }`}
                   >
                     {item.image_url && (
                       <img
                         src={item.image_url}
                         alt={item.name}
-                        className="w-20 h-20 rounded-xl object-cover flex-shrink-0"
+                        className={`${
+                          theme.flat ? "w-16 h-16" : "w-20 h-20"
+                        } rounded-xl object-cover flex-shrink-0`}
                       />
                     )}
                     <div className="flex-1 min-w-0">
