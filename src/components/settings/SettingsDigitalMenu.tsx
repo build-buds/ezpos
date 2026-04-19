@@ -314,7 +314,7 @@ const SettingsDigitalMenu = ({ open, onClose }: Props) => {
           {/* Logo */}
           <div className="space-y-2">
             <Label className="text-xs font-semibold">Logo Menu</Label>
-            <div className="flex items-start gap-2 p-3 bg-blue-50 dark:bg-blue-950/30 rounded-xl">
+            <div className="flex items-start gap-2 p-3 bg-primary/10 rounded-xl">
               <Info className="w-4 h-4 text-primary shrink-0 mt-0.5" />
               <p className="text-xs text-muted-foreground leading-relaxed">
                 Gunakan gambar <span className="font-semibold text-foreground">persegi (rasio 1:1)</span>,
