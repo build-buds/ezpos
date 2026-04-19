@@ -20,10 +20,30 @@ interface Props {
 }
 
 const themes = [
-  { value: "classic", label: "Classic", preview: "bg-white border border-gray-300" },
-  { value: "warm", label: "Warm", preview: "bg-[#FBF6EE] border border-[#E8DCC4]" },
-  { value: "modern", label: "Modern", preview: "bg-[#0F0F10] border border-[#2A2A2E]" },
-  { value: "minimal", label: "Minimal", preview: "bg-white border-b-2 border-gray-400" },
+  {
+    value: "classic",
+    label: "Classic",
+    preview: "bg-white border border-gray-300",
+    pattern: `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16'><circle cx='2' cy='2' r='1' fill='%23000000' opacity='0.12'/></svg>")`,
+  },
+  {
+    value: "warm",
+    label: "Warm",
+    preview: "bg-[#FBF6EE] border border-[#E8DCC4]",
+    pattern: `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14'><path d='M0 14L14 0' stroke='%238B6F47' stroke-width='0.6' opacity='0.3'/></svg>")`,
+  },
+  {
+    value: "modern",
+    label: "Modern",
+    preview: "bg-[#0F0F10] border border-[#2A2A2E]",
+    pattern: `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16'><path d='M16 0H0V16' fill='none' stroke='%23ffffff' stroke-width='0.5' opacity='0.15'/></svg>")`,
+  },
+  {
+    value: "minimal",
+    label: "Minimal",
+    preview: "bg-white border-b-2 border-gray-400",
+    pattern: `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='6' height='6'><path d='M0 3H6' stroke='%23000000' stroke-width='0.4' opacity='0.12'/></svg>")`,
+  },
 ];
 
 const SettingsDigitalMenu = ({ open, onClose }: Props) => {
@@ -363,7 +383,10 @@ const SettingsDigitalMenu = ({ open, onClose }: Props) => {
                     theme === t.value ? "border-primary" : "border-transparent bg-muted"
                   )}
                 >
-                  <div className={cn("w-full h-12 rounded-md mb-2", t.preview)} />
+                  <div
+                    className={cn("w-full h-12 rounded-md mb-2", t.preview)}
+                    style={{ backgroundImage: t.pattern }}
+                  />
                   {t.label}
                 </button>
               ))}
