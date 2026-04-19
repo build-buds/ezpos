@@ -56,17 +56,6 @@ const CheckoutSuccess = () => {
                 <p className="text-sm text-muted-foreground">Memverifikasi pembayaran...</p>
               </>
             )}
-            {status === "pending_doku" && (
-              <>
-                <Clock className="w-12 h-12 mx-auto text-primary" />
-                <h2 className="text-lg font-bold">Pembayaran Sedang Diproses</h2>
-                <p className="text-sm text-muted-foreground">
-                  Setelah pembayaran berhasil di DOKU, akun Anda akan otomatis di-upgrade ke Pro dalam 1-2 menit.
-                  Halaman ini akan refresh secara otomatis.
-                </p>
-                <Loader2 className="w-5 h-5 mx-auto text-muted-foreground animate-spin" />
-              </>
-            )}
             {status === "succeeded" && (
               <>
                 <CheckCircle className="w-12 h-12 mx-auto text-primary" />
