@@ -6,11 +6,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader2, Copy, Download, ExternalLink, Upload } from "lucide-react";
+import { Loader2, Copy, Download, ExternalLink, Upload, Shuffle, Info } from "lucide-react";
 import { toast } from "sonner";
 import QRCode from "qrcode";
 import SettingsSheet from "./SettingsSheet";
-import { generateSlug } from "@/lib/slug";
+import { generateSlug, isValidSlug, sanitizeSlugInput } from "@/lib/slug";
 import { generateMenuPdf } from "@/lib/menuPdf";
 import { cn } from "@/lib/utils";
 
@@ -20,9 +20,10 @@ interface Props {
 }
 
 const themes = [
-  { value: "classic", label: "Classic", preview: "bg-white border" },
-  { value: "warm", label: "Warm", preview: "bg-[#FBF6EE] border-[#E8DCC4]" },
-  { value: "modern", label: "Modern", preview: "bg-[#0F0F10] border-[#2A2A2E]" },
+  { value: "classic", label: "Classic", preview: "bg-white border border-gray-300" },
+  { value: "warm", label: "Warm", preview: "bg-[#FBF6EE] border border-[#E8DCC4]" },
+  { value: "modern", label: "Modern", preview: "bg-[#0F0F10] border border-[#2A2A2E]" },
+  { value: "minimal", label: "Minimal", preview: "bg-white border-b-2 border-gray-400" },
 ];
 
 const SettingsDigitalMenu = ({ open, onClose }: Props) => {
@@ -32,6 +33,7 @@ const SettingsDigitalMenu = ({ open, onClose }: Props) => {
   const [generatingPdf, setGeneratingPdf] = useState(false);
   const [enabled, setEnabled] = useState(false);
   const [slug, setSlug] = useState("");
+  const [originalSlug, setOriginalSlug] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [theme, setTheme] = useState("classic");
@@ -41,6 +43,7 @@ const SettingsDigitalMenu = ({ open, onClose }: Props) => {
   const [uploading, setUploading] = useState(false);
 
   const menuUrl = slug ? `${window.location.origin}/menu/${slug}` : "";
+  const slugValid = isValidSlug(slug);
 
   useEffect(() => {
     if (!open || !businessId) return;
@@ -58,6 +61,7 @@ const SettingsDigitalMenu = ({ open, onClose }: Props) => {
             await supabase.from("businesses").update({ slug: currentSlug }).eq("id", businessId);
           }
           setSlug(currentSlug);
+          setOriginalSlug(currentSlug);
           setEnabled(data.menu_enabled);
           setTitle(data.menu_title || "");
           setDescription(data.menu_description || "");
@@ -70,16 +74,37 @@ const SettingsDigitalMenu = ({ open, onClose }: Props) => {
   }, [open, businessId]);
 
   useEffect(() => {
-    if (!menuUrl) return;
+    if (!menuUrl || !slugValid) return;
     QRCode.toDataURL(menuUrl, { width: 300, margin: 1 }).then(setQrPreview);
-  }, [menuUrl]);
+  }, [menuUrl, slugValid]);
 
   const handleSave = async () => {
     if (!businessId) return;
+    if (!slugValid) {
+      toast.error("Slug harus 3-40 karakter, huruf kecil/angka/tanda hubung saja.");
+      return;
+    }
     setSaving(true);
+
+    // Cek slug unik jika berubah
+    if (slug !== originalSlug) {
+      const { data: existing } = await supabase
+        .from("businesses")
+        .select("id")
+        .eq("slug", slug)
+        .neq("id", businessId)
+        .maybeSingle();
+      if (existing) {
+        setSaving(false);
+        toast.error("Slug sudah dipakai bisnis lain. Coba yang lain.");
+        return;
+      }
+    }
+
     const { error } = await supabase
       .from("businesses")
       .update({
+        slug,
         menu_enabled: enabled,
         menu_title: title || null,
         menu_description: description || null,
@@ -93,12 +118,17 @@ const SettingsDigitalMenu = ({ open, onClose }: Props) => {
       toast.error("Gagal menyimpan: " + error.message);
       return;
     }
+    setOriginalSlug(slug);
     toast.success("Menu digital diperbarui!");
   };
 
   const handleCopy = () => {
     navigator.clipboard.writeText(menuUrl);
     toast.success("Tautan disalin!");
+  };
+
+  const handleRandomizeSlug = () => {
+    setSlug(generateSlug(businessName || "menu"));
   };
 
   const handleDownloadPdf = async () => {
@@ -125,9 +155,23 @@ const SettingsDigitalMenu = ({ open, onClose }: Props) => {
     const file = e.target.files?.[0];
     if (!file || !businessId) return;
     if (file.size > 2 * 1024 * 1024) {
-      toast.error("Maksimal 2MB");
+      toast.error("Ukuran maksimal 2MB");
       return;
     }
+
+    // Validasi rasio 1:1
+    const isSquare = await new Promise<boolean>((resolve) => {
+      const img = new Image();
+      img.onload = () => resolve(img.width === img.height);
+      img.onerror = () => resolve(false);
+      img.src = URL.createObjectURL(file);
+    });
+
+    if (!isSquare) {
+      toast.error("Logo harus rasio 1:1 (persegi). Crop dulu sebelum upload.");
+      return;
+    }
+
     setUploading(true);
     const ext = file.name.split(".").pop();
     const path = `${businessId}/menu-logo-${Date.now()}.${ext}`;
@@ -171,8 +215,42 @@ const SettingsDigitalMenu = ({ open, onClose }: Props) => {
             <Switch checked={enabled} onCheckedChange={setEnabled} />
           </div>
 
-          {/* URL + QR */}
+          {/* Custom Slug */}
           {enabled && (
+            <div className="space-y-2">
+              <Label className="text-xs font-semibold">Tautan Kustom (Slug)</Label>
+              <div className="flex gap-2">
+                <div className="flex-1 flex items-center h-11 rounded-xl border border-input bg-background overflow-hidden">
+                  <span className="px-3 text-xs text-muted-foreground border-r border-input bg-muted/50 h-full flex items-center whitespace-nowrap">
+                    /menu/
+                  </span>
+                  <Input
+                    value={slug}
+                    onChange={(e) => setSlug(sanitizeSlugInput(e.target.value))}
+                    placeholder="warung-saya"
+                    className="border-0 h-full rounded-none focus-visible:ring-0 text-xs"
+                  />
+                </div>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="h-11 w-11 shrink-0"
+                  onClick={handleRandomizeSlug}
+                  title="Acak ulang"
+                >
+                  <Shuffle className="w-4 h-4" />
+                </Button>
+              </div>
+              <p className={cn("text-xs", slugValid ? "text-muted-foreground" : "text-destructive")}>
+                {slugValid
+                  ? "3-40 karakter. Hanya huruf kecil, angka, dan tanda hubung."
+                  : "Slug tidak valid. Min 3 karakter, huruf kecil/angka/dash saja."}
+              </p>
+            </div>
+          )}
+
+          {/* URL + QR */}
+          {enabled && slugValid && (
             <div className="space-y-3">
               <Label className="text-xs font-semibold">Tautan Menu</Label>
               <div className="flex gap-2">
@@ -236,6 +314,13 @@ const SettingsDigitalMenu = ({ open, onClose }: Props) => {
           {/* Logo */}
           <div className="space-y-2">
             <Label className="text-xs font-semibold">Logo Menu</Label>
+            <div className="flex items-start gap-2 p-3 bg-primary/10 rounded-xl">
+              <Info className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Gunakan gambar <span className="font-semibold text-foreground">persegi (rasio 1:1)</span>,
+                minimal 200×200px, maksimal 2MB. Format PNG/JPG.
+              </p>
+            </div>
             <div className="flex items-center gap-3">
               {logoUrl ? (
                 <img src={logoUrl} alt="Logo" className="w-14 h-14 rounded-xl object-cover border" />
@@ -267,7 +352,7 @@ const SettingsDigitalMenu = ({ open, onClose }: Props) => {
           {/* Theme */}
           <div className="space-y-2">
             <Label className="text-xs font-semibold">Tema Menu</Label>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-2 gap-2">
               {themes.map((t) => (
                 <button
                   key={t.value}
@@ -278,7 +363,7 @@ const SettingsDigitalMenu = ({ open, onClose }: Props) => {
                     theme === t.value ? "border-primary" : "border-transparent bg-muted"
                   )}
                 >
-                  <div className={cn("w-full h-10 rounded-md mb-2", t.preview)} />
+                  <div className={cn("w-full h-12 rounded-md mb-2", t.preview)} />
                   {t.label}
                 </button>
               ))}
