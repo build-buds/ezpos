@@ -193,6 +193,14 @@ Deno.serve(async (req) => {
       );
     }
 
+    // SECURITY: only the owning user may trigger pushes for this notification
+    if (notif.user_id !== user.id) {
+      return new Response(
+        JSON.stringify({ error: "Forbidden" }),
+        { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     // Get push subscriptions for this user
     const { data: subs } = await supabaseAdmin
       .from("push_subscriptions")
