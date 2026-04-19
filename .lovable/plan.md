@@ -1,66 +1,68 @@
 
-User sudah selesai setup di DOKU dashboard dan ingin lanjut implementasi sekarang. Mereka ingin saya minta input untuk Client ID dan Secret Key.
+User ingin reset integrasi DOKU dan mulai ulang khusus untuk sandbox. Saya perlu hapus implementasi DOKU saat ini dan setup ulang dengan fokus sandbox.
 
-Plan: implementasi DOKU payment gateway secara minimal-viable dulu. Pakai DOKU Checkout (hosted page) — paling simpel, mirip flow Polar.
+Yang ada sekarang:
+- 2 edge functions: create-doku-checkout, doku-notification
+- 5 secrets DOKU sudah terset
+- UI: Pricing dialog 2 metode bayar, CheckoutSuccess polling
+- supabase/config.toml block doku-notification
 
-Strategi:
-1. Minta secrets dulu via add_secret (Client ID, Secret Key, Public Key DOKU, Private Key merchant, Env)
-2. Buat 2 edge functions: `create-doku-checkout` (auth required) + `doku-notification` (public webhook)
-3. Update `supabase/config.toml` untuk `verify_jwt = false` di doku-notification
-4. Update `Pricing.tsx` — tambah tombol kedua untuk DOKU
-5. Update `CheckoutSuccess.tsx` untuk handle invoice DOKU
+Strategi reset: hapus semua DOKU code, lalu rebuild bersih dengan fokus sandbox-only. Hardcode endpoint sandbox, simplify, dan dokumentasi sandbox-spesifik.
 
-Untuk DOKU Checkout v1: pakai header `Client-Id`, `Request-Id`, `Request-Timestamp`, `Signature` (HMAC-SHA256 base64). Webhook verifikasi pakai signature DOKU di header `Signature`.
+## Plan: Reset & Setup Ulang DOKU (Sandbox-Only)
 
-Keep plan concise.
+### Step 1: Hapus Integrasi DOKU Lama
+- Hapus folder `supabase/functions/create-doku-checkout/`
+- Hapus folder `supabase/functions/doku-notification/`
+- Hapus block `[functions.doku-notification]` di `supabase/config.toml`
+- Revert `Pricing.tsx`: hapus dialog pilihan metode, kembali ke 1 tombol Polar saja
+- Revert `CheckoutSuccess.tsx`: hapus polling DOKU
+- Hapus secrets via tool: `DOKU_CLIENT_ID`, `DOKU_SECRET_KEY`, `DOKU_PUBLIC_KEY`, `DOKU_PRIVATE_KEY`, `DOKU_ENV`
 
-## Plan: Implementasi DOKU Payment Gateway
+### Step 2: Konfirmasi Kredensial Sandbox Baru
+Saya minta ulang **3 secrets sandbox saja** (lebih simpel — `DOKU_PRIVATE_KEY` & `DOKU_ENV` tidak perlu lagi karena hardcode sandbox):
+- `DOKU_CLIENT_ID` — dari DOKU **sandbox** dashboard
+- `DOKU_SECRET_KEY` — dari DOKU **sandbox** dashboard
+- `DOKU_PUBLIC_KEY` — DOKU sandbox public key (untuk verifikasi webhook)
 
-### Step 1: Saya minta 5 secrets via tool
-- `DOKU_CLIENT_ID` — Client ID / API Key Anda
-- `DOKU_SECRET_KEY` — Secret Key Anda
-- `DOKU_PUBLIC_KEY` — DOKU Public Key (untuk verifikasi notifikasi dari DOKU)
-- `DOKU_PRIVATE_KEY` — Merchant Private Key yang Anda generate
-- `DOKU_ENV` — `sandbox` atau `production`
-
-### Step 2: Edge Functions
+### Step 3: Bangun Ulang Edge Functions (Sandbox-Hardcoded)
 
 **`create-doku-checkout`** (auth required)
-- Verifikasi user login (pola sama dengan Polar)
-- Generate `invoice_number` unik: `EZPOS-{userId}-{timestamp}`
-- Build payload Checkout DOKU (amount Rp 500.000, customer info, success_url, notification_url)
-- Sign request: HMAC-SHA256 dengan komponen `Client-Id`, `Request-Id`, `Request-Timestamp`, `Request-Target`, `Digest`
-- POST ke endpoint DOKU (sandbox/production sesuai env)
-- Return `payment_url` ke client
+- Hardcode `baseUrl = "https://api-sandbox.doku.com"`
+- Tetap pakai DOKU Checkout API v1 dengan signature HMAC-SHA256
+- Generate invoice: `EZPOS-{userIdPrefix}-{timestamp}`
+- Return payment URL ke client
 
-**`doku-notification`** (PUBLIC, `verify_jwt = false`)
-- Terima POST notifikasi pembayaran dari DOKU
-- Verifikasi signature dari header (anti-spoofing)
-- Parse `invoice_number` → extract `userId`
-- Jika status `SUCCESS`: upsert `subscriptions` (plan=`pro`, status=`active`, expires_at=+30 hari) pakai service role
-- Return 200 cepat
-
-### Step 3: Update `supabase/config.toml`
-Tambah block untuk `doku-notification` dengan `verify_jwt = false`.
+**`doku-notification`** (public webhook, `verify_jwt = false`)
+- Verifikasi signature DOKU dari header
+- Parse invoice → temukan user → upsert subscription jadi Pro 30 hari
+- Logging detail untuk memudahkan debug sandbox
 
 ### Step 4: Update UI
 
-**`src/pages/Pricing.tsx`**
-- Tombol "Upgrade ke Pro" → buka Dialog pilihan metode bayar:
-  - **Kartu Internasional (Polar)** — flow existing
-  - **VA / E-Wallet / QRIS (DOKU)** — flow baru
-- Handler `handleUpgradeDoku()` fetch ke `create-doku-checkout`, redirect ke payment URL
+**`Pricing.tsx`**
+- Tambah lagi Dialog pilih metode bayar (Polar vs DOKU)
+- Tandai DOKU dengan badge **"Sandbox"** kuning supaya jelas mode test
 
-**`src/pages/CheckoutSuccess.tsx`**
-- Tambah handle `?invoice=...` (DOKU): tampilkan "Pembayaran sedang diproses, akun aktif dalam 1-2 menit". Webhook yang aktivasi.
+**`CheckoutSuccess.tsx`**
+- Polling subscription status setelah redirect dari DOKU
 
-### Step 5: Webhook URL untuk didaftarkan di DOKU Dashboard
-Setelah deploy, daftarkan URL ini di DOKU dashboard → Notification URL:
-```text
-https://geepcyqmgracqsvqgeks.supabase.co/functions/v1/doku-notification
-```
+### Step 5: Panduan Setup Sandbox (Setelah Implementasi)
+
+Saya akan beri panduan lengkap:
+1. Login https://sandbox.doku.com
+2. Daftarkan webhook URL: `https://geepcyqmgracqsvqgeks.supabase.co/functions/v1/doku-notification`
+3. Test transaksi pakai VA dummy sandbox
+4. Cek logs `doku-notification`
 
 ### Tidak Diubah
-- Flow Polar tetap utuh
-- Tabel database tidak berubah (pakai `subscriptions` existing)
-- `useSubscription` hook tidak berubah
+- Polar tetap utuh (bisa test tetap berfungsi)
+- Tabel `subscriptions` tetap sama
+- Hooks & state management tidak berubah
+
+### Catatan
+Setelah Anda approve, saya akan:
+1. Hapus kode DOKU lama
+2. Hapus 5 secret DOKU lama  
+3. Minta 3 secret sandbox baru via tool
+4. Build ulang edge functions + UI
