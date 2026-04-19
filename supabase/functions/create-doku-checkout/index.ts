@@ -107,7 +107,17 @@ Deno.serve(async (req) => {
     const signatureRaw = await hmacSha256Base64(secretKey, signaturePayload);
     const signature = `HMACSHA256=${signatureRaw}`;
 
-    console.log("[DOKU sandbox] Creating checkout", { invoiceNumber, requestId });
+    console.log("[DOKU sandbox] Creating checkout", {
+      invoiceNumber,
+      requestId,
+      requestTimestamp,
+      clientIdPrefix: clientId?.slice(0, 12),
+      secretKeyLength: secretKey?.length,
+      secretKeyPrefix: secretKey?.slice(0, 8),
+      digest,
+      signaturePayload,
+      signature,
+    });
 
     const dokuRes = await fetch(`${DOKU_BASE_URL}${REQUEST_TARGET}`, {
       method: "POST",
