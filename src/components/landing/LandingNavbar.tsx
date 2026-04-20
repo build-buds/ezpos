@@ -4,6 +4,8 @@ import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { useAppState } from "@/contexts/AppContext";
+import logoWhite from "@/assets/logo-white.png";
+import logoBlack from "@/assets/logo-black.png";
 
 const navItems = [
   { label: "Fitur", href: "#features" },
@@ -28,8 +30,8 @@ const LandingNavbar = () => {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-primary-foreground/10 bg-primary text-primary-foreground">
       <div className="container flex h-16 max-w-7xl items-center justify-between px-4 md:px-6">
-        <Link to="/" className="flex items-center">
-          <span className="font-display text-xl font-bold tracking-tight">EZPOS</span>
+        <Link to="/" className="flex items-center" aria-label="EZPOS">
+          <img src={logoWhite} alt="EZPOS" className="h-7 w-auto" />
         </Link>
 
         <nav className="hidden items-center gap-8 md:flex">
@@ -70,7 +72,9 @@ const LandingNavbar = () => {
           </SheetTrigger>
           <SheetContent side="right" className="w-[280px]">
             <SheetHeader>
-              <SheetTitle className="font-display text-left">EZPOS</SheetTitle>
+              <SheetTitle className="text-left">
+                <img src={logoBlack} alt="EZPOS" className="h-6 w-auto" />
+              </SheetTitle>
             </SheetHeader>
             <div className="mt-6 flex flex-col gap-1">
               {navItems.map((item) => (

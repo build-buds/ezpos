@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import logoBlack from "@/assets/logo-black.png";
 
 const LandingFooter = () => {
   return (
@@ -7,7 +8,7 @@ const LandingFooter = () => {
         <div className="grid gap-8 md:grid-cols-4">
           <div>
             <div className="flex items-center">
-              <span className="font-display text-xl font-bold text-foreground">EZPOS</span>
+              <img src={logoBlack} alt="EZPOS" className="h-7 w-auto" />
             </div>
             <p className="mt-4 text-sm text-muted-foreground">
               Platform kasir & manajemen bisnis untuk pelaku usaha Indonesia.
