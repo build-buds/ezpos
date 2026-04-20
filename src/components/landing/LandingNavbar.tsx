@@ -26,11 +26,10 @@ const LandingNavbar = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-lg">
+    <header className="sticky top-0 z-50 w-full border-b border-primary-foreground/10 bg-primary text-primary-foreground">
       <div className="container flex h-16 max-w-7xl items-center justify-between px-4 md:px-6">
-        <Link to="/" className="flex items-center gap-2">
-          <img src="/logo.png" alt="EZPOS" className="h-8 w-auto" />
-          <span className="font-display text-xl font-bold text-foreground">EZPOS</span>
+        <Link to="/" className="flex items-center">
+          <span className="font-display text-xl font-bold tracking-tight">EZPOS</span>
         </Link>
 
         <nav className="hidden items-center gap-8 md:flex">
@@ -38,7 +37,7 @@ const LandingNavbar = () => {
             <button
               key={item.href}
               onClick={() => scrollTo(item.href)}
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+              className="text-sm font-medium text-primary-foreground/80 transition-colors hover:text-primary-foreground"
             >
               {item.label}
             </button>
@@ -46,7 +45,11 @@ const LandingNavbar = () => {
         </nav>
 
         <div className="hidden items-center gap-2 md:flex">
-          <Button variant="ghost" onClick={() => navigate(isLoggedIn ? "/dashboard" : "/auth")}>
+          <Button
+            variant="ghost"
+            className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground"
+            onClick={() => navigate(isLoggedIn ? "/dashboard" : "/auth")}
+          >
             Masuk
           </Button>
           <Button variant="cta" onClick={() => navigate(ctaTarget)}>
@@ -56,7 +59,12 @@ const LandingNavbar = () => {
 
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger asChild className="md:hidden">
-            <Button variant="ghost" size="icon" aria-label="Buka menu">
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label="Buka menu"
+              className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground"
+            >
               <Menu className="h-5 w-5" />
             </Button>
           </SheetTrigger>

@@ -15,7 +15,7 @@ export default {
     extend: {
       fontFamily: {
         sans: ["Inter", "sans-serif"],
-        display: ["Manrope", "Inter", "sans-serif"],
+        display: ["'Circular Std'", "Inter", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",
