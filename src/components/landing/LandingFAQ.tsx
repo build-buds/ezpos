@@ -14,8 +14,8 @@ const LandingFAQ = () => {
     <section id="faq" className="bg-muted/30 py-20 md:py-28">
       <div className="container max-w-3xl px-4 md:px-6">
         <div className="text-center">
-          <h2 className="font-display text-3xl font-bold tracking-tight md:text-5xl">
-            Pertanyaan <em className="text-primary">yang sering ditanya</em>
+          <h2 className="font-display text-3xl font-extrabold tracking-tight text-foreground md:text-5xl">
+            Pertanyaan <span className="text-primary">yang sering ditanya</span>
           </h2>
         </div>
 

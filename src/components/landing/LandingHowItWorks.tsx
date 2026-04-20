@@ -9,8 +9,8 @@ const LandingHowItWorks = () => {
     <section className="bg-background py-20 md:py-28">
       <div className="container max-w-7xl px-4 md:px-6">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="font-display text-3xl font-bold tracking-tight md:text-5xl">
-            Mulai dalam <em className="text-primary">3 langkah mudah</em>
+          <h2 className="font-display text-3xl font-extrabold tracking-tight text-foreground md:text-5xl">
+            Mulai dalam <span className="text-primary">3 langkah mudah</span>
           </h2>
         </div>
 

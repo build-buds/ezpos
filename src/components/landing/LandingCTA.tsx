@@ -16,7 +16,7 @@ const LandingCTA = () => {
           <div className="absolute -bottom-20 -left-20 h-72 w-72 rounded-full bg-accent/10 blur-3xl" />
 
           <div className="relative">
-            <h2 className="mx-auto max-w-3xl font-display text-3xl font-bold leading-tight text-primary-foreground md:text-5xl lg:text-6xl">
+            <h2 className="mx-auto max-w-3xl font-display text-3xl font-extrabold leading-tight text-primary-foreground md:text-5xl lg:text-6xl">
               <span className="text-accent">#SelaluAda</span> untuk membantu bisnis Anda tumbuh
             </h2>
             <p className="mx-auto mt-6 max-w-xl text-base text-primary-foreground/80 md:text-lg">

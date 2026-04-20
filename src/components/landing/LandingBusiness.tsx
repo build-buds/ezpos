@@ -27,8 +27,8 @@ const LandingBusiness = () => {
     <section id="business" className="bg-background py-20 md:py-28">
       <div className="container max-w-7xl px-4 md:px-6">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="font-display text-3xl font-bold tracking-tight text-foreground md:text-5xl">
-            Cocok untuk <em className="text-primary">semua jenis</em> usaha
+          <h2 className="font-display text-3xl font-extrabold tracking-tight text-foreground md:text-5xl">
+            Cocok untuk <span className="text-primary">semua jenis</span> usaha
           </h2>
           <p className="mt-4 text-base text-muted-foreground md:text-lg">
             Dari warung pinggir jalan sampai restoran fine dining — EZPOS menyesuaikan dengan kebutuhan Anda.
