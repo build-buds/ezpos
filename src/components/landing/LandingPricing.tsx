@@ -46,8 +46,8 @@ const LandingPricing = () => {
       <div className="container max-w-7xl px-4 md:px-6">
         <div className="mx-auto max-w-2xl text-center">
           <p className="text-sm font-semibold uppercase tracking-wider text-primary">Harga</p>
-          <h2 className="mt-3 font-display text-3xl font-bold tracking-tight md:text-5xl">
-            Pilih paket yang <em className="text-primary">tepat</em> untuk Anda
+          <h2 className="mt-3 font-display text-3xl font-extrabold tracking-tight text-foreground md:text-5xl">
+            Pilih paket yang <span className="text-primary">tepat</span> untuk Anda
           </h2>
           <p className="mt-4 text-muted-foreground">Tanpa biaya tersembunyi. Batalkan kapan saja.</p>
         </div>

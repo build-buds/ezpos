@@ -15,9 +15,9 @@ const LandingFeatures = () => {
       <div className="container max-w-7xl px-4 md:px-6">
         <div className="mx-auto max-w-2xl text-center">
           <p className="text-sm font-semibold uppercase tracking-wider text-primary">Fitur Lengkap</p>
-          <h2 className="mt-3 font-display text-3xl font-bold tracking-tight text-foreground md:text-5xl">
+          <h2 className="mt-3 font-display text-3xl font-extrabold tracking-tight text-foreground md:text-5xl">
             Semua yang Anda butuhkan, <br />
-            <em className="text-primary">dalam satu aplikasi</em>
+            <span className="text-primary">dalam satu aplikasi</span>
           </h2>
         </div>
 

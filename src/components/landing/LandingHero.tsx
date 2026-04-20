@@ -23,11 +23,11 @@ const LandingHero = () => {
               Platform Kasir & Manajemen Bisnis #1
             </div>
 
-            <h1 className="font-display text-4xl font-bold leading-[1.1] tracking-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl">
+            <h1 className="font-display text-4xl font-extrabold leading-[1.05] tracking-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl">
               <span className="text-primary">#SelaluAda</span>
               <br />
               Bersama Pelaku <br className="hidden sm:block" />
-              Usaha <em className="font-display italic">Indonesia</em>
+              Usaha <span className="text-primary">Indonesia</span>
             </h1>
 
             <p className="mx-auto max-w-xl font-sans text-base text-muted-foreground sm:text-lg lg:mx-0">

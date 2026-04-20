@@ -24,8 +24,8 @@ const LandingTestimonials = () => {
     <section className="bg-background py-20 md:py-28">
       <div className="container max-w-7xl px-4 md:px-6">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="font-display text-3xl font-bold tracking-tight md:text-5xl">
-            Dipercaya oleh <em className="text-primary">ribuan pelaku usaha</em>
+          <h2 className="font-display text-3xl font-extrabold tracking-tight text-foreground md:text-5xl">
+            Dipercaya oleh <span className="text-primary">ribuan pelaku usaha</span>
           </h2>
         </div>
 
@@ -34,7 +34,7 @@ const LandingTestimonials = () => {
             <Card key={t.name} className="p-6">
               <div className="flex gap-1">
                 {Array.from({ length: 5 }).map((_, i) => (
-                  <Star key={i} className="h-4 w-4 fill-accent text-accent" />
+                  <Star key={i} className="h-4 w-4 fill-warning text-warning" />
                 ))}
               </div>
               <p className="mt-4 text-sm leading-relaxed text-foreground">"{t.text}"</p>
