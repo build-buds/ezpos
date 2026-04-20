@@ -6,6 +6,7 @@ import { AppProvider } from "@/contexts/AppContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import PublicRoute from "@/components/PublicRoute";
 import SplashScreen from "./pages/SplashScreen";
+import Landing from "./pages/Landing";
 import Auth from "./pages/Auth";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
@@ -31,7 +32,8 @@ const App = () => (
         <Sonner />
         <OfflineBanner />
         <Routes>
-          <Route path="/" element={<SplashScreen />} />
+          <Route path="/" element={<Landing />} />
+          <Route path="/splash" element={<SplashScreen />} />
           <Route path="/auth" element={<PublicRoute><Auth /></PublicRoute>} />
           <Route path="/home" element={<Index />} />
           <Route path="/onboarding" element={<ProtectedRoute requireOnboarded={false}><OnboardingCategory /></ProtectedRoute>} />
