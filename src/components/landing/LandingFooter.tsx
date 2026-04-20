@@ -6,9 +6,8 @@ const LandingFooter = () => {
       <div className="container max-w-7xl px-4 py-12 md:px-6">
         <div className="grid gap-8 md:grid-cols-4">
           <div>
-            <div className="flex items-center gap-2">
-              <img src="/logo.png" alt="EZPOS" className="h-8 w-auto" />
-              <span className="font-display text-xl font-bold">EZPOS</span>
+            <div className="flex items-center">
+              <span className="font-display text-xl font-bold text-foreground">EZPOS</span>
             </div>
             <p className="mt-4 text-sm text-muted-foreground">
               Platform kasir & manajemen bisnis untuk pelaku usaha Indonesia.
