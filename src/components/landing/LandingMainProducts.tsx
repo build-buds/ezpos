@@ -1,6 +1,6 @@
 import ProductSection from "./ProductSection";
 import productPos from "@/assets/product-pos.png";
-import productQr from "@/assets/product-qr.svg";
+import productQr from "@/assets/product-qr.png";
 import productKiosk from "@/assets/product-kiosk.svg";
 import productQueue from "@/assets/product-queue.svg";
 
