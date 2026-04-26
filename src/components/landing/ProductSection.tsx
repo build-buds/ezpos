@@ -34,13 +34,13 @@ const ProductSection = ({
       <div className="container max-w-7xl px-4 md:px-6">
         <div className="grid items-center gap-10 md:grid-cols-2 md:gap-16">
           <div className={`order-1 ${reverse ? "md:order-2" : "md:order-1"}`}>
-            <div className="relative overflow-hidden rounded-3xl bg-muted/50 ring-1 ring-border">
+            <div className="relative">
               <div className="aspect-[4/3] w-full">
                 <img
                   src={image}
                   alt={imageAlt}
                   loading="lazy"
-                  className="h-full w-full object-cover"
+                  className="h-full w-full object-contain"
                 />
               </div>
             </div>
