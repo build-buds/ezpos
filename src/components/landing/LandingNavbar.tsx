@@ -8,11 +8,10 @@ import logoWhite from "@/assets/logo-white.png";
 import logoBlack from "@/assets/logo-black.png";
 
 const navItems = [
-  { label: "Produk & Fitur", href: "#produk" },
-  { label: "Tentang Kami", href: "#why-choose" },
-  { label: "Integrasi", href: "#integrasi" },
+  { label: "Fitur", href: "#features" },
+  { label: "Bisnis", href: "#business" },
   { label: "Harga", href: "#pricing" },
-  { label: "Resources", href: "#faq" },
+  { label: "FAQ", href: "#faq" },
 ];
 
 const LandingNavbar = () => {
@@ -55,20 +54,8 @@ const LandingNavbar = () => {
           >
             Masuk
           </Button>
-          <Button
-            variant="outline"
-            className="border-primary-foreground/30 bg-transparent text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground"
-            onClick={() => navigate(ctaTarget)}
-          >
-            Daftar
-          </Button>
-          <Button
-            variant="cta"
-            onClick={() =>
-              window.open("https://wa.me/6281234567890?text=Halo%20EZPOS,%20saya%20tertarik%20dengan%20produk%20Anda", "_blank")
-            }
-          >
-            Hubungi Kami
+          <Button variant="cta" onClick={() => navigate(ctaTarget)}>
+            Coba Gratis
           </Button>
         </div>
 
@@ -103,17 +90,8 @@ const LandingNavbar = () => {
                 <Button variant="outline" onClick={() => { setOpen(false); navigate(isLoggedIn ? "/dashboard" : "/auth"); }}>
                   Masuk
                 </Button>
-                <Button variant="outline" onClick={() => { setOpen(false); navigate(ctaTarget); }}>
-                  Daftar
-                </Button>
-                <Button
-                  variant="cta"
-                  onClick={() => {
-                    setOpen(false);
-                    window.open("https://wa.me/6281234567890?text=Halo%20EZPOS,%20saya%20tertarik%20dengan%20produk%20Anda", "_blank");
-                  }}
-                >
-                  Hubungi Kami
+                <Button variant="cta" onClick={() => { setOpen(false); navigate(ctaTarget); }}>
+                  Coba Gratis
                 </Button>
               </div>
             </div>
