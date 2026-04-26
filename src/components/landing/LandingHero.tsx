@@ -28,8 +28,7 @@ const LandingHero = () => {
               id="hero-title"
               className="font-display text-4xl font-extrabold leading-[1.05] tracking-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl"
             >
-              Menyederhanakan{" "}
-              <span className="text-primary">Manajemen Restoran</span>, Satu per Satu
+              Satu Aplikasi <span className="text-primary">POS</span> untuk Semua Kebutuhan Bisnismu
             </h1>
 
             <p className="mx-auto max-w-xl font-sans text-base text-muted-foreground sm:text-lg lg:mx-0">
