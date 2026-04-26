@@ -13,6 +13,7 @@ interface ProductSectionProps {
   primaryCta?: { label: string; to: string };
   secondaryCta?: { label: string; to: string };
   id?: string;
+  imageScale?: number;
 }
 
 const ProductSection = ({
@@ -26,6 +27,7 @@ const ProductSection = ({
   primaryCta,
   secondaryCta,
   id,
+  imageScale = 1,
 }: ProductSectionProps) => {
   const navigate = useNavigate();
 
@@ -35,12 +37,13 @@ const ProductSection = ({
         <div className="grid items-center gap-10 md:grid-cols-2 md:gap-16">
           <div className={`order-1 ${reverse ? "md:order-2" : "md:order-1"}`}>
             <div className="relative">
-              <div className="aspect-[4/3] w-full">
+              <div className="aspect-[4/3] w-full overflow-visible">
                 <img
                   src={image}
                   alt={imageAlt}
                   loading="lazy"
-                  className="h-full w-full object-contain"
+                  style={{ transform: `scale(${imageScale})` }}
+                  className="h-full w-full object-contain origin-center"
                 />
               </div>
             </div>
