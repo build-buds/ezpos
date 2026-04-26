@@ -17,7 +17,7 @@ const LandingHero = () => {
       </div>
 
       <div className="container max-w-7xl px-4 pt-16 md:px-6 md:pt-24 lg:pt-32">
-        <div className="grid items-end gap-8 lg:grid-cols-2 lg:gap-12">
+        <div className="grid items-center gap-8 lg:grid-cols-2 lg:gap-12">
           <div className="flex flex-col gap-6 pb-16 text-center lg:pb-32 lg:text-left">
             <div className="inline-flex items-center gap-2 self-center rounded-full border border-border bg-card px-4 py-1.5 text-xs font-medium text-muted-foreground lg:self-start">
               <Sparkles className="h-3.5 w-3.5 text-primary" />
@@ -60,7 +60,7 @@ const LandingHero = () => {
           </div>
 
           <div className="relative flex justify-center lg:justify-end">
-            <div className="relative w-full max-w-md sm:max-w-lg lg:max-w-2xl xl:max-w-[680px]">
+            <div className="relative w-full max-w-lg sm:max-w-xl lg:max-w-2xl xl:max-w-[820px]">
               <div className="absolute inset-0 -z-10 mx-auto h-full w-full rounded-[3rem] bg-gradient-to-br from-primary/20 via-accent/10 to-primary/5 blur-2xl" />
               <div className="absolute right-2 top-4 z-10 rounded-2xl bg-accent px-4 py-2 font-display text-sm font-bold text-accent-foreground shadow-lg sm:right-6 sm:top-8 md:px-5 md:py-2.5 md:text-base">
                 100% Gratis

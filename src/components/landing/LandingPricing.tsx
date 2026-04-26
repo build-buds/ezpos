@@ -61,7 +61,7 @@ const LandingPricing = () => {
           {plans.map((plan) => (
             <Card
               key={plan.name}
-              className={`relative p-8 ${plan.highlighted ? "border-2 border-primary shadow-2xl" : ""}`}
+              className={`relative flex flex-col p-8 ${plan.highlighted ? "border-2 border-primary shadow-2xl" : ""}`}
             >
               {plan.highlighted && (
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-accent px-4 py-1 text-xs font-bold text-accent-foreground">
@@ -75,7 +75,7 @@ const LandingPricing = () => {
                 <span className="text-muted-foreground">{plan.period}</span>
               </div>
 
-              <ul className="mt-6 space-y-3">
+              <ul className="mt-6 flex-1 space-y-3">
                 {plan.features.map((f) => (
                   <li key={f} className="flex items-start gap-3 text-sm">
                     <Check className="mt-0.5 h-4 w-4 shrink-0 text-success" />
