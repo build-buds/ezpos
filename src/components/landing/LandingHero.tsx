@@ -59,7 +59,7 @@ const LandingHero = () => {
             </div>
           </div>
 
-          <div className="relative flex justify-center lg:justify-end">
+          <div className="relative flex justify-center self-end lg:justify-end">
             <div className="relative w-full max-w-lg sm:max-w-xl lg:max-w-2xl xl:max-w-[820px]">
               <div className="absolute inset-0 -z-10 mx-auto h-full w-full rounded-[3rem] bg-gradient-to-br from-primary/20 via-accent/10 to-primary/5 blur-2xl" />
               <div className="absolute right-2 top-4 z-10 rounded-2xl bg-accent px-4 py-2 font-display text-sm font-bold text-accent-foreground shadow-lg sm:right-6 sm:top-8 md:px-5 md:py-2.5 md:text-base">
