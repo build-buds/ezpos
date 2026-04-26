@@ -40,6 +40,7 @@ const LandingMainProducts = () => {
         image={productQr}
         imageAlt="Pelanggan memindai QR menu EZPOS di meja restoran"
         reverse
+        imageScale={1.18}
         primaryCta={{ label: "Pelajari Lebih Lanjut", to: "/auth" }}
         secondaryCta={{ label: "Lihat Demo", to: "#features" }}
       />
