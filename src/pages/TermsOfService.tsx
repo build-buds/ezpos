@@ -53,7 +53,7 @@ const TermsOfService = () => {
 
         <h2 className="text-base font-bold mt-6">9. Kontak</h2>
         <p>Jika Anda memiliki pertanyaan tentang syarat dan ketentuan ini, silakan hubungi kami melalui fitur bantuan di dalam aplikasi.</p>
-      </div>
+      </main>
     </div>
   );
 };
