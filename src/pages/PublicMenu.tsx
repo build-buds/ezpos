@@ -9,6 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import SEO from "@/components/SEO";
 
 interface BusinessData {
   id: string;
@@ -165,6 +166,15 @@ const PublicMenu = () => {
       className={`min-h-screen ${theme.bg} ${theme.text}`}
       style={theme.bgPattern ? { backgroundImage: theme.bgPattern } : undefined}
     >
+      <SEO
+        title={`${business.menu_title || business.name} — Menu Digital`}
+        description={
+          business.menu_description ||
+          `Lihat menu digital ${business.name} dan pesan langsung dari ponsel Anda. Didukung oleh EZPOS.`
+        }
+        path={`/menu/${slug ?? ""}`}
+        image={business.menu_logo_url || undefined}
+      />
       {/* Header */}
       <header
         className="px-6 pt-10 pb-8 text-white"
