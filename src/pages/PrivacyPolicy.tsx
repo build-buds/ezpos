@@ -70,7 +70,7 @@ const PrivacyPolicy = () => {
 
         <h2 className="text-base font-bold mt-6">9. Kontak</h2>
         <p>Untuk pertanyaan tentang kebijakan privasi ini, silakan hubungi kami melalui fitur bantuan di dalam aplikasi.</p>
-      </div>
+      </main>
     </div>
   );
 };
