@@ -59,7 +59,8 @@ const LandingHero = () => {
                   }}
                 >
                   <PlayCircle className="mr-1 h-4 w-4" />
-                Tonton Video
+                  Tonton Video
+                </a>
               </Button>
             </div>
 
