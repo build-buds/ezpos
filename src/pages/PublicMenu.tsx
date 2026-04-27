@@ -94,12 +94,9 @@ const PublicMenu = () => {
   useEffect(() => {
     if (!slug) return;
     (async () => {
-      const { data: biz } = await supabase
-        .from("businesses")
-        .select("id, name, address, menu_title, menu_description, menu_theme, menu_accent_color, menu_logo_url")
-        .eq("slug", slug)
-        .eq("menu_enabled", true)
-        .maybeSingle();
+      const { data: bizRows } = await supabase
+        .rpc("get_public_menu_business", { _slug: slug });
+      const biz = Array.isArray(bizRows) ? bizRows[0] : bizRows;
 
       if (!biz) {
         setLoading(false);
