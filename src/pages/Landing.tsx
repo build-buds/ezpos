@@ -14,8 +14,31 @@ import LandingIntegrations from "@/components/landing/LandingIntegrations";
 import LandingFAQ from "@/components/landing/LandingFAQ";
 import LandingCTA from "@/components/landing/LandingCTA";
 import LandingFooter from "@/components/landing/LandingFooter";
+import { useRevealOnScroll } from "@/hooks/useRevealOnScroll";
 
 const Landing = () => {
+  const revealRef = useRevealOnScroll<HTMLDivElement>();
+
+  // Auto cache-busting: clear caches & unregister SW so the landing page
+  // always reflects the latest deployed version on every visit.
+  useEffect(() => {
+    const bustCaches = async () => {
+      try {
+        if ("caches" in window) {
+          const keys = await caches.keys();
+          await Promise.all(keys.map((k) => caches.delete(k)));
+        }
+        if ("serviceWorker" in navigator) {
+          const regs = await navigator.serviceWorker.getRegistrations();
+          await Promise.all(regs.map((r) => r.unregister()));
+        }
+      } catch {
+        // best-effort — ignore failures
+      }
+    };
+    bustCaches();
+  }, []);
+
   useEffect(() => {
     document.title =
       "EZPOS — Kasir Restoran, QR Ordering & Manajemen F&B #1 di Indonesia";
@@ -72,22 +95,22 @@ const Landing = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div ref={revealRef} className="min-h-screen bg-background">
       <LandingNavbar />
       <main>
-        <LandingHero />
-        <LandingStats />
-        <LandingProductIntro />
-        <LandingMainProducts />
-        <LandingSubProducts />
-        <LandingOthers />
-        <LandingWhyChoose />
-        <LandingHowItWorks />
-        <LandingPricing />
-        <LandingTestimonials />
-        <LandingIntegrations />
-        <LandingFAQ />
-        <LandingCTA />
+        <div data-reveal><LandingHero /></div>
+        <div data-reveal><LandingStats /></div>
+        <div data-reveal><LandingProductIntro /></div>
+        <div data-reveal><LandingMainProducts /></div>
+        <div data-reveal><LandingSubProducts /></div>
+        <div data-reveal><LandingOthers /></div>
+        <div data-reveal><LandingWhyChoose /></div>
+        <div data-reveal><LandingHowItWorks /></div>
+        <div data-reveal><LandingPricing /></div>
+        <div data-reveal><LandingTestimonials /></div>
+        <div data-reveal><LandingIntegrations /></div>
+        <div data-reveal><LandingFAQ /></div>
+        <div data-reveal><LandingCTA /></div>
       </main>
       <LandingFooter />
     </div>
