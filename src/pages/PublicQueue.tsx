@@ -61,13 +61,13 @@ const PublicQueuePage = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <header className="px-6 py-4 border-b" style={{ borderColor: `${accent}33` }}>
+      <header className="px-4 sm:px-6 py-4 border-b" style={{ borderColor: `${accent}33` }}>
         <p className="text-xs text-muted-foreground">Antrian</p>
-        <h1 className="text-lg font-bold truncate">{business.name}</h1>
+        <h1 className="text-base sm:text-lg font-bold truncate">{business.name}</h1>
       </header>
 
-      <main className="flex-1 flex items-center justify-center p-6">
-        <div className="w-full max-w-md">
+      <main className="flex-1 flex items-center justify-center p-4 sm:p-6">
+        <div className="w-full max-w-md md:max-w-lg">
           {stage === "welcome" && (
             <WelcomeStage
               title={settings.welcome_title}

@@ -28,18 +28,18 @@ const QueueHistory = () => {
 
   return (
     <div className="space-y-3">
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-3 gap-2 sm:gap-3">
         <Card className="p-3">
           <p className="text-xs text-muted-foreground">Total 7 hari</p>
-          <p className="text-2xl font-extrabold">{tickets.length}</p>
+          <p className="text-xl sm:text-2xl font-extrabold">{tickets.length}</p>
         </Card>
         <Card className="p-3">
-          <p className="text-xs text-muted-foreground">Rata-rata Tunggu</p>
-          <p className="text-2xl font-extrabold">{avgWaitMin}m</p>
+          <p className="text-xs text-muted-foreground truncate">Rata-rata Tunggu</p>
+          <p className="text-xl sm:text-2xl font-extrabold">{avgWaitMin}m</p>
         </Card>
         <Card className="p-3">
           <p className="text-xs text-muted-foreground">No-show</p>
-          <p className="text-2xl font-extrabold">{noShowRate}%</p>
+          <p className="text-xl sm:text-2xl font-extrabold">{noShowRate}%</p>
         </Card>
       </div>
 
@@ -50,16 +50,16 @@ const QueueHistory = () => {
           {tickets.map((t) => {
             const s = statusLabel[t.status] || { label: t.status, variant: "secondary" as const };
             return (
-              <div key={t.id} className="flex items-center justify-between p-3">
-                <div className="min-w-0">
-                  <p className="font-semibold">
+              <div key={t.id} className="flex items-center justify-between gap-2 p-3">
+                <div className="min-w-0 flex-1">
+                  <p className="font-semibold truncate">
                     {t.number} <span className="font-normal text-muted-foreground">— {t.name}</span>
                   </p>
                   <p className="text-xs text-muted-foreground">
                     {new Date(t.created_at).toLocaleString("id-ID", { dateStyle: "short", timeStyle: "short" })}
                   </p>
                 </div>
-                <Badge variant={s.variant}>{s.label}</Badge>
+                <Badge variant={s.variant} className="shrink-0">{s.label}</Badge>
               </div>
             );
           })}
