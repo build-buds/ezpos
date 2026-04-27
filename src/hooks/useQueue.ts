@@ -119,7 +119,7 @@ export const useQueueTickets = (range: "active" | "history" = "active") => {
   useEffect(() => {
     if (!businessId) return;
     const channel = supabase
-      .channel(`queue-tickets-${businessId}`)
+      .channel(`queue-tickets-${businessId}-${Math.random().toString(36).slice(2)}`)
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "queue_tickets", filter: `business_id=eq.${businessId}` },
@@ -226,7 +226,7 @@ export const usePublicTicket = (ticketId: string | null, businessId: string | nu
   useEffect(() => {
     if (!businessId) return;
     const channel = supabase
-      .channel(`public-queue-${businessId}`)
+      .channel(`public-queue-${businessId}-${Math.random().toString(36).slice(2)}`)
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "queue_tickets", filter: `business_id=eq.${businessId}` },
