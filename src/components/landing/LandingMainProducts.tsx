@@ -1,7 +1,7 @@
 import ProductSection from "./ProductSection";
 import productPos from "@/assets/product-pos.png";
 import productQr from "@/assets/product-qr.png";
-import productKiosk from "@/assets/product-kiosk.svg";
+import productKiosk from "@/assets/product-kiosk-hero.png";
 import productQueue from "@/assets/product-queue-hero.png";
 
 const LandingMainProducts = () => {
@@ -58,6 +58,7 @@ const LandingMainProducts = () => {
         ]}
         image={productKiosk}
         imageAlt="EZPOS Kiosk self-service ordering di restoran"
+        imageScale={1.1}
         primaryCta={{ label: "Pelajari Lebih Lanjut", to: "/auth" }}
         secondaryCta={{ label: "Lihat Demo", to: "#features" }}
       />
