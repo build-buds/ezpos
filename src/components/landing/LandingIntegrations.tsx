@@ -50,18 +50,18 @@ const LandingIntegrations = () => {
           </p>
         </div>
 
-        <div className="mx-auto mt-12 grid max-w-5xl grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+        <div className="mx-auto mt-12 grid max-w-5xl grid-cols-2 items-center gap-x-8 gap-y-10 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
           {integrations.map((item) => (
             <div
               key={item.name}
-              className="flex h-20 items-center justify-center rounded-2xl border border-border bg-card px-4 text-sm font-semibold text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
+              className="flex h-12 items-center justify-center text-sm font-semibold text-muted-foreground transition-opacity hover:opacity-80"
             >
               {item.logo ? (
                 <img
                   src={item.logo}
                   alt={`${item.name} logo`}
                   loading="lazy"
-                  className="max-h-8 w-auto max-w-[80%] object-contain"
+                  className="max-h-10 w-auto max-w-full object-contain"
                 />
               ) : (
                 item.name
