@@ -245,7 +245,10 @@ const AddMemberDialog = ({ open, onClose }: { open: boolean; onClose: () => void
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
       <DialogContent className="sm:max-w-md">
-        <DialogHeader><DialogTitle>Tambah Member</DialogTitle></DialogHeader>
+        <DialogHeader>
+          <DialogTitle>Tambah Member</DialogTitle>
+          <DialogDescription>Daftarkan pelanggan baru ke program loyalty.</DialogDescription>
+        </DialogHeader>
         <div className="space-y-3">
           <div><Label>Nama *</Label><Input value={name} onChange={(e) => setName(e.target.value)} maxLength={100} /></div>
           <div><Label>No HP *</Label><Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="08xxx" maxLength={20} /></div>
