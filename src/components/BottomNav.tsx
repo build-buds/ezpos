@@ -1,12 +1,12 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { LayoutDashboard, ShoppingCart, Package, FileText, Settings } from "lucide-react";
+import { LayoutDashboard, ShoppingCart, Package, Sparkles, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
   { path: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { path: "/pos", label: "Kasir", icon: ShoppingCart },
   { path: "/products", label: "Produk", icon: Package },
-  { path: "/reports", label: "Laporan", icon: FileText },
+  { path: "/modules", label: "Modul", icon: Sparkles },
   { path: "/settings", label: "Lainnya", icon: Settings },
 ];
 
