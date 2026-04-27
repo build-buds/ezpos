@@ -2,7 +2,7 @@ import { Check, Heart, Link2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import loyaltyMockup from "@/assets/loyalty-mockup.svg";
+import loyaltyMockup from "@/assets/loyalty-mockup.png";
 
 const loyaltyFeatures = [
   "Program poin & cashback otomatis",
@@ -27,13 +27,13 @@ const LandingOthers = () => {
 
         <div className="mt-14 grid items-center gap-10 md:grid-cols-2 md:gap-16">
           <div className="order-1">
-            <div className="relative overflow-hidden rounded-3xl bg-muted/50 ring-1 ring-border">
+            <div className="relative overflow-hidden rounded-3xl bg-muted/50 ring-1 ring-border p-3 sm:p-4">
               <div className="aspect-[4/3] w-full">
                 <img
                   src={loyaltyMockup}
-                  alt="Mockup aplikasi Loyalty Programme EZPOS pada tiga perangkat HP"
+                  alt="Dashboard Loyalty Programme EZPOS"
                   loading="lazy"
-                  className="h-full w-full object-cover"
+                  className="h-full w-full object-contain"
                 />
               </div>
             </div>
