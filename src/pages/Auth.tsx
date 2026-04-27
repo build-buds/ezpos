@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import logoImg from "@/assets/logo.png";
 import { toast } from "sonner";
+import SEO from "@/components/SEO";
 
 const Auth = () => {
   const { isOnboarded, isLoggedIn, isBusinessDataLoaded } = useAppState();
@@ -100,6 +101,12 @@ const Auth = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center px-6">
+      <SEO
+        title="Masuk atau Daftar — EZPOS"
+        description="Masuk ke akun EZPOS atau daftar gratis untuk mulai mengelola kasir POS, QR ordering, dan operasional bisnis F&B Anda."
+        path="/auth"
+        noIndex
+      />
       <div className="w-full max-w-sm md:max-w-md space-y-8">
         <div className="flex flex-col items-center gap-2">
           <img src={logoImg} alt="EZPOS Logo" className="w-14 h-14 md:w-16 md:h-16 rounded-2xl" />
