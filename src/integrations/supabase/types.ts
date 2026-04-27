@@ -116,6 +116,87 @@ export type Database = {
         }
         Relationships: []
       }
+      kiosk_sessions: {
+        Row: {
+          business_id: string
+          completed_at: string | null
+          id: string
+          order_type: string | null
+          started_at: string
+          total: number | null
+          transaction_id: string | null
+        }
+        Insert: {
+          business_id: string
+          completed_at?: string | null
+          id?: string
+          order_type?: string | null
+          started_at?: string
+          total?: number | null
+          transaction_id?: string | null
+        }
+        Update: {
+          business_id?: string
+          completed_at?: string | null
+          id?: string
+          order_type?: string | null
+          started_at?: string
+          total?: number | null
+          transaction_id?: string | null
+        }
+        Relationships: []
+      }
+      kiosk_settings: {
+        Row: {
+          accent_color: string
+          ask_loyalty: boolean
+          ask_order_type: boolean
+          business_id: string
+          created_at: string
+          enabled: boolean
+          id: string
+          idle_timeout_seconds: number
+          payment_methods: string[]
+          success_message: string
+          terms: string | null
+          updated_at: string
+          welcome_subtitle: string
+          welcome_title: string
+        }
+        Insert: {
+          accent_color?: string
+          ask_loyalty?: boolean
+          ask_order_type?: boolean
+          business_id: string
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          idle_timeout_seconds?: number
+          payment_methods?: string[]
+          success_message?: string
+          terms?: string | null
+          updated_at?: string
+          welcome_subtitle?: string
+          welcome_title?: string
+        }
+        Update: {
+          accent_color?: string
+          ask_loyalty?: boolean
+          ask_order_type?: boolean
+          business_id?: string
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          idle_timeout_seconds?: number
+          payment_methods?: string[]
+          success_message?: string
+          terms?: string | null
+          updated_at?: string
+          welcome_subtitle?: string
+          welcome_title?: string
+        }
+        Relationships: []
+      }
       loyalty_members: {
         Row: {
           birthday: string | null
