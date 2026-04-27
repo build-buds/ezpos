@@ -68,6 +68,27 @@ export type Database = {
         }
         Relationships: []
       }
+      module_interests: {
+        Row: {
+          created_at: string
+          id: string
+          module_slug: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          module_slug: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          module_slug?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           body: string | null

@@ -1,63 +1,96 @@
-
 ## Tujuan
-Membuat halaman baru `/contact` (Hubungi Kami) yang terinspirasi dari screenshot yang Anda berikan, namun **menggunakan brand EZPOS** (Cobalt Blue `#2563EB` + Neon Yellow `#D4FF00`, font Inter, gaya minimalis landing page yang ada). Tombol "Hubungi Kami" di **navbar (desktop & mobile)** akan diubah agar mengarah ke halaman ini, bukan langsung ke WhatsApp.
+Sinkronkan dashboard EZPOS dengan janji landing page. Fitur high-impact dibangun penuh, sisanya tampil sebagai item menu dengan badge **"Segera Hadir"** + halaman info & form notify.
 
-## Perubahan
+## Audit Landing → Dashboard
 
-### 1. Halaman baru: `src/pages/Contact.tsx`
-Struktur halaman:
-- **LandingNavbar** di atas (konsisten dengan landing).
-- **Hero section** dengan tagline "Hubungi Kami" + "Mari Terhubung dengan EZPOS" (kata "EZPOS" diberi warna accent / Neon Yellow di atas background gelap, atau primary blue di atas background terang — selaras brand).
-- **Layout 2 kolom** (stack di mobile):
-  - **Kolom kiri** — info kontak:
-    - "Kami akan merespons dalam 24 jam"
-    - **Lokasi Kami** — alamat kantor (placeholder Jakarta / akan diisi user nanti)
-    - **Email Kami** — `halo@ezpos.id`
-    - **Kontak Kami** — nomor WhatsApp `+62 812-3456-7890`
-    - Setiap item memakai ikon dari `lucide-react` (`MapPin`, `Mail`, `Phone`) di dalam rounded square dengan background `bg-primary/10` dan ikon `text-primary`.
-  - **Kolom kanan** — form kontak (Card dengan `bg-card`, `rounded-2xl`, `border`, `shadow-sm`):
-    - Nama* (Input)
-    - Nomor HP* (Input dengan prefix +62)
-    - Email* (Input)
-    - Subjek* (Input)
-    - Pesan (Textarea)
-    - Checkbox: "Saya setuju menerima informasi & promosi dari EZPOS"
-    - Tombol **Kirim** full-width memakai `variant="cta"` (Neon Yellow) — selaras brand.
-- **LandingFooter** di bawah.
-- Tombol **floating WhatsApp** di pojok kanan bawah ("Chat dengan kami di WhatsApp") menggunakan warna hijau WhatsApp standar (pengecualian fungsional, bukan elemen brand utama) — opsional, bisa dihilangkan kalau Anda mau strict brand only. Saya akan **menyertakan** karena ada di referensi.
+| Fitur landing | Status saat ini | Rencana |
+|---|---|---|
+| Kasir POS Cepat | ✅ Ada (`/pos`) | Tetap |
+| Manajemen Produk | ✅ Ada (`/products`) | Tetap |
+| Laporan Real-time | ✅ Ada (`/reports`) | Tetap |
+| Menu Digital QR | ✅ Ada (Settings → Menu Digital) | Tetap |
+| Mode Offline | ✅ Ada (banner + cache) | Tetap |
+| Notifikasi Pintar | ✅ Ada (push + in-app) | Tetap |
+| **EZPOS QR Order** (pesan dari meja → KDS) | ⚠️ Hanya menu view, belum bisa order | **Bangun penuh** |
+| **KDS** (Kitchen Display) | ❌ Belum ada | **Bangun penuh** (dependency QR Order) |
+| **Loyalty Programme** (poin, member) | ❌ Belum ada | **Bangun penuh** |
+| **CRM Pelanggan** | ❌ Belum ada | **Bangun penuh** (dasar: data customer + segmentasi) |
+| **Biolink** halaman bisnis | ❌ Belum ada | **Bangun penuh** (sederhana) |
+| **EZPOS Kiosk** self-service | ❌ Belum ada | 🟡 Coming Soon |
+| **EZPOS Queue** antrian | ❌ Belum ada | 🟡 Coming Soon |
+| **EDS** Expo Display | ❌ Belum ada | 🟡 Coming Soon |
+| **PDA** Waiter Device | ❌ Belum ada | 🟡 Coming Soon |
+| **Cloud Printer** | ❌ Belum ada | 🟡 Coming Soon |
 
-### 2. Validasi & submit form
-- Pakai **zod** + react-hook-form (sudah ada di project) untuk validasi:
-  - nama 1–100 char, email valid, telp 8–20 digit, subjek 1–150 char, pesan max 1000 char.
-- Saat submit: format pesan lalu **buka WhatsApp** ke `https://wa.me/6281234567890?text=...` (encodeURIComponent) di tab baru, dan tampilkan toast `sonner` "Pesan berhasil dikirim, kami akan menghubungi Anda segera." (Tidak perlu backend — sesuai pola landing page existing.)
+## Strategi Eksekusi (5 iterasi)
 
-### 3. Routing — `src/App.tsx`
-Tambah route publik:
-```tsx
-<Route path="/contact" element={<Contact />} />
+Karena scope sangat besar, saya bagi menjadi **5 iterasi terpisah** yang masing-masing bisa dirilis & diuji. Plan ini mendeskripsikan **arsitektur** seluruhnya, tapi implementasi dilakukan iterasi per iterasi setelah Anda approve plan ini. Setelah selesai iterasi ke-N, Anda bisa lanjut ke N+1 atau berhenti.
+
+### Iterasi 1 — Navigasi Modul + Coming Soon (cepat, fondasi)
+- Tambah menu **"Modul"** baru di sidebar/bottom-nav (atau jadikan "Lainnya" di bottom-nav sebagai grid modul, Settings dipindah ke header).
+- Halaman `/modules` menampilkan **semua modul** sebagai card dengan status:
+  - ✅ Aktif (link langsung)
+  - 🟡 Segera Hadir (klik → halaman info + tombol "Notify saya")
+- Halaman info per modul `/modules/:slug` (kiosk, queue, eds, pda, printer) dengan deskripsi, ilustrasi, dan form interest.
+- Tabel baru: `module_interests (user_id, module_slug, created_at)`.
+
+### Iterasi 2 — EZPOS QR Order + KDS
+- Public menu `/menu/:slug` ditambah **keranjang & form order** (nama meja/no meja).
+- Tabel baru: `orders (id, business_id, table_no, customer_name, items jsonb, status, created_at)`. Status: `new → preparing → ready → served`.
+- Halaman dashboard baru `/kds` (Kitchen Display) — list order real-time (Supabase Realtime), tombol ubah status, suara notifikasi pesanan baru.
+- Pesanan selesai (`served`) otomatis dibuat sebagai transaction.
+- Setting di Settings → Menu Digital: toggle "Terima order online".
+
+### Iterasi 3 — Loyalty Programme
+- Tabel baru: `customers (id, business_id, name, phone, points, total_spent)`, `loyalty_config (business_id, points_per_rupiah, redeem_ratio)`.
+- Halaman `/loyalty` di dashboard:
+  - Tab "Member" — list customer + poin
+  - Tab "Pengaturan" — atur rasio poin (contoh: 1 poin / Rp 1.000)
+- Integrasi di POS: input/scan no HP customer saat checkout → poin otomatis ditambah; opsi redeem poin sebagai diskon.
+
+### Iterasi 4 — CRM
+- Reuse tabel `customers`. Tambah field `tags`, `last_visit`, `notes`.
+- Halaman `/crm` di dashboard:
+  - List + search + filter customer
+  - Detail customer: riwayat transaksi, total spend, frekuensi
+  - Segmentasi (VIP, regular, dorman) auto berdasarkan total_spent & last_visit
+  - Export CSV
+- Quick action: kirim pesan WhatsApp (open `wa.me/<nomor>?text=...` dengan template).
+
+### Iterasi 5 — Biolink
+- Tabel baru: `biolinks (business_id, slug, bio, links jsonb, theme, avatar_url)`.
+- Public route `/bio/:slug` — landing minimal: avatar, nama, bio, daftar link (menu digital, WhatsApp, IG, lokasi Google Maps, telpon).
+- Editor di Settings → Biolink: drag & drop list link, pilih tema, copy URL.
+
+## Struktur Halaman Dashboard Sesudah Selesai
+
+```text
+Bottom nav (mobile)        Sidebar (desktop)
+├─ Dashboard               ├─ Dashboard
+├─ Kasir                   ├─ Kasir
+├─ Produk                  ├─ Produk
+├─ Modul ▼                 ├─ Modul
+│  ├─ KDS                  │  ├─ KDS                ✅
+│  ├─ Loyalty              │  ├─ Loyalty            ✅
+│  ├─ CRM                  │  ├─ CRM                ✅
+│  ├─ Biolink              │  ├─ Biolink            ✅
+│  ├─ Kiosk        🟡      │  ├─ Kiosk           🟡
+│  ├─ Queue        🟡      │  ├─ Queue           🟡
+│  ├─ EDS          🟡      │  ├─ EDS             🟡
+│  ├─ PDA          🟡      │  ├─ PDA             🟡
+│  └─ Cloud Printer 🟡     │  └─ Cloud Printer   🟡
+├─ Laporan                 ├─ Laporan
+└─ Pengaturan              └─ Pengaturan
 ```
 
-### 4. Update tombol "Hubungi Kami" — `src/components/landing/LandingNavbar.tsx`
-- Desktop & mobile: ubah `onClick` dari `window.open(wa.me/...)` menjadi `navigate("/contact")`. Tetap pakai `variant="cta"`.
+## Detail Teknis
 
-### 5. Mobile responsive
-- Grid `grid-cols-1 lg:grid-cols-2` untuk konten utama.
-- Padding responsif `px-4 md:px-6 lg:px-8`, `py-12 md:py-20`.
-- Form tetap full-width di mobile, tombol Kirim full-width.
-- Floating WhatsApp button: `fixed bottom-4 right-4` dengan ukuran lebih kecil di mobile.
+- **Database**: tabel baru semuanya RLS — owner-only via `business_id IN (SELECT id FROM businesses WHERE owner_id = auth.uid())`. Public read hanya untuk `biolinks` & order submission.
+- **Realtime**: enable `supabase_realtime` untuk tabel `orders` (KDS) — pakai pola mount-safe yang sudah ada di project memory.
+- **Pro gating**: KDS, Loyalty, CRM, Biolink → fitur Pro (cek `useIsPro()`). User free lihat preview + CTA upgrade.
+- **Routing**: tambah route baru di `src/App.tsx`, semua di-wrap `ProtectedRoute`.
+- **Memory updates**: setiap iterasi update `mem://features/` masing-masing.
 
-### 6. Animasi
-- Re-use `useRevealOnScroll` + atribut `data-reveal` agar konsisten dengan landing page.
+## Pertanyaan Sebelum Mulai
 
-## Brand compliance
-- Warna: `bg-primary` untuk header hero, `text-accent` untuk highlight kata "EZPOS", `variant="cta"` untuk tombol Kirim.
-- Font: Inter (default project).
-- Tidak ada warna merah (sesuai aturan brand).
-- Border radius `rounded-2xl` selaras dengan komponen landing existing.
-
-## File yang akan dibuat / diubah
-- ➕ `src/pages/Contact.tsx` (baru)
-- ✏️ `src/App.tsx` (tambah route)
-- ✏️ `src/components/landing/LandingNavbar.tsx` (ubah CTA navigate ke /contact)
-
-Setelah Anda menyetujui plan ini, saya akan langsung mengeksekusinya.
+Setelah plan ini di-approve, saya akan **mulai dari Iterasi 1** (navigasi Modul + Coming Soon). Setelah selesai, Anda boleh minta lanjut ke Iterasi 2, atau ubah urutannya. Apakah urutan ini OK, atau Anda ingin urutan lain (misal Loyalty dulu sebelum KDS)?

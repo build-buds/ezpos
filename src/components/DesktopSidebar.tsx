@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { LayoutDashboard, ShoppingCart, Package, FileText, Settings } from "lucide-react";
+import { LayoutDashboard, ShoppingCart, Package, FileText, Settings, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAppState } from "@/contexts/AppContext";
 import brandIcon from "@/assets/logo.png";
@@ -8,6 +8,7 @@ const navItems = [
   { path: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { path: "/pos", label: "Kasir", icon: ShoppingCart },
   { path: "/products", label: "Produk", icon: Package },
+  { path: "/modules", label: "Modul", icon: Sparkles },
   { path: "/reports", label: "Laporan", icon: FileText },
   { path: "/settings", label: "Pengaturan", icon: Settings },
 ];

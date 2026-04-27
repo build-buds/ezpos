@@ -23,6 +23,8 @@ import TermsOfService from "./pages/TermsOfService";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import PublicMenu from "./pages/PublicMenu";
 import Contact from "./pages/Contact";
+import Modules from "./pages/Modules";
+import ModuleDetail from "./pages/ModuleDetail";
 
 const queryClient = new QueryClient();
 
@@ -46,6 +48,8 @@ const App = () => (
           <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
           <Route path="/pricing" element={<ProtectedRoute><Pricing /></ProtectedRoute>} />
           <Route path="/checkout/success" element={<ProtectedRoute><CheckoutSuccess /></ProtectedRoute>} />
+          <Route path="/modules" element={<ProtectedRoute><Modules /></ProtectedRoute>} />
+          <Route path="/modules/:slug" element={<ProtectedRoute><ModuleDetail /></ProtectedRoute>} />
           <Route path="/menu/:slug" element={<PublicMenu />} />
           <Route path="/terms" element={<TermsOfService />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
