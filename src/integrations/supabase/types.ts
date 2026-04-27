@@ -14,6 +14,54 @@ export type Database = {
   }
   public: {
     Tables: {
+      biolinks: {
+        Row: {
+          accent_color: string
+          avatar_url: string | null
+          bio: string | null
+          business_id: string
+          created_at: string
+          display_name: string | null
+          enabled: boolean
+          id: string
+          links: Json
+          slug: string
+          theme: string
+          updated_at: string
+          view_count: number
+        }
+        Insert: {
+          accent_color?: string
+          avatar_url?: string | null
+          bio?: string | null
+          business_id: string
+          created_at?: string
+          display_name?: string | null
+          enabled?: boolean
+          id?: string
+          links?: Json
+          slug: string
+          theme?: string
+          updated_at?: string
+          view_count?: number
+        }
+        Update: {
+          accent_color?: string
+          avatar_url?: string | null
+          bio?: string | null
+          business_id?: string
+          created_at?: string
+          display_name?: string | null
+          enabled?: boolean
+          id?: string
+          links?: Json
+          slug?: string
+          theme?: string
+          updated_at?: string
+          view_count?: number
+        }
+        Relationships: []
+      }
       businesses: {
         Row: {
           address: string | null
@@ -315,6 +363,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      increment_biolink_view: { Args: { _slug: string }; Returns: undefined }
     }
     Enums: {
       app_role: "admin" | "staff"

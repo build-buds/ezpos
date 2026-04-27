@@ -25,6 +25,8 @@ import PublicMenu from "./pages/PublicMenu";
 import Contact from "./pages/Contact";
 import Modules from "./pages/Modules";
 import ModuleDetail from "./pages/ModuleDetail";
+import Biolink from "./pages/Biolink";
+import PublicBiolink from "./pages/PublicBiolink";
 
 const queryClient = new QueryClient();
 
@@ -50,7 +52,9 @@ const App = () => (
           <Route path="/checkout/success" element={<ProtectedRoute><CheckoutSuccess /></ProtectedRoute>} />
           <Route path="/modules" element={<ProtectedRoute><Modules /></ProtectedRoute>} />
           <Route path="/modules/:slug" element={<ProtectedRoute><ModuleDetail /></ProtectedRoute>} />
+          <Route path="/biolink" element={<ProtectedRoute><Biolink /></ProtectedRoute>} />
           <Route path="/menu/:slug" element={<PublicMenu />} />
+          <Route path="/bio/:slug" element={<PublicBiolink />} />
           <Route path="/terms" element={<TermsOfService />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/contact" element={<Contact />} />

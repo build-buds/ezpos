@@ -81,7 +81,8 @@ export const MODULES: ModuleDef[] = [
     description:
       "Halaman bio bisnis Anda dalam satu link. Tampilkan menu digital, sosial media, lokasi, kontak, dan promo dalam satu tempat — cocok untuk bio Instagram & WhatsApp.",
     icon: Link2,
-    status: "coming-soon",
+    status: "active",
+    path: "/biolink",
     features: [
       "Halaman publik di /bio/nama-anda",
       "Drag & drop link kustom",

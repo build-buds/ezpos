@@ -1,96 +1,62 @@
 ## Tujuan
-Sinkronkan dashboard EZPOS dengan janji landing page. Fitur high-impact dibangun penuh, sisanya tampil sebagai item menu dengan badge **"Segera Hadir"** + halaman info & form notify.
 
-## Audit Landing → Dashboard
+Membangun **Biolink Bisnis** end-to-end: setiap merchant dapat punya halaman publik `/bio/:slug` berisi avatar, bio, dan daftar link (menu, WhatsApp, IG, Maps, custom). Editor terintegrasi di dashboard, modul ini berubah dari `coming-soon` → `active`.
 
-| Fitur landing | Status saat ini | Rencana |
-|---|---|---|
-| Kasir POS Cepat | ✅ Ada (`/pos`) | Tetap |
-| Manajemen Produk | ✅ Ada (`/products`) | Tetap |
-| Laporan Real-time | ✅ Ada (`/reports`) | Tetap |
-| Menu Digital QR | ✅ Ada (Settings → Menu Digital) | Tetap |
-| Mode Offline | ✅ Ada (banner + cache) | Tetap |
-| Notifikasi Pintar | ✅ Ada (push + in-app) | Tetap |
-| **EZPOS QR Order** (pesan dari meja → KDS) | ⚠️ Hanya menu view, belum bisa order | **Bangun penuh** |
-| **KDS** (Kitchen Display) | ❌ Belum ada | **Bangun penuh** (dependency QR Order) |
-| **Loyalty Programme** (poin, member) | ❌ Belum ada | **Bangun penuh** |
-| **CRM Pelanggan** | ❌ Belum ada | **Bangun penuh** (dasar: data customer + segmentasi) |
-| **Biolink** halaman bisnis | ❌ Belum ada | **Bangun penuh** (sederhana) |
-| **EZPOS Kiosk** self-service | ❌ Belum ada | 🟡 Coming Soon |
-| **EZPOS Queue** antrian | ❌ Belum ada | 🟡 Coming Soon |
-| **EDS** Expo Display | ❌ Belum ada | 🟡 Coming Soon |
-| **PDA** Waiter Device | ❌ Belum ada | 🟡 Coming Soon |
-| **Cloud Printer** | ❌ Belum ada | 🟡 Coming Soon |
+## Yang Akan Dibangun
 
-## Strategi Eksekusi (5 iterasi)
+### 1. Database (migration)
+Tabel baru `public.biolinks`:
+- `id` uuid PK, `business_id` uuid UNIQUE, `slug` text UNIQUE
+- `enabled` bool default false
+- `display_name` text, `bio` text, `avatar_url` text
+- `theme` text default `'classic'` (classic / warm / modern / minimal — selaras dengan menu digital)
+- `accent_color` text default `'#2563EB'`
+- `links` jsonb default `'[]'` (array `{ id, label, url, icon, enabled }`)
+- `view_count` int default 0
+- `created_at`, `updated_at` timestamptz
+- Trigger `update_updated_at_column` di-attach untuk `updated_at`
 
-Karena scope sangat besar, saya bagi menjadi **5 iterasi terpisah** yang masing-masing bisa dirilis & diuji. Plan ini mendeskripsikan **arsitektur** seluruhnya, tapi implementasi dilakukan iterasi per iterasi setelah Anda approve plan ini. Setelah selesai iterasi ke-N, Anda bisa lanjut ke N+1 atau berhenti.
+**RLS**:
+- Owner CRUD: pakai pola `business_id IN (SELECT id FROM businesses WHERE owner_id = auth.uid())`
+- Public SELECT: `enabled = true` untuk role `anon, authenticated`
 
-### Iterasi 1 — Navigasi Modul + Coming Soon (cepat, fondasi)
-- Tambah menu **"Modul"** baru di sidebar/bottom-nav (atau jadikan "Lainnya" di bottom-nav sebagai grid modul, Settings dipindah ke header).
-- Halaman `/modules` menampilkan **semua modul** sebagai card dengan status:
-  - ✅ Aktif (link langsung)
-  - 🟡 Segera Hadir (klik → halaman info + tombol "Notify saya")
-- Halaman info per modul `/modules/:slug` (kiosk, queue, eds, pda, printer) dengan deskripsi, ilustrasi, dan form interest.
-- Tabel baru: `module_interests (user_id, module_slug, created_at)`.
+### 2. Halaman Publik `/bio/:slug`
+- File `src/pages/PublicBiolink.tsx` + route di `App.tsx`
+- Layout linktree-style: avatar bulat → display name → bio → tombol-tombol link full-width
+- Auto-link ke menu digital bila business punya `menu_enabled` (tombol "Lihat Menu" muncul otomatis)
+- Tema mengikuti `theme` + `accent_color`; ikon link dari lucide
+- Footer "Powered by EZPOS"
+- 404 friendly bila slug tidak ada / `enabled=false`
+- Increment `view_count` sekali per load (RPC `increment_biolink_view`)
 
-### Iterasi 2 — EZPOS QR Order + KDS
-- Public menu `/menu/:slug` ditambah **keranjang & form order** (nama meja/no meja).
-- Tabel baru: `orders (id, business_id, table_no, customer_name, items jsonb, status, created_at)`. Status: `new → preparing → ready → served`.
-- Halaman dashboard baru `/kds` (Kitchen Display) — list order real-time (Supabase Realtime), tombol ubah status, suara notifikasi pesanan baru.
-- Pesanan selesai (`served`) otomatis dibuat sebagai transaction.
-- Setting di Settings → Menu Digital: toggle "Terima order online".
+### 3. Editor Dashboard
+Komponen baru `src/components/settings/SettingsBiolink.tsx` (mengikuti pola `SettingsDigitalMenu`):
+- Toggle Aktif/Nonaktif
+- Slug editor (validasi via `isValidSlug`, cek unik di DB sebelum save)
+- Display name, bio (textarea)
+- Upload avatar → bucket `product-images` (sudah public)
+- Pemilih tema (4 opsi) + accent color picker
+- **Manajemen Link**: tambah/edit/hapus/reorder (drag handle naik-turun via tombol). Field per link: label, URL, ikon (Instagram, WhatsApp, Globe, Music, Mail, Phone, MapPin, Link), enabled
+- Quick-add buttons: WhatsApp (auto wa.me), Instagram, Maps, Email
+- Preview link publik + tombol Copy + Open
+- Generate QR code biolink (reuse pola QR di SettingsDigitalMenu)
 
-### Iterasi 3 — Loyalty Programme
-- Tabel baru: `customers (id, business_id, name, phone, points, total_spent)`, `loyalty_config (business_id, points_per_rupiah, redeem_ratio)`.
-- Halaman `/loyalty` di dashboard:
-  - Tab "Member" — list customer + poin
-  - Tab "Pengaturan" — atur rasio poin (contoh: 1 poin / Rp 1.000)
-- Integrasi di POS: input/scan no HP customer saat checkout → poin otomatis ditambah; opsi redeem poin sebagai diskon.
+### 4. Integrasi Navigasi
+- Tambah halaman editor `src/pages/Biolink.tsx` yang membuka `SettingsBiolink` sebagai full page (sesuai instruksi user "semua modul jadi satu di dashboard, mudah dinavigasi")
+- Route protected `/biolink`
+- Update `src/data/modules.ts`: biolink → `status: "active"`, `path: "/biolink"`
+- Modul kartu di `/modules` akan otomatis muncul di section "Aktif" dan navigasi langsung ke `/biolink`
+- Tambah shortcut "Biolink" di Settings page (link ke `/biolink`)
 
-### Iterasi 4 — CRM
-- Reuse tabel `customers`. Tambah field `tags`, `last_visit`, `notes`.
-- Halaman `/crm` di dashboard:
-  - List + search + filter customer
-  - Detail customer: riwayat transaksi, total spend, frekuensi
-  - Segmentasi (VIP, regular, dorman) auto berdasarkan total_spent & last_visit
-  - Export CSV
-- Quick action: kirim pesan WhatsApp (open `wa.me/<nomor>?text=...` dengan template).
+### 5. QA Manual
+- Buat biolink test → buka `/bio/:slug` di incognito → verifikasi link bekerja, view_count naik
+- Toggle off → halaman publik 404
+- Slug duplikat → pesan error jelas
 
-### Iterasi 5 — Biolink
-- Tabel baru: `biolinks (business_id, slug, bio, links jsonb, theme, avatar_url)`.
-- Public route `/bio/:slug` — landing minimal: avatar, nama, bio, daftar link (menu digital, WhatsApp, IG, lokasi Google Maps, telpon).
-- Editor di Settings → Biolink: drag & drop list link, pilih tema, copy URL.
+## Catatan Teknis
 
-## Struktur Halaman Dashboard Sesudah Selesai
-
-```text
-Bottom nav (mobile)        Sidebar (desktop)
-├─ Dashboard               ├─ Dashboard
-├─ Kasir                   ├─ Kasir
-├─ Produk                  ├─ Produk
-├─ Modul ▼                 ├─ Modul
-│  ├─ KDS                  │  ├─ KDS                ✅
-│  ├─ Loyalty              │  ├─ Loyalty            ✅
-│  ├─ CRM                  │  ├─ CRM                ✅
-│  ├─ Biolink              │  ├─ Biolink            ✅
-│  ├─ Kiosk        🟡      │  ├─ Kiosk           🟡
-│  ├─ Queue        🟡      │  ├─ Queue           🟡
-│  ├─ EDS          🟡      │  ├─ EDS             🟡
-│  ├─ PDA          🟡      │  ├─ PDA             🟡
-│  └─ Cloud Printer 🟡     │  └─ Cloud Printer   🟡
-├─ Laporan                 ├─ Laporan
-└─ Pengaturan              └─ Pengaturan
-```
-
-## Detail Teknis
-
-- **Database**: tabel baru semuanya RLS — owner-only via `business_id IN (SELECT id FROM businesses WHERE owner_id = auth.uid())`. Public read hanya untuk `biolinks` & order submission.
-- **Realtime**: enable `supabase_realtime` untuk tabel `orders` (KDS) — pakai pola mount-safe yang sudah ada di project memory.
-- **Pro gating**: KDS, Loyalty, CRM, Biolink → fitur Pro (cek `useIsPro()`). User free lihat preview + CTA upgrade.
-- **Routing**: tambah route baru di `src/App.tsx`, semua di-wrap `ProtectedRoute`.
-- **Memory updates**: setiap iterasi update `mem://features/` masing-masing.
-
-## Pertanyaan Sebelum Mulai
-
-Setelah plan ini di-approve, saya akan **mulai dari Iterasi 1** (navigasi Modul + Coming Soon). Setelah selesai, Anda boleh minta lanjut ke Iterasi 2, atau ubah urutannya. Apakah urutan ini OK, atau Anda ingin urutan lain (misal Loyalty dulu sebelum KDS)?
+- Slug biolink dipisah dari slug menu digital agar bisa berbeda (mis. menu = `warung-budi`, bio = `budi`)
+- RPC `increment_biolink_view(_slug text)` security definer agar anon bisa increment tanpa update RLS terbuka
+- File yang akan dibuat: migration SQL, `src/pages/PublicBiolink.tsx`, `src/pages/Biolink.tsx`, `src/components/settings/SettingsBiolink.tsx`
+- File yang diubah: `src/App.tsx`, `src/data/modules.ts`, `src/pages/Settings.tsx` (tambah entry)
+- Tidak ada perubahan di tabel `businesses`

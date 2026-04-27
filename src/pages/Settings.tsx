@@ -3,7 +3,7 @@ import MobileLayout from "@/components/MobileLayout";
 import { useAppState } from "@/contexts/AppContext";
 import { useSubscription } from "@/hooks/useSubscription";
 import { cn } from "@/lib/utils";
-import { User, Store, Bell, Palette, LogOut, ChevronRight, Crown, CheckCircle, QrCode } from "lucide-react";
+import { User, Store, Bell, Palette, LogOut, ChevronRight, Crown, CheckCircle, QrCode, Link2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import SettingsProfile from "@/components/settings/SettingsProfile";
 import SettingsBusiness from "@/components/settings/SettingsBusiness";
@@ -28,6 +28,7 @@ const Settings = () => {
     { key: "profile", icon: User, label: "Profil Akun", description: "Email, nama, foto profil" },
     { key: "business", icon: Store, label: "Pengaturan Bisnis", description: "Nama, alamat, metode bayar" },
     { key: "digital-menu", icon: QrCode, label: "Menu Digital", description: "Publish menu, tema, cetak QR PDF" },
+    { key: "biolink", icon: Link2, label: "Biolink Bisnis", description: "Satu link untuk semua channel", route: "/biolink" },
     { key: "notification", icon: Bell, label: "Notifikasi", description: "Stok kritis, hutang jatuh tempo" },
     { key: "appearance", icon: Palette, label: "Tampilan", description: "Tema, bahasa" },
   ];
@@ -51,7 +52,7 @@ const Settings = () => {
         {menuItems.map((item) => (
           <button
             key={item.key}
-            onClick={() => setActiveSheet(item.key)}
+            onClick={() => (item.route ? navigate(item.route) : setActiveSheet(item.key))}
             className="w-full flex items-center gap-3 p-4 bg-card rounded-2xl card-shadow"
           >
             <item.icon className="w-5 h-5 text-muted-foreground" />
