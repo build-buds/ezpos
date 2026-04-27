@@ -1,11 +1,10 @@
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { ArrowRight, PlayCircle, ShieldCheck, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAppState } from "@/contexts/AppContext";
 import heroImage from "@/assets/hero-ibu-happy.png";
 
 const LandingHero = () => {
-  const navigate = useNavigate();
   const { isLoggedIn, isOnboarded } = useAppState();
   const ctaTarget = isLoggedIn ? (isOnboarded ? "/dashboard" : "/onboarding") : "/auth";
 
@@ -37,17 +36,29 @@ const LandingHero = () => {
             </p>
 
             <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start">
-              <Button variant="cta" size="lg" className="w-full sm:w-auto" onClick={() => navigate(ctaTarget)}>
-                Jadwalkan Demo
-                <ArrowRight className="ml-1 h-4 w-4" />
+              <Button asChild variant="cta" size="lg" className="w-full sm:w-auto">
+                <Link to={ctaTarget}>
+                  Jadwalkan Demo
+                  <ArrowRight className="ml-1 h-4 w-4" />
+                </Link>
               </Button>
               <Button
+                asChild
                 variant="outline"
                 size="lg"
                 className="w-full sm:w-auto"
-                onClick={() => document.querySelector("#produk")?.scrollIntoView({ behavior: "smooth" })}
               >
-                <PlayCircle className="mr-1 h-4 w-4" />
+                <a
+                  href="#produk"
+                  onClick={(e) => {
+                    const el = document.querySelector("#produk");
+                    if (el) {
+                      e.preventDefault();
+                      el.scrollIntoView({ behavior: "smooth" });
+                    }
+                  }}
+                >
+                  <PlayCircle className="mr-1 h-4 w-4" />
                 Tonton Video
               </Button>
             </div>
