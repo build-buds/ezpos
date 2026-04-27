@@ -94,19 +94,27 @@ const ContactPage = () => {
         {/* Content */}
         <section className="px-4 py-12 md:px-6 md:py-20">
           <div className="container max-w-6xl">
-            <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
-              {/* Left: info */}
-              <div className="space-y-6" data-reveal>
+            <div
+              className="overflow-hidden rounded-3xl border border-border bg-card shadow-sm"
+              data-reveal
+            >
+              <div className="grid gap-0 lg:grid-cols-2">
+                {/* Left: info */}
+                <div className="relative space-y-6 bg-muted/40 p-6 md:p-10">
                 <div>
-                  <h2 className="font-display text-2xl font-bold text-foreground md:text-3xl">
-                    Kami siap mendengar Anda
+                  <p className="text-sm font-semibold uppercase tracking-wider text-primary">
+                    Hubungi Kami
+                  </p>
+                  <h2 className="mt-2 font-display text-3xl font-extrabold leading-tight text-foreground md:text-4xl">
+                    Mari Terhubung dengan{" "}
+                    <span className="text-primary">EZPOS</span>
                   </h2>
-                  <p className="mt-3 text-base text-muted-foreground">
-                    Hubungi EZPOS melalui kanal di bawah ini atau kirim pesan langsung lewat formulir.
+                  <p className="mt-4 text-base text-muted-foreground">
+                    Kami akan menghubungi Anda kembali dalam 24 jam untuk menjawab pertanyaan Anda.
                   </p>
                 </div>
 
-                <div className="space-y-4">
+                <div className="space-y-5 pt-2">
                   {[
                     {
                       icon: MapPin,
@@ -135,9 +143,9 @@ const ContactPage = () => {
                       <Wrapper
                         key={item.title}
                         {...wrapperProps}
-                        className="flex items-start gap-4 rounded-2xl border border-border bg-card p-4 transition-colors hover:border-primary/40"
+                        className="flex items-start gap-4"
                       >
-                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm">
                           <Icon className="h-5 w-5" />
                         </div>
                         <div className="min-w-0">
@@ -152,13 +160,10 @@ const ContactPage = () => {
                     );
                   })}
                 </div>
-              </div>
+                </div>
 
-              {/* Right: form */}
-              <div
-                className="rounded-3xl border border-border bg-card p-6 shadow-sm md:p-8"
-                data-reveal
-              >
+                {/* Right: form */}
+                <div className="bg-card p-6 md:p-10">
                 <Form {...form}>
                   <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
                     <FormField
@@ -284,6 +289,7 @@ const ContactPage = () => {
                     </Button>
                   </form>
                 </Form>
+                </div>
               </div>
             </div>
           </div>
