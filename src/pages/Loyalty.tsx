@@ -500,29 +500,28 @@ const SettingsTab = () => {
   const { data: settings } = useLoyaltySettings();
   const upsert = useUpsertLoyaltySettings();
   const [form, setForm] = useState<{ enabled: boolean; points_per_rupiah: number; point_value_rupiah: number; min_redeem_points: number; welcome_bonus: number; auto_create_member: boolean; terms: string }>({
-    enabled: settings?.enabled ?? false,
-    points_per_rupiah: settings?.points_per_rupiah ?? 0.01,
-    point_value_rupiah: settings?.point_value_rupiah ?? 100,
-    min_redeem_points: settings?.min_redeem_points ?? 100,
-    welcome_bonus: settings?.welcome_bonus ?? 0,
-    auto_create_member: settings?.auto_create_member ?? true,
-    terms: settings?.terms ?? "",
+    enabled: false,
+    points_per_rupiah: 0.01,
+    point_value_rupiah: 100,
+    min_redeem_points: 100,
+    welcome_bonus: 0,
+    auto_create_member: true,
+    terms: "",
   });
 
-  // sync once on settings load
-  const [synced, setSynced] = useState(false);
-  if (settings && !synced) {
-    setSynced(true);
-    setForm({
-      enabled: settings.enabled,
-      points_per_rupiah: settings.points_per_rupiah,
-      point_value_rupiah: settings.point_value_rupiah,
-      min_redeem_points: settings.min_redeem_points,
-      welcome_bonus: settings.welcome_bonus,
-      auto_create_member: settings.auto_create_member,
-      terms: settings.terms || "",
-    });
-  }
+  useEffect(() => {
+    if (settings) {
+      setForm({
+        enabled: settings.enabled,
+        points_per_rupiah: Number(settings.points_per_rupiah),
+        point_value_rupiah: settings.point_value_rupiah,
+        min_redeem_points: settings.min_redeem_points,
+        welcome_bonus: settings.welcome_bonus,
+        auto_create_member: settings.auto_create_member,
+        terms: settings.terms || "",
+      });
+    }
+  }, [settings]);
 
   const save = async () => {
     try {
