@@ -164,7 +164,7 @@ const Auth = () => {
           Masuk dengan Google
         </Button>
       </div>
-    </div>
+    </main>
   );
 };
 
