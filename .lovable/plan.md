@@ -1,116 +1,63 @@
 
+## Tujuan
+Membuat halaman baru `/contact` (Hubungi Kami) yang terinspirasi dari screenshot yang Anda berikan, namun **menggunakan brand EZPOS** (Cobalt Blue `#2563EB` + Neon Yellow `#D4FF00`, font Inter, gaya minimalis landing page yang ada). Tombol "Hubungi Kami" di **navbar (desktop & mobile)** akan diubah agar mengarah ke halaman ini, bukan langsung ke WhatsApp.
 
-## Rencana: Restrukturisasi Landing Page EZPOS (Gaya IDEKU)
+## Perubahan
 
-Mengubah struktur landing page EZPOS agar mengikuti layout & narasi seperti referensi IDEKU, namun tetap dengan brand EZPOS (Cobalt Blue + Neon Yellow + font Circular Std), bahasa Indonesia, mobile responsive, dan SEO friendly. Setiap section produk akan menyediakan **placeholder gambar** yang siap Anda ganti nanti.
+### 1. Halaman baru: `src/pages/Contact.tsx`
+Struktur halaman:
+- **LandingNavbar** di atas (konsisten dengan landing).
+- **Hero section** dengan tagline "Hubungi Kami" + "Mari Terhubung dengan EZPOS" (kata "EZPOS" diberi warna accent / Neon Yellow di atas background gelap, atau primary blue di atas background terang — selaras brand).
+- **Layout 2 kolom** (stack di mobile):
+  - **Kolom kiri** — info kontak:
+    - "Kami akan merespons dalam 24 jam"
+    - **Lokasi Kami** — alamat kantor (placeholder Jakarta / akan diisi user nanti)
+    - **Email Kami** — `halo@ezpos.id`
+    - **Kontak Kami** — nomor WhatsApp `+62 812-3456-7890`
+    - Setiap item memakai ikon dari `lucide-react` (`MapPin`, `Mail`, `Phone`) di dalam rounded square dengan background `bg-primary/10` dan ikon `text-primary`.
+  - **Kolom kanan** — form kontak (Card dengan `bg-card`, `rounded-2xl`, `border`, `shadow-sm`):
+    - Nama* (Input)
+    - Nomor HP* (Input dengan prefix +62)
+    - Email* (Input)
+    - Subjek* (Input)
+    - Pesan (Textarea)
+    - Checkbox: "Saya setuju menerima informasi & promosi dari EZPOS"
+    - Tombol **Kirim** full-width memakai `variant="cta"` (Neon Yellow) — selaras brand.
+- **LandingFooter** di bawah.
+- Tombol **floating WhatsApp** di pojok kanan bawah ("Chat dengan kami di WhatsApp") menggunakan warna hijau WhatsApp standar (pengecualian fungsional, bukan elemen brand utama) — opsional, bisa dihilangkan kalau Anda mau strict brand only. Saya akan **menyertakan** karena ada di referensi.
 
-### Struktur Halaman Baru
+### 2. Validasi & submit form
+- Pakai **zod** + react-hook-form (sudah ada di project) untuk validasi:
+  - nama 1–100 char, email valid, telp 8–20 digit, subjek 1–150 char, pesan max 1000 char.
+- Saat submit: format pesan lalu **buka WhatsApp** ke `https://wa.me/6281234567890?text=...` (encodeURIComponent) di tab baru, dan tampilkan toast `sonner` "Pesan berhasil dikirim, kami akan menghubungi Anda segera." (Tidak perlu backend — sesuai pola landing page existing.)
 
-1. **Navbar** (`LandingNavbar.tsx` — update)
-   - Menu: **Produk & Fitur** (dropdown), **Tentang Kami**, **Integrasi** (dropdown), **Karir**, **Resources**
-   - CTA: "Daftar" (outline) + "Hubungi Kami" (CTA kuning)
-   - Logo putih EZPOS (sudah ada)
-
-2. **Hero** (`LandingHero.tsx` — update copy)
-   - Headline: "Menyederhanakan Manajemen Restoran, Satu per Satu"
-   - Sub: deskripsi produk EZPOS POS, QR, Kiosk, Queue
-   - CTA: "Jadwalkan Demo" + "Tonton Video"
-   - Gambar hero tetap (Ibu happy)
-
-3. **Our Product Intro** (baru — `LandingProductIntro.tsx`)
-   - Eyebrow "Produk Kami" + judul besar "Sederhanakan & Optimalkan Operasional Bisnis F&B Anda dengan Solusi Inovatif Kami"
-
-4. **Main Products** (baru — `LandingMainProducts.tsx`)
-   Layout selang-seling (gambar kiri/kanan), masing-masing dengan **placeholder gambar** (`<div>` aspect-ratio + import dari `@/assets/product-*.png` yang akan Anda ganti):
-   - **EZPOS POS** — "Yang Dapat EZPOS POS Lakukan untuk Anda" (5 checklist)
-   - **EZPOS QR** — "Tingkatkan Proses Pemesanan untuk Bisnis F&B Anda" (5 checklist)
-   - **EZPOS Kiosk** — "Cara Inovatif & Mudah untuk Self-Service Ordering" (4 checklist)
-   - **EZPOS Queue** — "Manajemen Antrian Modern untuk Restoran Anda" (4 checklist)
-   Setiap card punya CTA "Pelajari lebih lanjut" + "Lihat Demo".
-
-5. **Sub Products** (baru — `LandingSubProducts.tsx`)
-   Grid 2 kolom dengan placeholder gambar:
-   - **KDS (Kitchen Display System)**
-   - **EDS (Expo Display System)**
-   - **PDA (Waiter Order Device)**
-   - **Cloud Printer**
-
-6. **Others / Loyalty & Engagement** (baru — `LandingOthers.tsx`)
-   - **Loyalty Programme** — "Tingkatkan Engagement Pelanggan dengan Program Loyalty" + placeholder gambar 3 mockup HP
-   - **CRM & Biolink** (compact card)
-
-7. **Why Choose EZPOS** (baru — `LandingWhyChoose.tsx`)
-   - Heading kiri "Mengapa Memilih EZPOS?" + sub
-   - 3 card di kanan (staggered): "POS Sederhana & Andal", "Dukungan Pelanggan Berdedikasi", "Berdayakan Bisnis F&B Anda"
-   - Background watermark logo EZPOS opacity rendah
-
-8. **Stats** (`LandingStats.tsx` — keep)
-9. **How It Works** (`LandingHowItWorks.tsx` — keep)
-10. **Pricing** (`LandingPricing.tsx` — keep, sudah Rp 500k)
-11. **Testimonials** (`LandingTestimonials.tsx` — keep)
-12. **Integrasi** (baru — `LandingIntegrations.tsx`)
-    - Logo grid: WhatsApp, Midtrans, Xendit, Doku, Polar, Google, dll. (placeholder)
-13. **FAQ** (`LandingFAQ.tsx` — keep)
-14. **CTA** (`LandingCTA.tsx` — keep)
-15. **Footer** (`LandingFooter.tsx` — keep, logo hitam)
-
-### Placeholder Gambar Per-Section
-
-Setiap section produk menggunakan komponen placeholder konsisten:
-```text
-┌─────────────────────────┐
-│  [Aspect 4/3 atau 1/1]  │
-│   Gambar Produk EZPOS   │
-│   (klik ganti nanti)    │
-└─────────────────────────┘
+### 3. Routing — `src/App.tsx`
+Tambah route publik:
+```tsx
+<Route path="/contact" element={<Contact />} />
 ```
-Path import yang disiapkan (file dummy SVG dibuat sementara, Anda tinggal replace):
-- `src/assets/product-pos.png`
-- `src/assets/product-qr.png`
-- `src/assets/product-kiosk.png`
-- `src/assets/product-queue.png`
-- `src/assets/sub-kds.png`, `sub-eds.png`, `sub-pda.png`, `sub-printer.png`
-- `src/assets/loyalty-mockup.png`
-- `src/assets/why-choose-bg.png`
 
-### SEO Friendly
+### 4. Update tombol "Hubungi Kami" — `src/components/landing/LandingNavbar.tsx`
+- Desktop & mobile: ubah `onClick` dari `window.open(wa.me/...)` menjadi `navigate("/contact")`. Tetap pakai `variant="cta"`.
 
-- `<title>` & `<meta description>` Indonesia di `Landing.tsx` (sudah ada, akan diperkaya keyword: "kasir restoran, POS F&B, QR ordering Indonesia")
-- Tag semantik: `<section aria-labelledby>`, `<h1>`–`<h3>` hierarki benar (hanya 1 `<h1>`)
-- `alt` text deskriptif Indonesia di semua `<img>`
-- `loading="lazy"` untuk gambar di bawah fold
-- Open Graph & Twitter Card meta tags ditambahkan di `index.html`
-- JSON-LD `SoftwareApplication` schema di `Landing.tsx`
-- Sitemap link: `/terms`, `/privacy`, `/menu/:slug` tetap accessible
+### 5. Mobile responsive
+- Grid `grid-cols-1 lg:grid-cols-2` untuk konten utama.
+- Padding responsif `px-4 md:px-6 lg:px-8`, `py-12 md:py-20`.
+- Form tetap full-width di mobile, tombol Kirim full-width.
+- Floating WhatsApp button: `fixed bottom-4 right-4` dengan ukuran lebih kecil di mobile.
 
-### Mobile Responsive (100%)
+### 6. Animasi
+- Re-use `useRevealOnScroll` + atribut `data-reveal` agar konsisten dengan landing page.
 
-- Semua section pakai grid `grid-cols-1 md:grid-cols-2` dengan urutan gambar/teks dibalik via `order-*` di mobile (gambar selalu di atas teks)
-- Container `px-4 md:px-6`, max-width `7xl`
-- Font size pakai `text-2xl sm:text-3xl md:text-4xl lg:text-5xl`
-- Navbar mobile: hamburger Sheet (sudah ada) — tambahkan menu baru
-- Tested breakpoints: 375px, 414px, 768px, 1024px, 1440px
+## Brand compliance
+- Warna: `bg-primary` untuk header hero, `text-accent` untuk highlight kata "EZPOS", `variant="cta"` untuk tombol Kirim.
+- Font: Inter (default project).
+- Tidak ada warna merah (sesuai aturan brand).
+- Border radius `rounded-2xl` selaras dengan komponen landing existing.
 
-### Files
+## File yang akan dibuat / diubah
+- ➕ `src/pages/Contact.tsx` (baru)
+- ✏️ `src/App.tsx` (tambah route)
+- ✏️ `src/components/landing/LandingNavbar.tsx` (ubah CTA navigate ke /contact)
 
-**Created:**
-- `src/components/landing/LandingProductIntro.tsx`
-- `src/components/landing/LandingMainProducts.tsx`
-- `src/components/landing/LandingSubProducts.tsx`
-- `src/components/landing/LandingOthers.tsx`
-- `src/components/landing/LandingWhyChoose.tsx`
-- `src/components/landing/LandingIntegrations.tsx`
-- `src/components/landing/ProductSection.tsx` (reusable: image + checklist + CTA)
-- `src/assets/product-*.png` (placeholder SVG/PNG sementara)
-
-**Edited:**
-- `src/pages/Landing.tsx` (compose new sections + JSON-LD + meta)
-- `src/components/landing/LandingNavbar.tsx` (menu baru + dropdown)
-- `src/components/landing/LandingHero.tsx` (copy & CTA disesuaikan)
-- `index.html` (Open Graph + Twitter meta)
-
-### Catatan
-- Warna merah pada referensi IDEKU **diganti** ke Cobalt Blue (`primary`) — checklist icon, eyebrow, link "Pelajari lebih lanjut" semua biru. Aksen kuning hanya untuk CTA utama.
-- Tidak ada warna merah dipakai (sesuai brand rule).
-- Semua tombol berfungsi: scroll ke section, navigate ke `/auth`, atau buka WhatsApp untuk "Hubungi Kami".
-
+Setelah Anda menyetujui plan ini, saya akan langsung mengeksekusinya.

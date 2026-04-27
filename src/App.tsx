@@ -22,6 +22,7 @@ import CheckoutSuccess from "./pages/CheckoutSuccess";
 import TermsOfService from "./pages/TermsOfService";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import PublicMenu from "./pages/PublicMenu";
+import Contact from "./pages/Contact";
 
 const queryClient = new QueryClient();
 
@@ -48,6 +49,7 @@ const App = () => (
           <Route path="/menu/:slug" element={<PublicMenu />} />
           <Route path="/terms" element={<TermsOfService />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
+          <Route path="/contact" element={<Contact />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </AppProvider>
