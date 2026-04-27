@@ -116,6 +116,245 @@ export type Database = {
         }
         Relationships: []
       }
+      loyalty_members: {
+        Row: {
+          birthday: string | null
+          business_id: string
+          created_at: string
+          email: string | null
+          id: string
+          last_visit_at: string | null
+          name: string
+          notes: string | null
+          phone: string
+          points_balance: number
+          tier: Database["public"]["Enums"]["loyalty_tier"]
+          total_earned: number
+          total_spent_rupiah: number
+          updated_at: string
+          visit_count: number
+        }
+        Insert: {
+          birthday?: string | null
+          business_id: string
+          created_at?: string
+          email?: string | null
+          id?: string
+          last_visit_at?: string | null
+          name: string
+          notes?: string | null
+          phone: string
+          points_balance?: number
+          tier?: Database["public"]["Enums"]["loyalty_tier"]
+          total_earned?: number
+          total_spent_rupiah?: number
+          updated_at?: string
+          visit_count?: number
+        }
+        Update: {
+          birthday?: string | null
+          business_id?: string
+          created_at?: string
+          email?: string | null
+          id?: string
+          last_visit_at?: string | null
+          name?: string
+          notes?: string | null
+          phone?: string
+          points_balance?: number
+          tier?: Database["public"]["Enums"]["loyalty_tier"]
+          total_earned?: number
+          total_spent_rupiah?: number
+          updated_at?: string
+          visit_count?: number
+        }
+        Relationships: []
+      }
+      loyalty_redemptions: {
+        Row: {
+          business_id: string
+          code: string
+          created_at: string
+          id: string
+          member_id: string
+          transaction_id: string | null
+          used_at: string | null
+          voucher_id: string
+        }
+        Insert: {
+          business_id: string
+          code: string
+          created_at?: string
+          id?: string
+          member_id: string
+          transaction_id?: string | null
+          used_at?: string | null
+          voucher_id: string
+        }
+        Update: {
+          business_id?: string
+          code?: string
+          created_at?: string
+          id?: string
+          member_id?: string
+          transaction_id?: string | null
+          used_at?: string | null
+          voucher_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "loyalty_redemptions_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "loyalty_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "loyalty_redemptions_voucher_id_fkey"
+            columns: ["voucher_id"]
+            isOneToOne: false
+            referencedRelation: "loyalty_vouchers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      loyalty_settings: {
+        Row: {
+          auto_create_member: boolean
+          business_id: string
+          created_at: string
+          enabled: boolean
+          id: string
+          min_redeem_points: number
+          point_value_rupiah: number
+          points_per_rupiah: number
+          terms: string | null
+          updated_at: string
+          welcome_bonus: number
+        }
+        Insert: {
+          auto_create_member?: boolean
+          business_id: string
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          min_redeem_points?: number
+          point_value_rupiah?: number
+          points_per_rupiah?: number
+          terms?: string | null
+          updated_at?: string
+          welcome_bonus?: number
+        }
+        Update: {
+          auto_create_member?: boolean
+          business_id?: string
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          min_redeem_points?: number
+          point_value_rupiah?: number
+          points_per_rupiah?: number
+          terms?: string | null
+          updated_at?: string
+          welcome_bonus?: number
+        }
+        Relationships: []
+      }
+      loyalty_transactions: {
+        Row: {
+          business_id: string
+          created_at: string
+          id: string
+          member_id: string
+          note: string | null
+          points: number
+          transaction_id: string | null
+          type: Database["public"]["Enums"]["loyalty_txn_type"]
+          voucher_id: string | null
+        }
+        Insert: {
+          business_id: string
+          created_at?: string
+          id?: string
+          member_id: string
+          note?: string | null
+          points: number
+          transaction_id?: string | null
+          type: Database["public"]["Enums"]["loyalty_txn_type"]
+          voucher_id?: string | null
+        }
+        Update: {
+          business_id?: string
+          created_at?: string
+          id?: string
+          member_id?: string
+          note?: string | null
+          points?: number
+          transaction_id?: string | null
+          type?: Database["public"]["Enums"]["loyalty_txn_type"]
+          voucher_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "loyalty_transactions_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "loyalty_members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      loyalty_vouchers: {
+        Row: {
+          active: boolean
+          business_id: string
+          created_at: string
+          description: string | null
+          discount_type: Database["public"]["Enums"]["loyalty_discount_type"]
+          discount_value: number
+          id: string
+          max_redemptions: number | null
+          min_purchase: number
+          name: string
+          points_cost: number
+          redemption_count: number
+          updated_at: string
+          valid_until: string | null
+        }
+        Insert: {
+          active?: boolean
+          business_id: string
+          created_at?: string
+          description?: string | null
+          discount_type?: Database["public"]["Enums"]["loyalty_discount_type"]
+          discount_value?: number
+          id?: string
+          max_redemptions?: number | null
+          min_purchase?: number
+          name: string
+          points_cost?: number
+          redemption_count?: number
+          updated_at?: string
+          valid_until?: string | null
+        }
+        Update: {
+          active?: boolean
+          business_id?: string
+          created_at?: string
+          description?: string | null
+          discount_type?: Database["public"]["Enums"]["loyalty_discount_type"]
+          discount_value?: number
+          id?: string
+          max_redemptions?: number | null
+          min_purchase?: number
+          name?: string
+          points_cost?: number
+          redemption_count?: number
+          updated_at?: string
+          valid_until?: string | null
+        }
+        Relationships: []
+      }
       module_interests: {
         Row: {
           created_at: string
@@ -356,6 +595,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      adjust_loyalty_points: {
+        Args: { _delta: number; _member_id: string; _note: string }
+        Returns: undefined
+      }
+      award_loyalty_points: {
+        Args: { _amount: number; _member_id: string; _transaction_id: string }
+        Returns: number
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -364,9 +611,16 @@ export type Database = {
         Returns: boolean
       }
       increment_biolink_view: { Args: { _slug: string }; Returns: undefined }
+      redeem_loyalty_voucher: {
+        Args: { _member_id: string; _voucher_id: string }
+        Returns: string
+      }
     }
     Enums: {
       app_role: "admin" | "staff"
+      loyalty_discount_type: "percent" | "fixed"
+      loyalty_tier: "bronze" | "silver" | "gold"
+      loyalty_txn_type: "earn" | "redeem" | "adjust" | "bonus"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -495,6 +749,9 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "staff"],
+      loyalty_discount_type: ["percent", "fixed"],
+      loyalty_tier: ["bronze", "silver", "gold"],
+      loyalty_txn_type: ["earn", "redeem", "adjust", "bonus"],
     },
   },
 } as const
