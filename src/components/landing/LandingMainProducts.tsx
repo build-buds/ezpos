@@ -76,6 +76,7 @@ const LandingMainProducts = () => {
         image={productQueue}
         imageAlt="Sistem antrian digital EZPOS Queue"
         reverse
+        imageScale={1.1}
         primaryCta={{ label: "Pelajari Lebih Lanjut", to: "/auth" }}
         secondaryCta={{ label: "Lihat Demo", to: "#features" }}
       />
