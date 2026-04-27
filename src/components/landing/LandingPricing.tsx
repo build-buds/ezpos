@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useAppState } from "@/contexts/AppContext";
+import JsonLd from "@/components/JsonLd";
 
 const plans = [
   {
@@ -45,8 +46,50 @@ const LandingPricing = () => {
     return highlighted ? "/pricing" : "/dashboard";
   };
 
+  const productSchema = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: "EZPOS — Aplikasi Kasir & Manajemen F&B",
+    description:
+      "Aplikasi kasir POS, QR ordering, kiosk self-service, dan manajemen antrian untuk restoran, kafe, dan warung makan di Indonesia.",
+    brand: { "@type": "Brand", name: "EZPOS" },
+    url: "https://ezpos.id/",
+    offers: {
+      "@type": "AggregateOffer",
+      priceCurrency: "IDR",
+      lowPrice: "0",
+      highPrice: "500000",
+      offerCount: 2,
+      offers: [
+        {
+          "@type": "Offer",
+          name: "Gratis",
+          price: "0",
+          priceCurrency: "IDR",
+          url: "https://ezpos.id/auth",
+          availability: "https://schema.org/InStock",
+        },
+        {
+          "@type": "Offer",
+          name: "Pro",
+          price: "500000",
+          priceCurrency: "IDR",
+          url: "https://ezpos.id/pricing",
+          availability: "https://schema.org/InStock",
+          priceSpecification: {
+            "@type": "UnitPriceSpecification",
+            price: "500000",
+            priceCurrency: "IDR",
+            referenceQuantity: { "@type": "QuantitativeValue", value: 1, unitCode: "MON" },
+          },
+        },
+      ],
+    },
+  };
+
   return (
     <section id="pricing" className="bg-muted/30 py-20 md:py-28">
+      <JsonLd data={productSchema} />
       <div className="container max-w-7xl px-4 md:px-6">
         <div className="mx-auto max-w-2xl text-center">
           <p className="text-sm font-semibold uppercase tracking-wider text-primary">Harga</p>
