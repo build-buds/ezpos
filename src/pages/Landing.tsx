@@ -16,6 +16,7 @@ import LandingCTA from "@/components/landing/LandingCTA";
 import LandingFooter from "@/components/landing/LandingFooter";
 import { useRevealOnScroll } from "@/hooks/useRevealOnScroll";
 import SEO from "@/components/SEO";
+import JsonLd from "@/components/JsonLd";
 
 const Landing = () => {
   const revealRef = useRevealOnScroll<HTMLDivElement>();
@@ -101,6 +102,39 @@ const Landing = () => {
         title="EZPOS — Kasir Restoran, QR Ordering & Manajemen F&B #1 di Indonesia"
         description="EZPOS: Solusi lengkap kasir POS, QR ordering, kiosk self-service, dan manajemen antrian untuk restoran, kafe, dan warung makan di Indonesia."
         path="/"
+      />
+      <JsonLd
+        data={[
+          {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            name: "EZPOS",
+            url: "https://ezpos.id/",
+            logo: "https://ezpos.id/icon-192.png",
+            description:
+              "Platform kasir POS, QR ordering, kiosk self-service, dan manajemen antrian untuk bisnis F&B di Indonesia.",
+            contactPoint: {
+              "@type": "ContactPoint",
+              contactType: "customer support",
+              email: "halo@ezpos.id",
+              areaServed: "ID",
+              availableLanguage: ["Indonesian", "English"],
+            },
+            sameAs: ["https://ezpos.lovable.app"],
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            name: "EZPOS",
+            url: "https://ezpos.id/",
+            inLanguage: "id-ID",
+            potentialAction: {
+              "@type": "SearchAction",
+              target: "https://ezpos.id/?q={search_term_string}",
+              "query-input": "required name=search_term_string",
+            },
+          },
+        ]}
       />
       <LandingNavbar />
       <main>
