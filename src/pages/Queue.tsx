@@ -41,11 +41,11 @@ const QueuePage = () => {
       </div>
 
       <div className="px-5 md:px-8 lg:px-10 py-4 lg:max-w-5xl lg:mx-auto">
-        <Card className="p-3 mb-4 flex items-center gap-2">
-          <Badge variant={settings?.enabled ? "default" : "secondary"}>
+        <Card className="p-3 mb-4 flex flex-wrap sm:flex-nowrap items-center gap-2">
+          <Badge variant={settings?.enabled ? "default" : "secondary"} className="shrink-0">
             {settings?.enabled ? "Antrian Aktif" : "Nonaktif"}
           </Badge>
-          <div className="flex-1 min-w-0">
+          <div className="flex-1 min-w-0 order-3 sm:order-none w-full sm:w-auto">
             {!slug ? (
               <p className="text-xs text-muted-foreground">Atur slug bisnis di Pengaturan untuk mendapatkan link antrian.</p>
             ) : (
@@ -53,7 +53,7 @@ const QueuePage = () => {
             )}
           </div>
           {slug && (
-            <>
+            <div className="flex gap-2 ml-auto sm:ml-0">
               <Button
                 size="icon"
                 variant="outline"
@@ -67,15 +67,24 @@ const QueuePage = () => {
               <Button size="icon" variant="outline" onClick={() => window.open(queueUrl, "_blank")}>
                 <ExternalLink className="w-4 h-4" />
               </Button>
-            </>
+            </div>
           )}
         </Card>
 
         <Tabs defaultValue="live">
           <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="live"><Bell className="w-4 h-4 mr-1" />Live</TabsTrigger>
-            <TabsTrigger value="settings"><SettingsIcon className="w-4 h-4 mr-1" />Pengaturan</TabsTrigger>
-            <TabsTrigger value="history"><History className="w-4 h-4 mr-1" />Riwayat</TabsTrigger>
+            <TabsTrigger value="live" className="text-xs sm:text-sm">
+              <Bell className="w-4 h-4 sm:mr-1" />
+              <span className="hidden sm:inline">Live</span>
+            </TabsTrigger>
+            <TabsTrigger value="settings" className="text-xs sm:text-sm">
+              <SettingsIcon className="w-4 h-4 sm:mr-1" />
+              <span className="hidden sm:inline">Pengaturan</span>
+            </TabsTrigger>
+            <TabsTrigger value="history" className="text-xs sm:text-sm">
+              <History className="w-4 h-4 sm:mr-1" />
+              <span className="hidden sm:inline">Riwayat</span>
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="live" className="mt-4">

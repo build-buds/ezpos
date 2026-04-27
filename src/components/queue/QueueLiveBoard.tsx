@@ -34,7 +34,7 @@ const QueueLiveBoard = () => {
 
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         <Card className="p-4">
           <p className="text-xs text-muted-foreground">Menunggu</p>
           <p className="text-3xl font-extrabold">{waiting.length}</p>
@@ -102,16 +102,16 @@ const TicketCard = ({
         {ticket.note && <p className="text-xs text-muted-foreground mt-1 truncate">{ticket.note}</p>}
       </div>
     </div>
-    <div className="flex gap-2 mt-3">
+    <div className="flex flex-wrap gap-2 mt-3">
       {ticket.status === "waiting" && (
-        <Button size="sm" className="flex-1" onClick={() => onAction(ticket, "called")}>
+        <Button size="sm" className="flex-1 min-w-[110px]" onClick={() => onAction(ticket, "called")}>
           <PhoneCall className="w-4 h-4 mr-1" />Panggil
         </Button>
       )}
-      <Button size="sm" variant="secondary" className="flex-1" onClick={() => onAction(ticket, "served")}>
+      <Button size="sm" variant="secondary" className="flex-1 min-w-[110px]" onClick={() => onAction(ticket, "served")}>
         <CheckCircle2 className="w-4 h-4 mr-1" />Layani
       </Button>
-      <Button size="sm" variant="ghost" onClick={() => onAction(ticket, "skipped")}>
+      <Button size="sm" variant="ghost" onClick={() => onAction(ticket, "skipped")} aria-label="Lewati">
         <SkipForward className="w-4 h-4" />
       </Button>
     </div>
