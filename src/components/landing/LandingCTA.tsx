@@ -1,10 +1,9 @@
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAppState } from "@/contexts/AppContext";
 
 const LandingCTA = () => {
-  const navigate = useNavigate();
   const { isLoggedIn, isOnboarded } = useAppState();
   const target = isLoggedIn ? (isOnboarded ? "/dashboard" : "/onboarding") : "/auth";
 
@@ -22,9 +21,11 @@ const LandingCTA = () => {
             <p className="mx-auto mt-6 max-w-xl text-base text-primary-foreground/80 md:text-lg">
               Bergabung dengan ribuan pelaku usaha Indonesia yang sudah merasakan kemudahan EZPOS.
             </p>
-            <Button variant="cta" size="lg" className="mt-8" onClick={() => navigate(target)}>
-              Coba Gratis Sekarang
-              <ArrowRight className="ml-1 h-4 w-4" />
+            <Button asChild variant="cta" size="lg" className="mt-8">
+              <Link to={target}>
+                Coba Gratis Sekarang
+                <ArrowRight className="ml-1 h-4 w-4" />
+              </Link>
             </Button>
           </div>
         </div>
