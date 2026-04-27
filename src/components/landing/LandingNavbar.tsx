@@ -62,12 +62,7 @@ const LandingNavbar = () => {
           >
             Daftar
           </Button>
-          <Button
-            variant="cta"
-            onClick={() =>
-              window.open("https://wa.me/6281234567890?text=Halo%20EZPOS,%20saya%20tertarik%20dengan%20produk%20Anda", "_blank")
-            }
-          >
+          <Button variant="cta" onClick={() => navigate("/contact")}>
             Hubungi Kami
           </Button>
         </div>
@@ -110,7 +105,7 @@ const LandingNavbar = () => {
                   variant="cta"
                   onClick={() => {
                     setOpen(false);
-                    window.open("https://wa.me/6281234567890?text=Halo%20EZPOS,%20saya%20tertarik%20dengan%20produk%20Anda", "_blank");
+                    navigate("/contact");
                   }}
                 >
                   Hubungi Kami
