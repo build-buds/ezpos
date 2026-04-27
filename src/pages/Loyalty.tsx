@@ -427,18 +427,19 @@ const VouchersTab = ({ vouchers }: { vouchers: LoyaltyVoucher[] }) => {
 
 const VoucherDialog = ({ open, voucher, onClose }: { open: boolean; voucher: LoyaltyVoucher | null; onClose: () => void }) => {
   const upsert = useUpsertVoucher();
-  const [form, setForm] = useState<Partial<LoyaltyVoucher>>({});
-
-  const reset = () => setForm(voucher || {
+  const [form, setForm] = useState<Partial<LoyaltyVoucher>>({
     name: "", description: "", discount_type: "fixed", discount_value: 0,
     points_cost: 100, min_purchase: 0, valid_until: null, active: true,
   });
 
-  // initialize form when opened
-  if (open && form.name === undefined && form.discount_type === undefined) {
-    // first open
-    setTimeout(reset, 0);
-  }
+  useEffect(() => {
+    if (open) {
+      setForm(voucher ?? {
+        name: "", description: "", discount_type: "fixed", discount_value: 0,
+        points_cost: 100, min_purchase: 0, valid_until: null, active: true,
+      });
+    }
+  }, [open, voucher]);
 
   const submit = async () => {
     if (!form.name?.trim()) { toast.error("Nama wajib diisi"); return; }
@@ -455,7 +456,10 @@ const VoucherDialog = ({ open, voucher, onClose }: { open: boolean; voucher: Loy
   return (
     <Dialog open={open} onOpenChange={(o) => { if (!o) { setForm({}); onClose(); } }}>
       <DialogContent className="sm:max-w-md max-h-[85vh] overflow-y-auto">
-        <DialogHeader><DialogTitle>{voucher ? "Edit Voucher" : "Voucher Baru"}</DialogTitle></DialogHeader>
+        <DialogHeader>
+          <DialogTitle>{voucher ? "Edit Voucher" : "Voucher Baru"}</DialogTitle>
+          <DialogDescription>Atur diskon, biaya poin, dan masa berlaku voucher.</DialogDescription>
+        </DialogHeader>
         <div className="space-y-3">
           <div><Label>Nama *</Label><Input value={form.name || ""} onChange={(e) => setForm({ ...form, name: e.target.value })} maxLength={100} /></div>
           <div><Label>Deskripsi</Label><Textarea value={form.description || ""} onChange={(e) => setForm({ ...form, description: e.target.value })} maxLength={300} rows={2} /></div>
