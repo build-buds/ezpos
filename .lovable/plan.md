@@ -1,83 +1,94 @@
-## Modul EZPOS Kiosk
+## Modul EZPOS Queue
 
-Self-service ordering untuk pelanggan F&B — mengikuti panduan IDEKU Kiosk: **simple ordering**, **seamless POS integration**, **reduce manpower**, **promotions surface**.
+Sistem antrian digital untuk F&B yang mengikuti 4 alur IDEKU Queue: **Scan QR → Join Queue → Notification → Skip the Line**. Pelanggan ambil nomor antrian sendiri via halaman publik, owner mengelola via dashboard real-time.
 
-Karena kiosk adalah perangkat yang dipakai pelanggan (bukan owner), modul ini bekerja dalam dua bagian:
-1. **Halaman Manajemen** (`/kiosk`) — owner mengaktifkan & mengatur kiosk, lihat sesi/transaksi kiosk, salin link kiosk untuk dibuka di tablet/layar sentuh.
-2. **Halaman Kiosk Publik** (`/kiosk/:slug`) — UI full-screen layar sentuh untuk pelanggan: pilih dine-in/takeaway → browse menu → tambah ke cart → checkout → input no HP loyalty (opsional) → bayar → struk + nomor antrian.
+Mirror struktur modul **Kiosk** (sudah ada) supaya konsisten: dua bagian — manajemen owner (`/queue`) + halaman publik (`/queue/:slug`).
 
 ---
 
-### 1. Database (Migration baru)
+### 1. Database (migration baru)
 
-**`kiosk_settings`** (1 row per business)
-- `business_id` (unique), `enabled`, `welcome_title`, `welcome_subtitle`, `accent_color` (default `#2563EB`), `idle_timeout_seconds` (default 60), `ask_order_type` (bool, default true), `ask_loyalty` (bool, default true), `payment_methods` (text[], default `{cash,qris}`), `success_message`, `terms`, `created_at`, `updated_at`
+**`queue_settings`** (1 row per business)
+- `business_id` (unique), `enabled`, `welcome_title`, `welcome_subtitle`, `accent_color` (default `#2563EB`)
+- `prefix` (default `A`) — prefix nomor antrian (mis. `A001`, `A002`)
+- `ask_party_size` (bool), `ask_phone` (bool), `allow_preorder` (bool, default false — menu publik wajib aktif)
+- `avg_serve_minutes` (default 5) — untuk estimasi tunggu
+- `closed_message` (saat antrian ditutup), `terms`
 
-**`kiosk_sessions`** (analytics ringan: berapa sesi mulai vs konversi)
-- `id`, `business_id`, `started_at`, `completed_at?`, `transaction_id?`, `order_type?`, `total?`
+**`queue_tickets`**
+- `id`, `business_id`, `number` (text, mis. `A012`), `seq` (int, increment harian per business), `name`, `phone?`, `party_size?`, `note?`
+- `status` (enum: `waiting`, `called`, `served`, `skipped`, `cancelled`)
+- `preorder_transaction_id?` (link kalau pre-order)
+- `created_at`, `called_at?`, `served_at?`, `served_at?`
 
-RLS: owner-only CRUD (pola sama dengan `loyalty_settings`). Public bisa SELECT `kiosk_settings` ketika `enabled=true` (untuk render kiosk publik tanpa login), dan public bisa INSERT `kiosk_sessions` + `transactions` untuk businesses yang `kiosk_settings.enabled=true`.
+**RLS**:
+- Owner: full CRUD untuk business sendiri.
+- Public (anon): `SELECT` `queue_settings` jika `enabled=true`; `INSERT` `queue_tickets` via RPC; `SELECT` ticket sendiri by id (untuk halaman status pelanggan).
 
-> Reuse: Produk diambil dari `products` (sudah ada policy public untuk `menu_enabled`; akan ditambah policy paralel untuk businesses yang kiosk-nya aktif). Loyalty memakai RPC `award_loyalty_points` yang sudah ada.
+**RPC `create_queue_ticket(_business_id, _name, _phone, _party_size, _note)`** (SECURITY DEFINER):
+- Validasi `queue_settings.enabled=true`.
+- Hitung `seq` berikutnya (count waiting+called hari ini + 1), generate `number` = `prefix + seq.padStart(3,'0')`.
+- Insert ticket, return `{ id, number, position, eta_minutes }`.
+- Cek limit transaksi free tier untuk owner sebelum izinkan baru.
+
+**RPC `get_public_queue_business(_slug)`** (mirror `get_public_kiosk_business`).
 
 ---
 
-### 2. Halaman Manajemen `/kiosk` (owner)
+### 2. Halaman Manajemen `/queue` (owner, protected, Pro)
 
-Tabs:
-- **Ringkasan** — total sesi 7 hari, conversion rate, rata-rata nilai order kiosk, link kiosk + tombol "Salin" & "Buka di tab baru" + QR untuk scan ke tablet.
-- **Pengaturan** — toggle aktif, judul/subjudul welcome, warna aksen, idle timeout, toggle tanya tipe order & loyalty, pilih metode pembayaran yang muncul, pesan sukses & T&C.
-- **Transaksi Kiosk** — list transaksi yang berasal dari kiosk (filter `transactions.order_type` di-tag `kiosk-dinein` / `kiosk-takeaway`).
+3 Tabs:
+- **Live Queue** — daftar tiket `waiting` & `called` real-time (Supabase Realtime di `queue_tickets`). Tiap kartu: nomor besar, nama, party size, waktu tunggu. Aksi: **Panggil** (→ `called` + notifikasi owner), **Layani** (→ `served`), **Lewati** (→ `skipped`). Counter: total menunggu, dipanggil, rata-rata tunggu hari ini.
+- **Pengaturan** — toggle aktif, judul/subjudul, prefix, warna aksen, toggle tanya HP/party size/preorder, avg serve minutes, pesan tutup, T&C. Tampilkan link publik `/queue/:slug` + tombol Salin & QR (dipakai untuk poster meja).
+- **Riwayat** — list ticket `served|skipped|cancelled` 7 hari terakhir + rata-rata tunggu, no-show rate.
 
-### 3. Halaman Kiosk Publik `/kiosk/:slug` (full-screen, no auth)
+### 3. Halaman Publik `/queue/:slug` (anon, full-screen mobile-first)
 
-Alur layar (state machine sederhana):
-1. **Welcome** — judul + subjudul + tombol besar "Mulai Pesan". Idle timeout balik ke welcome.
-2. **Pilih Tipe Order** (jika `ask_order_type`) — Dine-in / Takeaway dengan icon besar.
-3. **Menu Browse** — grid produk besar (3-4 kolom), filter kategori horizontal scroll, search opsional, kartu produk tap untuk +1, mini-cart sticky bawah dengan total & "Lihat Pesanan".
-4. **Cart Review** — list item dengan +/- besar, hapus, total, tombol "Lanjut Bayar".
-5. **Loyalty (opsional)** — input no HP via numpad on-screen, atau "Lewati". Jika cocok → badge tier muncul.
-6. **Pembayaran** — pilih metode dari `payment_methods`. Cash → numpad input nominal. QRIS → tampilkan QR placeholder + tombol "Konfirmasi Diterima" (oleh kasir).
-7. **Sukses** — animasi check besar, nomor pesanan (`#` + last 4 dari `transaction_id`), pesan terima kasih, auto-redirect ke welcome setelah 8 detik.
+State machine sederhana:
+1. **Welcome** — judul/subjudul + tombol besar **"Ambil Nomor Antrian"**. Kalau `enabled=false` → tampilkan `closed_message`.
+2. **Form** — input nama (wajib), HP (jika `ask_phone`), jumlah orang (jika `ask_party_size`), catatan opsional. Tombol **Daftar Antrian**.
+3. **Ticket Status** (live, polling/realtime by ticket id):
+   - Nomor besar (`A012`), nama, posisi antrian (`#3 dari 7`), estimasi tunggu (`±15 menit`).
+   - Status badge: Menunggu → **Dipanggil** (animasi + suara di tab) → Selesai.
+   - Tombol "Batalkan" (set `cancelled`).
+   - Jika `allow_preorder` & menu aktif → tombol "Pesan Sambil Menunggu" → buka `/menu/:slug` di tab baru.
+4. Ticket id disimpan di `localStorage` (`queue_ticket_<slug>`) supaya pelanggan refresh tetap lihat status terakhir.
 
-Implementasi: insert ke `transactions` (status `completed`, `order_type` = `kiosk-dinein|kiosk-takeaway`), update `kiosk_sessions`, panggil `award_loyalty_points` jika ada member.
-
-UX: full-screen tanpa `MobileLayout`, tombol minimal 56px, font besar (text-xl baseline), warna aksen dari settings, animasi tap.
+UX: kontras tinggi, font besar (text-xl baseline), warna aksen dari settings, animasi tap.
 
 ---
 
 ### 4. Modules hub & routing
-- `src/data/modules.ts`: status Kiosk → `active`, path `/kiosk`.
-- `src/App.tsx`: route `/kiosk` (protected) + `/kiosk/:slug` (public).
+- `src/data/modules.ts`: Queue → `status: "active"`, `path: "/queue"`.
+- `src/App.tsx`: route `/queue` (protected) + `/queue/:slug` (public).
 
 ---
 
 ### 5. Files
 
 **Created:**
-- `supabase/migrations/<ts>_kiosk.sql` — tabel `kiosk_settings`, `kiosk_sessions`, RLS, policy public produk untuk kiosk-aktif.
-- `src/pages/Kiosk.tsx` — manajemen owner (tabs).
-- `src/pages/PublicKiosk.tsx` — UI full-screen pelanggan (state machine).
-- `src/components/kiosk/KioskSettingsForm.tsx`
-- `src/components/kiosk/KioskOverview.tsx`
-- `src/components/kiosk/KioskTransactions.tsx`
-- `src/components/kiosk/Numpad.tsx` — numpad layar sentuh dipakai untuk loyalty phone & cash.
-- `src/hooks/useKiosk.ts` — query/mutation hooks.
+- `supabase/migrations/<ts>_queue.sql` — tabel `queue_settings`, `queue_tickets`, RLS, RPC `create_queue_ticket`, `get_public_queue_business`. Tambah `queue_tickets` ke publication realtime.
+- `src/pages/Queue.tsx` — manajemen owner (3 tabs).
+- `src/pages/PublicQueue.tsx` — UI publik state machine.
+- `src/components/queue/QueueLiveBoard.tsx` — list tiket aktif + aksi.
+- `src/components/queue/QueueSettingsForm.tsx`
+- `src/components/queue/QueueHistory.tsx`
+- `src/hooks/useQueue.ts` — query/mutation hooks + realtime subscription.
 
 **Edited:**
 - `src/App.tsx` — 2 route baru.
-- `src/data/modules.ts` — Kiosk → active.
+- `src/data/modules.ts` — Queue → `active`.
 - `src/integrations/supabase/types.ts` — auto-regen.
 
 ---
 
-### 6. Tier integrasi & batasan
-- Dimark **Pro** (sesuai `modules.ts` saat ini). Akses `/kiosk` (manajemen) dibatasi cek `useIsPro` (mengikuti pola POS limit). UI publik `/kiosk/:slug` tetap dapat berjalan jika `kiosk_settings.enabled=true` (cek di server via RLS).
-- Batas transaksi free tier (`FREE_TRANSACTION_LIMIT`) tetap berlaku — kiosk publik akan memunculkan pesan "Sementara tidak menerima pesanan" jika owner free tier sudah melewati batas bulanan.
+### 6. Tier & batasan
+- Modul ditandai **Pro** (sesuai `modules.ts`). Akses `/queue` (manajemen) dibatasi `useIsPro` (pola sama Kiosk). UI publik `/queue/:slug` tetap jalan jika `queue_settings.enabled=true`.
+- Free tier: tetap bisa coba di dashboard tetapi tombol simpan terkunci dengan CTA upgrade (pola Loyalty/Kiosk).
 
-### 7. Out of scope iterasi ini (Coming Soon di tab Pengaturan)
-- Integrasi gateway QRIS otomatis (sekarang QR placeholder + konfirmasi manual).
-- Cetak struk via Cloud Printer.
-- Multi-bahasa & upselling otomatis (akan disambungkan saat modul Cloud Printer & CRM aktif).
+### 7. Out of scope iterasi ini (Coming Soon di Pengaturan)
+- Notifikasi WhatsApp otomatis ke pelanggan (akan disambungkan bersama modul CRM/notification template).
+- Display antrian publik full-screen di TV (akan dibuat di iterasi terpisah, mirror EDS).
+- Panggilan suara otomatis (TTS).
 
-Cakupan ini sudah cover **4 nilai unggulan IDEKU Kiosk**: Simple Ordering, Seamless POS Integration, Reduce Manpower, dan Promotions surface (lewat loyalty + warna aksen kustom).
+Cakupan ini sudah meliputi 4 alur inti IDEKU Queue: Scan QR → Join Queue → Notifikasi (in-page realtime) → Skip the line (status live + opsi pre-order via menu yang sudah ada).

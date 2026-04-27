@@ -30,6 +30,8 @@ import PublicBiolink from "./pages/PublicBiolink";
 import Loyalty from "./pages/Loyalty";
 import Kiosk from "./pages/Kiosk";
 import PublicKiosk from "./pages/PublicKiosk";
+import Queue from "./pages/Queue";
+import PublicQueue from "./pages/PublicQueue";
 
 const queryClient = new QueryClient();
 
@@ -59,6 +61,8 @@ const App = () => (
           <Route path="/loyalty" element={<ProtectedRoute><Loyalty /></ProtectedRoute>} />
           <Route path="/kiosk" element={<ProtectedRoute><Kiosk /></ProtectedRoute>} />
           <Route path="/kiosk/:slug" element={<PublicKiosk />} />
+          <Route path="/queue" element={<ProtectedRoute><Queue /></ProtectedRoute>} />
+          <Route path="/queue/:slug" element={<PublicQueue />} />
           <Route path="/menu/:slug" element={<PublicMenu />} />
           <Route path="/bio/:slug" element={<PublicBiolink />} />
           <Route path="/terms" element={<TermsOfService />} />

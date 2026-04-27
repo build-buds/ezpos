@@ -573,6 +573,111 @@ export type Database = {
         }
         Relationships: []
       }
+      queue_settings: {
+        Row: {
+          accent_color: string
+          allow_preorder: boolean
+          ask_party_size: boolean
+          ask_phone: boolean
+          avg_serve_minutes: number
+          business_id: string
+          closed_message: string
+          created_at: string
+          enabled: boolean
+          id: string
+          prefix: string
+          terms: string | null
+          updated_at: string
+          welcome_subtitle: string
+          welcome_title: string
+        }
+        Insert: {
+          accent_color?: string
+          allow_preorder?: boolean
+          ask_party_size?: boolean
+          ask_phone?: boolean
+          avg_serve_minutes?: number
+          business_id: string
+          closed_message?: string
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          prefix?: string
+          terms?: string | null
+          updated_at?: string
+          welcome_subtitle?: string
+          welcome_title?: string
+        }
+        Update: {
+          accent_color?: string
+          allow_preorder?: boolean
+          ask_party_size?: boolean
+          ask_phone?: boolean
+          avg_serve_minutes?: number
+          business_id?: string
+          closed_message?: string
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          prefix?: string
+          terms?: string | null
+          updated_at?: string
+          welcome_subtitle?: string
+          welcome_title?: string
+        }
+        Relationships: []
+      }
+      queue_tickets: {
+        Row: {
+          business_id: string
+          called_at: string | null
+          created_at: string
+          id: string
+          name: string
+          note: string | null
+          number: string
+          party_size: number | null
+          phone: string | null
+          preorder_transaction_id: string | null
+          seq: number
+          served_at: string | null
+          status: Database["public"]["Enums"]["queue_status"]
+          updated_at: string
+        }
+        Insert: {
+          business_id: string
+          called_at?: string | null
+          created_at?: string
+          id?: string
+          name: string
+          note?: string | null
+          number: string
+          party_size?: number | null
+          phone?: string | null
+          preorder_transaction_id?: string | null
+          seq: number
+          served_at?: string | null
+          status?: Database["public"]["Enums"]["queue_status"]
+          updated_at?: string
+        }
+        Update: {
+          business_id?: string
+          called_at?: string | null
+          created_at?: string
+          id?: string
+          name?: string
+          note?: string | null
+          number?: string
+          party_size?: number | null
+          phone?: string | null
+          preorder_transaction_id?: string | null
+          seq?: number
+          served_at?: string | null
+          status?: Database["public"]["Enums"]["queue_status"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
       subscriptions: {
         Row: {
           created_at: string
@@ -688,6 +793,10 @@ export type Database = {
         Args: { _business_id: string }
         Returns: boolean
       }
+      business_has_active_queue: {
+        Args: { _business_id: string }
+        Returns: boolean
+      }
       create_kiosk_transaction: {
         Args: {
           _business_id: string
@@ -696,6 +805,21 @@ export type Database = {
           _payment_method: string
         }
         Returns: string
+      }
+      create_queue_ticket: {
+        Args: {
+          _business_id: string
+          _name: string
+          _note?: string
+          _party_size?: number
+          _phone?: string
+        }
+        Returns: {
+          eta_minutes: number
+          id: string
+          number: string
+          queue_position: number
+        }[]
       }
       get_public_kiosk_business: {
         Args: { _slug: string }
@@ -719,6 +843,14 @@ export type Database = {
           slug: string
         }[]
       }
+      get_public_queue_business: {
+        Args: { _slug: string }
+        Returns: {
+          id: string
+          name: string
+          slug: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -737,6 +869,7 @@ export type Database = {
       loyalty_discount_type: "percent" | "fixed"
       loyalty_tier: "bronze" | "silver" | "gold"
       loyalty_txn_type: "earn" | "redeem" | "adjust" | "bonus"
+      queue_status: "waiting" | "called" | "served" | "skipped" | "cancelled"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -868,6 +1001,7 @@ export const Constants = {
       loyalty_discount_type: ["percent", "fixed"],
       loyalty_tier: ["bronze", "silver", "gold"],
       loyalty_txn_type: ["earn", "redeem", "adjust", "bonus"],
+      queue_status: ["waiting", "called", "served", "skipped", "cancelled"],
     },
   },
 } as const
