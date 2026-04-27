@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -16,7 +16,6 @@ const navItems = [
 ];
 
 const LandingNavbar = () => {
-  const navigate = useNavigate();
   const { isLoggedIn, isOnboarded } = useAppState();
   const [open, setOpen] = useState(false);
 
