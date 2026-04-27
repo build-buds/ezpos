@@ -1,94 +1,83 @@
-## Modul Loyalty Programme
+## Modul EZPOS Kiosk
 
-Membangun sistem loyalty end-to-end mengikuti panduan IDEKU Loyalty: **Membership Management**, **Points System**, **Voucher System**, dan **Engagement** (broadcast WhatsApp).
+Self-service ordering untuk pelanggan F&B — mengikuti panduan IDEKU Kiosk: **simple ordering**, **seamless POS integration**, **reduce manpower**, **promotions surface**.
 
----
-
-### 1. Database (Migration)
-
-**`loyalty_settings`** (1 row per business)
-- `business_id` (unique), `enabled`, `points_per_rupiah` (default `0.01` → Rp1.000 = 10 poin), `min_redeem_points` (default 100), `point_value_rupiah` (default 100 → 1 poin = Rp100), `welcome_bonus` (default 0), `terms` (text)
-
-**`loyalty_members`**
-- `id`, `business_id`, `name`, `phone` (unique per business), `email?`, `birthday?`, `tier` (`bronze`/`silver`/`gold` — auto by total spend), `points_balance`, `total_earned`, `total_spent_rupiah`, `visit_count`, `last_visit_at`, `created_at`
-
-**`loyalty_transactions`** (poin ledger)
-- `id`, `member_id`, `business_id`, `type` (`earn`/`redeem`/`adjust`/`bonus`), `points`, `transaction_id?` (FK transactions), `voucher_id?`, `note?`, `created_at`
-
-**`loyalty_vouchers`** (template voucher)
-- `id`, `business_id`, `code`, `name`, `description?`, `discount_type` (`percent`/`fixed`), `discount_value`, `points_cost`, `min_purchase`, `max_redemptions?`, `redemption_count` (default 0), `valid_until?`, `active`
-
-**`loyalty_redemptions`** (voucher yang sudah ditukar member)
-- `id`, `member_id`, `voucher_id`, `business_id`, `code` (unique 8-char), `redeemed_at`, `used_at?`, `transaction_id?`
-
-**RLS**: Owner-only CRUD untuk semua tabel (pola sama dengan `products`/`biolinks`).
-
-**Functions/Triggers**:
-- `award_loyalty_points(_member_id, _transaction_id, _amount)` — SECURITY DEFINER, hitung poin = `floor(amount * points_per_rupiah)`, insert ke `loyalty_transactions`, update `points_balance` & `total_spent_rupiah` & `visit_count`, recalc `tier` (bronze <Rp1jt, silver <Rp5jt, gold ≥Rp5jt).
-- `redeem_voucher(_member_id, _voucher_id)` — validasi balance, decrement poin, generate code, insert redemption.
+Karena kiosk adalah perangkat yang dipakai pelanggan (bukan owner), modul ini bekerja dalam dua bagian:
+1. **Halaman Manajemen** (`/kiosk`) — owner mengaktifkan & mengatur kiosk, lihat sesi/transaksi kiosk, salin link kiosk untuk dibuka di tablet/layar sentuh.
+2. **Halaman Kiosk Publik** (`/kiosk/:slug`) — UI full-screen layar sentuh untuk pelanggan: pilih dine-in/takeaway → browse menu → tambah ke cart → checkout → input no HP loyalty (opsional) → bayar → struk + nomor antrian.
 
 ---
 
-### 2. Frontend
+### 1. Database (Migration baru)
 
-**Halaman utama `/loyalty`** (Tabs):
-1. **Dashboard** — ringkasan: total member, total poin beredar, voucher aktif, top 5 member, grafik member baru 30 hari.
-2. **Members** — list/search by nama/HP, klik buka detail (poin, riwayat earn/redeem, total spent, tier badge). Tombol "Tambah Member" + "Adjust Poin" manual.
-3. **Vouchers** — CRUD voucher (nama, tipe diskon, nilai, biaya poin, min purchase, masa berlaku).
-4. **Settings** — toggle enable, atur `points_per_rupiah`, `point_value_rupiah`, welcome bonus, terms.
+**`kiosk_settings`** (1 row per business)
+- `business_id` (unique), `enabled`, `welcome_title`, `welcome_subtitle`, `accent_color` (default `#2563EB`), `idle_timeout_seconds` (default 60), `ask_order_type` (bool, default true), `ask_loyalty` (bool, default true), `payment_methods` (text[], default `{cash,qris}`), `success_message`, `terms`, `created_at`, `updated_at`
 
-**Integrasi POS** (`src/pages/POS.tsx`):
-- Saat checkout: field "No HP Member" (opsional). Jika diisi & cocok → tampilkan badge tier + poin balance + opsi "Pakai Voucher" (dropdown voucher member yang sudah di-redeem).
-- Setelah transaksi sukses → panggil `award_loyalty_points` RPC.
-- Auto-create member kalau no HP belum terdaftar (toggle di settings).
+**`kiosk_sessions`** (analytics ringan: berapa sesi mulai vs konversi)
+- `id`, `business_id`, `started_at`, `completed_at?`, `transaction_id?`, `order_type?`, `total?`
 
-**Public Member Card** (`/loyalty/card/:phone` — opsional minor, bisa di-skip iterasi ini, **akan dimasukkan di iterasi berikutnya** untuk fokus high-impact dulu).
+RLS: owner-only CRUD (pola sama dengan `loyalty_settings`). Public bisa SELECT `kiosk_settings` ketika `enabled=true` (untuk render kiosk publik tanpa login), dan public bisa INSERT `kiosk_sessions` + `transactions` untuk businesses yang `kiosk_settings.enabled=true`.
 
-**Modules hub**:
-- Update `src/data/modules.ts`: status Loyalty → `active`, path `/loyalty`.
-- Register route `/loyalty` di `src/App.tsx`.
+> Reuse: Produk diambil dari `products` (sudah ada policy public untuk `menu_enabled`; akan ditambah policy paralel untuk businesses yang kiosk-nya aktif). Loyalty memakai RPC `award_loyalty_points` yang sudah ada.
 
 ---
 
-### 3. Tier Logic (otomatis via trigger pada update `loyalty_members.total_spent_rupiah`)
-- Bronze: < Rp1.000.000
-- Silver: Rp1.000.000 – Rp4.999.999
-- Gold: ≥ Rp5.000.000
+### 2. Halaman Manajemen `/kiosk` (owner)
+
+Tabs:
+- **Ringkasan** — total sesi 7 hari, conversion rate, rata-rata nilai order kiosk, link kiosk + tombol "Salin" & "Buka di tab baru" + QR untuk scan ke tablet.
+- **Pengaturan** — toggle aktif, judul/subjudul welcome, warna aksen, idle timeout, toggle tanya tipe order & loyalty, pilih metode pembayaran yang muncul, pesan sukses & T&C.
+- **Transaksi Kiosk** — list transaksi yang berasal dari kiosk (filter `transactions.order_type` di-tag `kiosk-dinein` / `kiosk-takeaway`).
+
+### 3. Halaman Kiosk Publik `/kiosk/:slug` (full-screen, no auth)
+
+Alur layar (state machine sederhana):
+1. **Welcome** — judul + subjudul + tombol besar "Mulai Pesan". Idle timeout balik ke welcome.
+2. **Pilih Tipe Order** (jika `ask_order_type`) — Dine-in / Takeaway dengan icon besar.
+3. **Menu Browse** — grid produk besar (3-4 kolom), filter kategori horizontal scroll, search opsional, kartu produk tap untuk +1, mini-cart sticky bawah dengan total & "Lihat Pesanan".
+4. **Cart Review** — list item dengan +/- besar, hapus, total, tombol "Lanjut Bayar".
+5. **Loyalty (opsional)** — input no HP via numpad on-screen, atau "Lewati". Jika cocok → badge tier muncul.
+6. **Pembayaran** — pilih metode dari `payment_methods`. Cash → numpad input nominal. QRIS → tampilkan QR placeholder + tombol "Konfirmasi Diterima" (oleh kasir).
+7. **Sukses** — animasi check besar, nomor pesanan (`#` + last 4 dari `transaction_id`), pesan terima kasih, auto-redirect ke welcome setelah 8 detik.
+
+Implementasi: insert ke `transactions` (status `completed`, `order_type` = `kiosk-dinein|kiosk-takeaway`), update `kiosk_sessions`, panggil `award_loyalty_points` jika ada member.
+
+UX: full-screen tanpa `MobileLayout`, tombol minimal 56px, font besar (text-xl baseline), warna aksen dari settings, animasi tap.
 
 ---
 
-### 4. UX & Visual
-- Ikuti tema EZPOS: primer `#2563EB`, accent `#D4FF00`, kartu rounded-2xl + card-shadow.
-- Tier badge: bronze (amber), silver (slate), gold (yellow accent).
-- Empty states ramah dengan ilustrasi ikon.
-- Mobile-first dengan `MobileLayout`.
+### 4. Modules hub & routing
+- `src/data/modules.ts`: status Kiosk → `active`, path `/kiosk`.
+- `src/App.tsx`: route `/kiosk` (protected) + `/kiosk/:slug` (public).
 
 ---
 
 ### 5. Files
 
 **Created:**
-- `supabase/migrations/<ts>_loyalty.sql` — semua tabel, RLS, functions
-- `src/pages/Loyalty.tsx` — main dashboard + tabs
-- `src/components/loyalty/LoyaltyDashboard.tsx`
-- `src/components/loyalty/LoyaltyMembers.tsx`
-- `src/components/loyalty/LoyaltyMemberDetail.tsx` (sheet)
-- `src/components/loyalty/LoyaltyVouchers.tsx`
-- `src/components/loyalty/LoyaltySettings.tsx`
-- `src/components/loyalty/MemberLookup.tsx` (dipakai di POS)
-- `src/hooks/useLoyalty.ts` — query/mutation hooks
+- `supabase/migrations/<ts>_kiosk.sql` — tabel `kiosk_settings`, `kiosk_sessions`, RLS, policy public produk untuk kiosk-aktif.
+- `src/pages/Kiosk.tsx` — manajemen owner (tabs).
+- `src/pages/PublicKiosk.tsx` — UI full-screen pelanggan (state machine).
+- `src/components/kiosk/KioskSettingsForm.tsx`
+- `src/components/kiosk/KioskOverview.tsx`
+- `src/components/kiosk/KioskTransactions.tsx`
+- `src/components/kiosk/Numpad.tsx` — numpad layar sentuh dipakai untuk loyalty phone & cash.
+- `src/hooks/useKiosk.ts` — query/mutation hooks.
 
 **Edited:**
-- `src/App.tsx` — route `/loyalty`
-- `src/data/modules.ts` — status active
-- `src/pages/POS.tsx` — integrasi member lookup & award poin saat checkout
-- `src/integrations/supabase/types.ts` — auto-regen
+- `src/App.tsx` — 2 route baru.
+- `src/data/modules.ts` — Kiosk → active.
+- `src/integrations/supabase/types.ts` — auto-regen.
 
 ---
 
-### 6. Out of scope iterasi ini (Coming Soon di tab terpisah)
-- Broadcast WhatsApp otomatis (butuh integrasi WA Business API)
-- Email campaigns
-- Kartu member publik dengan QR scan
+### 6. Tier integrasi & batasan
+- Dimark **Pro** (sesuai `modules.ts` saat ini). Akses `/kiosk` (manajemen) dibatasi cek `useIsPro` (mengikuti pola POS limit). UI publik `/kiosk/:slug` tetap dapat berjalan jika `kiosk_settings.enabled=true` (cek di server via RLS).
+- Batas transaksi free tier (`FREE_TRANSACTION_LIMIT`) tetap berlaku — kiosk publik akan memunculkan pesan "Sementara tidak menerima pesanan" jika owner free tier sudah melewati batas bulanan.
 
-Cakupan ini sudah cover **3 dari 4 fitur unggulan IDEKU**: Voucher System, Redeem Points, Customer Membership Management. Automated Campaign ditandai "Segera Hadir" di tab Settings.
+### 7. Out of scope iterasi ini (Coming Soon di tab Pengaturan)
+- Integrasi gateway QRIS otomatis (sekarang QR placeholder + konfirmasi manual).
+- Cetak struk via Cloud Printer.
+- Multi-bahasa & upselling otomatis (akan disambungkan saat modul Cloud Printer & CRM aktif).
+
+Cakupan ini sudah cover **4 nilai unggulan IDEKU Kiosk**: Simple Ordering, Seamless POS Integration, Reduce Manpower, dan Promotions surface (lewat loyalty + warna aksen kustom).
