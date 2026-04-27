@@ -2,7 +2,7 @@ import ProductSection from "./ProductSection";
 import productPos from "@/assets/product-pos.png";
 import productQr from "@/assets/product-qr.png";
 import productKiosk from "@/assets/product-kiosk.svg";
-import productQueue from "@/assets/product-queue.svg";
+import productQueue from "@/assets/product-queue-hero.png";
 
 const LandingMainProducts = () => {
   return (
@@ -76,6 +76,7 @@ const LandingMainProducts = () => {
         image={productQueue}
         imageAlt="Sistem antrian digital EZPOS Queue"
         reverse
+        imageScale={1.1}
         primaryCta={{ label: "Pelajari Lebih Lanjut", to: "/auth" }}
         secondaryCta={{ label: "Lihat Demo", to: "#features" }}
       />
