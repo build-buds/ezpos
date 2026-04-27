@@ -100,12 +100,10 @@ export const usePublicKioskSettings = (slug: string | undefined) => {
     queryKey: ["public-kiosk", slug],
     queryFn: async () => {
       if (!slug) return null;
-      const { data: biz, error: e1 } = await supabase
-        .from("businesses")
-        .select("id, name, slug")
-        .eq("slug", slug)
-        .maybeSingle();
+      const { data: bizRows, error: e1 } = await supabase
+        .rpc("get_public_kiosk_business", { _slug: slug });
       if (e1) throw e1;
+      const biz = Array.isArray(bizRows) ? bizRows[0] : bizRows;
       if (!biz) return null;
       const { data: settings, error: e2 } = await supabase
         .from("kiosk_settings")
@@ -170,21 +168,14 @@ export const createPublicTransaction = async (payload: {
   payment_method: string;
   order_type: string;
 }) => {
-  const { data, error } = await supabase
-    .from("transactions")
-    .insert([{
-      business_id: payload.business_id,
-      total: payload.total,
-      items: payload.items as never,
-      payment_method: payload.payment_method,
-      order_type: payload.order_type,
-      discount: 0,
-      status: "completed",
-    }])
-    .select("id")
-    .single();
+  const { data, error } = await supabase.rpc("create_kiosk_transaction", {
+    _business_id: payload.business_id,
+    _items: payload.items as never,
+    _payment_method: payload.payment_method,
+    _order_type: payload.order_type,
+  });
   if (error) throw error;
-  return data.id as string;
+  return data as string;
 };
 
 export const findMemberByPhonePublic = async (businessId: string, phone: string) => {
