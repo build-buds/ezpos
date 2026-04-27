@@ -1,5 +1,5 @@
 import { Check, Heart, Link2 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import loyaltyMockup from "@/assets/loyalty-mockup.svg";
@@ -12,8 +12,6 @@ const loyaltyFeatures = [
 ];
 
 const LandingOthers = () => {
-  const navigate = useNavigate();
-
   return (
     <section id="others" aria-labelledby="others-title" className="bg-background py-20 md:py-28">
       <div className="container max-w-7xl px-4 md:px-6">
@@ -62,11 +60,11 @@ const LandingOthers = () => {
               ))}
             </ul>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Button variant="cta" size="lg" onClick={() => navigate("/auth")}>
-                Aktifkan Loyalty
+              <Button asChild variant="cta" size="lg">
+                <Link to="/auth">Aktifkan Loyalty</Link>
               </Button>
-              <Button variant="outline" size="lg" onClick={() => navigate("/auth")}>
-                Pelajari Lebih Lanjut
+              <Button asChild variant="outline" size="lg">
+                <Link to="/auth">Pelajari Lebih Lanjut</Link>
               </Button>
             </div>
           </div>
