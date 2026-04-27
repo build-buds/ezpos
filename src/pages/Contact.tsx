@@ -76,21 +76,6 @@ const ContactPage = () => {
       <LandingNavbar />
 
       <main className="flex-1">
-        {/* Hero */}
-        <section className="bg-primary text-primary-foreground">
-          <div className="container max-w-7xl px-4 py-14 md:px-6 md:py-20">
-            <div className="mx-auto max-w-3xl text-center" data-reveal>
-              <p className="text-sm font-semibold uppercase tracking-wider text-accent">Hubungi Kami</p>
-              <h1 className="mt-3 font-display text-3xl font-extrabold leading-tight md:text-5xl">
-                Mari Terhubung dengan <span className="text-accent">EZPOS</span>
-              </h1>
-              <p className="mx-auto mt-4 max-w-xl text-base text-primary-foreground/80 md:text-lg">
-                Tim kami siap membantu kebutuhan bisnismu. Kami akan merespons dalam 24 jam.
-              </p>
-            </div>
-          </div>
-        </section>
-
         {/* Content */}
         <section className="px-4 py-12 md:px-6 md:py-20">
           <div className="container max-w-6xl">
