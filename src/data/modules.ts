@@ -114,7 +114,8 @@ export const MODULES: ModuleDef[] = [
     description:
       "Sistem antrian digital modern. Pelanggan dapat nomor antrian via WhatsApp dan notifikasi real-time saat giliran tiba — tanpa kertas, tanpa kebingungan.",
     icon: Bell,
-    status: "coming-soon",
+    status: "active",
+    path: "/queue",
     features: [
       "Nomor antrian otomatis via WhatsApp",
       "Notifikasi real-time",
