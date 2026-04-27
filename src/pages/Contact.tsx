@@ -14,6 +14,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useRevealOnScroll } from "@/hooks/useRevealOnScroll";
 import SEO from "@/components/SEO";
+import JsonLd from "@/components/JsonLd";
 
 const WA_NUMBER = "6281234567890";
 
@@ -78,6 +79,26 @@ const ContactPage = () => {
         title="Hubungi Kami — EZPOS | Konsultasi Kasir POS & F&B"
         description="Hubungi tim EZPOS untuk demo, konsultasi gratis, atau dukungan terkait kasir POS, QR ordering, dan solusi manajemen F&B di Indonesia."
         path="/contact"
+      />
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "ContactPage",
+          name: "Hubungi EZPOS",
+          url: "https://ezpos.id/contact",
+          mainEntity: {
+            "@type": "Organization",
+            name: "EZPOS",
+            url: "https://ezpos.id/",
+            contactPoint: {
+              "@type": "ContactPoint",
+              contactType: "customer support",
+              email: "halo@ezpos.id",
+              areaServed: "ID",
+              availableLanguage: ["Indonesian", "English"],
+            },
+          },
+        }}
       />
       <LandingNavbar />
 

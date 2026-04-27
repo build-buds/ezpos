@@ -1,4 +1,5 @@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import JsonLd from "@/components/JsonLd";
 
 const faqs = [
   { q: "Apakah EZPOS benar-benar gratis?", a: "Ya, paket Gratis tersedia selamanya tanpa biaya tersembunyi. Anda hanya bayar jika butuh fitur Pro." },
@@ -10,8 +11,22 @@ const faqs = [
 ];
 
 const LandingFAQ = () => {
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((f) => ({
+      "@type": "Question",
+      name: f.q,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: f.a,
+      },
+    })),
+  };
+
   return (
     <section id="faq" className="bg-muted/30 py-20 md:py-28">
+      <JsonLd data={faqSchema} />
       <div className="container max-w-3xl px-4 md:px-6">
         <div className="text-center">
           <h2 className="font-display text-3xl font-extrabold tracking-tight text-foreground md:text-5xl">
