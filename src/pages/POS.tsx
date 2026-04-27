@@ -11,6 +11,8 @@ import { Search, Minus, Plus, ShoppingCart, X, Banknote, Building2, Clock, Utens
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import { POSLoyaltyPanel } from "@/components/loyalty/POSLoyaltyPanel";
+import { useAwardPoints, type LoyaltyMember } from "@/hooks/useLoyalty";
 
 const FREE_TRANSACTION_LIMIT = 100;
 
@@ -38,6 +40,7 @@ const POS = () => {
   const { data: monthTransactions = [] } = useTransactions("month");
   const isPro = useIsPro();
   const createTransaction = useCreateTransaction();
+  const awardPoints = useAwardPoints();
   const navigate = useNavigate();
   const [activeCategory, setActiveCategory] = useState("Semua");
   const [search, setSearch] = useState("");
@@ -45,6 +48,7 @@ const POS = () => {
   const [showCheckout, setShowCheckout] = useState(false);
   const [amountPaid, setAmountPaid] = useState("");
   const [pendingMethod, setPendingMethod] = useState<string | null>(null);
+  const [loyaltyMember, setLoyaltyMember] = useState<LoyaltyMember | null>(null);
 
   const headerColor = 'bg-primary';
   const isAtTransactionLimit = !isPro && monthTransactions.length >= FREE_TRANSACTION_LIMIT;
@@ -75,18 +79,32 @@ const POS = () => {
 
     const paymentMap: Record<string, string> = { "Cash": "cash", "Transfer": "transfer", "Bayar Nanti": "bayar_nanti" };
     try {
-      await createTransaction.mutateAsync({
+      const tx = await createTransaction.mutateAsync({
         items: cart.map((i) => ({ productId: i.product.id, name: i.product.name, qty: i.quantity, price: i.product.price, subtotal: i.subtotal })),
         total: cartTotal,
         discount: 0,
         payment_method: paymentMap[pendingMethod] || "cash",
       });
       toast.success(`Transaksi ${formatRupiah(cartTotal)} berhasil! (${pendingMethod})`);
+      // Award loyalty points if member selected
+      if (loyaltyMember) {
+        try {
+          const pts = await awardPoints.mutateAsync({
+            memberId: loyaltyMember.id,
+            transactionId: (tx as { id?: string })?.id || null,
+            amount: cartTotal,
+          });
+          if (pts > 0) toast.success(`+${pts} poin untuk ${loyaltyMember.name}`);
+        } catch {
+          /* silent — transaction already committed */
+        }
+      }
       clearCart();
       setShowCart(false);
       setShowCheckout(false);
       setAmountPaid("");
       setPendingMethod(null);
+      setLoyaltyMember(null);
     } catch {
       toast.error("Gagal menyimpan transaksi");
     }
@@ -229,6 +247,7 @@ const POS = () => {
                 <Button variant="cta" className="w-full h-14 text-base" onClick={() => setShowCheckout(true)}>Bayar Sekarang</Button>
               ) : (
                 <div className="space-y-3 animate-fade-in">
+                  <POSLoyaltyPanel member={loyaltyMember} onSelect={setLoyaltyMember} />
                   <Input type="number" placeholder="Nominal bayar..." value={amountPaid} onChange={(e) => setAmountPaid(e.target.value)} className="h-12 rounded-xl text-lg font-bold text-center" />
                   {amountPaid && parseInt(amountPaid) >= cartTotal && (
                     <div className="text-center">

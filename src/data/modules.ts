@@ -49,14 +49,14 @@ export const MODULES: ModuleDef[] = [
     description:
       "Program loyalty otomatis: setiap transaksi memberi poin pada pelanggan, yang bisa ditukar diskon. Member card digital tanpa kartu fisik.",
     icon: Heart,
-    status: "coming-soon",
+    status: "active",
+    path: "/loyalty",
     features: [
       "Poin & cashback otomatis dari transaksi",
       "Member card digital via no HP",
       "Voucher & promo dapat dikustomisasi",
       "Notifikasi WhatsApp ke member",
     ],
-    isPro: true,
   },
   {
     slug: "crm",
