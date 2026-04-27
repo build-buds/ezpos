@@ -143,7 +143,7 @@ const KioskPage = () => {
                   <div>
                     <p className="text-sm font-bold">#{t.id.slice(-4).toUpperCase()}</p>
                     <p className="text-xs text-muted-foreground">
-                      {new Date(t.createdAt).toLocaleString("id-ID")} ·{" "}
+                      {new Date(t.created_at).toLocaleString("id-ID")} ·{" "}
                       {t.order_type === "kiosk-dinein" ? "Dine-in" : "Takeaway"}
                     </p>
                   </div>
