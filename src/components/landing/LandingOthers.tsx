@@ -27,7 +27,7 @@ const LandingOthers = () => {
 
         <div className="mt-14 grid items-center gap-10 md:grid-cols-2 md:gap-16">
           <div className="order-1">
-            <div className="relative overflow-hidden rounded-3xl bg-muted/50 ring-1 ring-border p-3 sm:p-4">
+            <div className="relative">
               <div className="aspect-[4/3] w-full">
                 <img
                   src={loyaltyMockup}
