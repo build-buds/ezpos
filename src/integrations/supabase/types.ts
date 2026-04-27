@@ -684,6 +684,10 @@ export type Database = {
         Args: { _amount: number; _member_id: string; _transaction_id: string }
         Returns: number
       }
+      business_has_active_kiosk: {
+        Args: { _business_id: string }
+        Returns: boolean
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
