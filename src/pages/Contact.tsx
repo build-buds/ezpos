@@ -13,6 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useRevealOnScroll } from "@/hooks/useRevealOnScroll";
+import SEO from "@/components/SEO";
 
 const WA_NUMBER = "6281234567890";
 
@@ -73,6 +74,11 @@ const ContactPage = () => {
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
+      <SEO
+        title="Hubungi Kami — EZPOS | Konsultasi Kasir POS & F&B"
+        description="Hubungi tim EZPOS untuk demo, konsultasi gratis, atau dukungan terkait kasir POS, QR ordering, dan solusi manajemen F&B di Indonesia."
+        path="/contact"
+      />
       <LandingNavbar />
 
       <main className="flex-1">
