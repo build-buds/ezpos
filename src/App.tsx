@@ -28,6 +28,8 @@ import ModuleDetail from "./pages/ModuleDetail";
 import Biolink from "./pages/Biolink";
 import PublicBiolink from "./pages/PublicBiolink";
 import Loyalty from "./pages/Loyalty";
+import Kiosk from "./pages/Kiosk";
+import PublicKiosk from "./pages/PublicKiosk";
 
 const queryClient = new QueryClient();
 
@@ -55,6 +57,8 @@ const App = () => (
           <Route path="/modules/:slug" element={<ProtectedRoute><ModuleDetail /></ProtectedRoute>} />
           <Route path="/biolink" element={<ProtectedRoute><Biolink /></ProtectedRoute>} />
           <Route path="/loyalty" element={<ProtectedRoute><Loyalty /></ProtectedRoute>} />
+          <Route path="/kiosk" element={<ProtectedRoute><Kiosk /></ProtectedRoute>} />
+          <Route path="/kiosk/:slug" element={<PublicKiosk />} />
           <Route path="/menu/:slug" element={<PublicMenu />} />
           <Route path="/bio/:slug" element={<PublicBiolink />} />
           <Route path="/terms" element={<TermsOfService />} />
