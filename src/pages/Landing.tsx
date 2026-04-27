@@ -15,6 +15,7 @@ import LandingFAQ from "@/components/landing/LandingFAQ";
 import LandingCTA from "@/components/landing/LandingCTA";
 import LandingFooter from "@/components/landing/LandingFooter";
 import { useRevealOnScroll } from "@/hooks/useRevealOnScroll";
+import SEO from "@/components/SEO";
 
 const Landing = () => {
   const revealRef = useRevealOnScroll<HTMLDivElement>();
@@ -96,6 +97,11 @@ const Landing = () => {
 
   return (
     <div ref={revealRef} className="min-h-screen bg-background">
+      <SEO
+        title="EZPOS — Kasir Restoran, QR Ordering & Manajemen F&B #1 di Indonesia"
+        description="EZPOS: Solusi lengkap kasir POS, QR ordering, kiosk self-service, dan manajemen antrian untuk restoran, kafe, dan warung makan di Indonesia."
+        path="/"
+      />
       <LandingNavbar />
       <main>
         <div data-reveal><LandingHero /></div>

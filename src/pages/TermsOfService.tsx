@@ -1,11 +1,17 @@
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import SEO from "@/components/SEO";
 
 const TermsOfService = () => {
   const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO
+        title="Syarat & Ketentuan — EZPOS"
+        description="Baca syarat dan ketentuan penggunaan layanan EZPOS, aplikasi kasir POS dan manajemen F&B untuk usaha di Indonesia."
+        path="/terms"
+      />
       <div className="sticky top-0 z-10 bg-background border-b px-4 py-3 flex items-center gap-3">
         <button onClick={() => navigate(-1)} className="p-1">
           <ArrowLeft className="w-5 h-5" />
