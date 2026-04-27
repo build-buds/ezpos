@@ -35,21 +35,6 @@ export default defineConfig(({ mode }) => ({
       },
       manifest: false,
     }),
-    // Prerender public routes to static HTML so non-JS crawlers
-    // (Bing, WhatsApp, Twitter/X, Facebook, LinkedIn) can read the
-    // full <head> (title, meta, JSON-LD) and the visible content.
-    // Runs only at production build time. SPA routing still works
-    // afterwards because the bundled JS hydrates the page.
-    mode !== "development" &&
-      vitePrerender({
-        staticDir: path.resolve(__dirname, "dist"),
-        routes: ["/", "/contact", "/terms", "/privacy"],
-        renderer: new vitePrerender.PuppeteerRenderer({
-          renderAfterTime: 1500,
-          headless: true,
-          args: ["--no-sandbox", "--disable-setuid-sandbox"],
-        }),
-      }),
   ].filter(Boolean),
   resolve: {
     alias: {
