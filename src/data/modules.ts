@@ -97,7 +97,8 @@ export const MODULES: ModuleDef[] = [
     description:
       "Kiosk pemesanan mandiri dengan layar sentuh. Pelanggan pesan & bayar sendiri tanpa antri di kasir, mengurangi beban staff dan meningkatkan rata-rata nilai pesanan.",
     icon: Monitor,
-    status: "coming-soon",
+    status: "active",
+    path: "/kiosk",
     features: [
       "Antarmuka layar sentuh intuitif",
       "Upselling otomatis",
