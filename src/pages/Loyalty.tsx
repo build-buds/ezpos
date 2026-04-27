@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import MobileLayout from "@/components/MobileLayout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -20,6 +20,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import {
   Select,
@@ -244,7 +245,10 @@ const AddMemberDialog = ({ open, onClose }: { open: boolean; onClose: () => void
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
       <DialogContent className="sm:max-w-md">
-        <DialogHeader><DialogTitle>Tambah Member</DialogTitle></DialogHeader>
+        <DialogHeader>
+          <DialogTitle>Tambah Member</DialogTitle>
+          <DialogDescription>Daftarkan pelanggan baru ke program loyalty.</DialogDescription>
+        </DialogHeader>
         <div className="space-y-3">
           <div><Label>Nama *</Label><Input value={name} onChange={(e) => setName(e.target.value)} maxLength={100} /></div>
           <div><Label>No HP *</Label><Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="08xxx" maxLength={20} /></div>
@@ -426,18 +430,19 @@ const VouchersTab = ({ vouchers }: { vouchers: LoyaltyVoucher[] }) => {
 
 const VoucherDialog = ({ open, voucher, onClose }: { open: boolean; voucher: LoyaltyVoucher | null; onClose: () => void }) => {
   const upsert = useUpsertVoucher();
-  const [form, setForm] = useState<Partial<LoyaltyVoucher>>({});
-
-  const reset = () => setForm(voucher || {
+  const [form, setForm] = useState<Partial<LoyaltyVoucher>>({
     name: "", description: "", discount_type: "fixed", discount_value: 0,
     points_cost: 100, min_purchase: 0, valid_until: null, active: true,
   });
 
-  // initialize form when opened
-  if (open && form.name === undefined && form.discount_type === undefined) {
-    // first open
-    setTimeout(reset, 0);
-  }
+  useEffect(() => {
+    if (open) {
+      setForm(voucher ?? {
+        name: "", description: "", discount_type: "fixed", discount_value: 0,
+        points_cost: 100, min_purchase: 0, valid_until: null, active: true,
+      });
+    }
+  }, [open, voucher]);
 
   const submit = async () => {
     if (!form.name?.trim()) { toast.error("Nama wajib diisi"); return; }
@@ -454,7 +459,10 @@ const VoucherDialog = ({ open, voucher, onClose }: { open: boolean; voucher: Loy
   return (
     <Dialog open={open} onOpenChange={(o) => { if (!o) { setForm({}); onClose(); } }}>
       <DialogContent className="sm:max-w-md max-h-[85vh] overflow-y-auto">
-        <DialogHeader><DialogTitle>{voucher ? "Edit Voucher" : "Voucher Baru"}</DialogTitle></DialogHeader>
+        <DialogHeader>
+          <DialogTitle>{voucher ? "Edit Voucher" : "Voucher Baru"}</DialogTitle>
+          <DialogDescription>Atur diskon, biaya poin, dan masa berlaku voucher.</DialogDescription>
+        </DialogHeader>
         <div className="space-y-3">
           <div><Label>Nama *</Label><Input value={form.name || ""} onChange={(e) => setForm({ ...form, name: e.target.value })} maxLength={100} /></div>
           <div><Label>Deskripsi</Label><Textarea value={form.description || ""} onChange={(e) => setForm({ ...form, description: e.target.value })} maxLength={300} rows={2} /></div>
@@ -495,29 +503,28 @@ const SettingsTab = () => {
   const { data: settings } = useLoyaltySettings();
   const upsert = useUpsertLoyaltySettings();
   const [form, setForm] = useState<{ enabled: boolean; points_per_rupiah: number; point_value_rupiah: number; min_redeem_points: number; welcome_bonus: number; auto_create_member: boolean; terms: string }>({
-    enabled: settings?.enabled ?? false,
-    points_per_rupiah: settings?.points_per_rupiah ?? 0.01,
-    point_value_rupiah: settings?.point_value_rupiah ?? 100,
-    min_redeem_points: settings?.min_redeem_points ?? 100,
-    welcome_bonus: settings?.welcome_bonus ?? 0,
-    auto_create_member: settings?.auto_create_member ?? true,
-    terms: settings?.terms ?? "",
+    enabled: false,
+    points_per_rupiah: 0.01,
+    point_value_rupiah: 100,
+    min_redeem_points: 100,
+    welcome_bonus: 0,
+    auto_create_member: true,
+    terms: "",
   });
 
-  // sync once on settings load
-  const [synced, setSynced] = useState(false);
-  if (settings && !synced) {
-    setSynced(true);
-    setForm({
-      enabled: settings.enabled,
-      points_per_rupiah: settings.points_per_rupiah,
-      point_value_rupiah: settings.point_value_rupiah,
-      min_redeem_points: settings.min_redeem_points,
-      welcome_bonus: settings.welcome_bonus,
-      auto_create_member: settings.auto_create_member,
-      terms: settings.terms || "",
-    });
-  }
+  useEffect(() => {
+    if (settings) {
+      setForm({
+        enabled: settings.enabled,
+        points_per_rupiah: Number(settings.points_per_rupiah),
+        point_value_rupiah: settings.point_value_rupiah,
+        min_redeem_points: settings.min_redeem_points,
+        welcome_bonus: settings.welcome_bonus,
+        auto_create_member: settings.auto_create_member,
+        terms: settings.terms || "",
+      });
+    }
+  }, [settings]);
 
   const save = async () => {
     try {
