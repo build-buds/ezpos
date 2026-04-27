@@ -688,6 +688,37 @@ export type Database = {
         Args: { _business_id: string }
         Returns: boolean
       }
+      create_kiosk_transaction: {
+        Args: {
+          _business_id: string
+          _items: Json
+          _order_type: string
+          _payment_method: string
+        }
+        Returns: string
+      }
+      get_public_kiosk_business: {
+        Args: { _slug: string }
+        Returns: {
+          id: string
+          name: string
+          slug: string
+        }[]
+      }
+      get_public_menu_business: {
+        Args: { _slug: string }
+        Returns: {
+          address: string
+          id: string
+          menu_accent_color: string
+          menu_description: string
+          menu_logo_url: string
+          menu_theme: string
+          menu_title: string
+          name: string
+          slug: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
