@@ -1,5 +1,5 @@
 import { Check } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useAppState } from "@/contexts/AppContext";
@@ -38,12 +38,11 @@ const plans = [
 ];
 
 const LandingPricing = () => {
-  const navigate = useNavigate();
   const { isLoggedIn } = useAppState();
 
-  const handleClick = (highlighted: boolean) => {
-    if (!isLoggedIn) navigate("/auth");
-    else navigate(highlighted ? "/pricing" : "/dashboard");
+  const targetFor = (highlighted: boolean) => {
+    if (!isLoggedIn) return "/auth";
+    return highlighted ? "/pricing" : "/dashboard";
   };
 
   return (
@@ -85,12 +84,12 @@ const LandingPricing = () => {
               </ul>
 
               <Button
+                asChild
                 variant={plan.highlighted ? "cta" : "outline"}
                 size="lg"
                 className="mt-8 w-full"
-                onClick={() => handleClick(plan.highlighted)}
               >
-                {plan.cta}
+                <Link to={targetFor(plan.highlighted)}>{plan.cta}</Link>
               </Button>
             </Card>
           ))}

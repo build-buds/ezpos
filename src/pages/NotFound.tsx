@@ -10,7 +10,7 @@ const NotFound = () => {
   }, [location.pathname]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-muted">
+    <main className="flex min-h-screen items-center justify-center bg-muted">
       <SEO
         title="Halaman Tidak Ditemukan — EZPOS"
         description="Halaman yang Anda cari tidak tersedia. Kembali ke beranda EZPOS untuk menjelajahi solusi kasir POS dan manajemen F&B."
@@ -18,13 +18,14 @@ const NotFound = () => {
         noIndex
       />
       <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">404</h1>
-        <p className="mb-4 text-xl text-muted-foreground">Oops! Page not found</p>
+        <p className="mb-2 text-5xl font-bold text-muted-foreground" aria-hidden="true">404</p>
+        <h1 className="mb-3 text-2xl font-bold">Halaman tidak ditemukan</h1>
+        <p className="mb-4 text-base text-muted-foreground">Maaf, halaman yang Anda cari tidak tersedia.</p>
         <a href="/" className="text-primary underline hover:text-primary/90">
-          Return to Home
+          Kembali ke beranda
         </a>
       </div>
-    </div>
+    </main>
   );
 };
 

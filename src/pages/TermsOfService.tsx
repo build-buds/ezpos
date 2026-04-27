@@ -12,13 +12,13 @@ const TermsOfService = () => {
         description="Baca syarat dan ketentuan penggunaan layanan EZPOS, aplikasi kasir POS dan manajemen F&B untuk usaha di Indonesia."
         path="/terms"
       />
-      <div className="sticky top-0 z-10 bg-background border-b px-4 py-3 flex items-center gap-3">
-        <button onClick={() => navigate(-1)} className="p-1">
+      <header className="sticky top-0 z-10 bg-background border-b px-4 py-3 flex items-center gap-3">
+        <button onClick={() => navigate(-1)} aria-label="Kembali" className="p-1">
           <ArrowLeft className="w-5 h-5" />
         </button>
         <h1 className="text-lg font-bold">Syarat & Ketentuan</h1>
-      </div>
-      <div className="max-w-2xl mx-auto px-5 py-6 prose prose-sm text-foreground">
+      </header>
+      <main className="max-w-2xl mx-auto px-5 py-6 prose prose-sm text-foreground">
         <p className="text-muted-foreground text-xs">Terakhir diperbarui: 12 April 2026</p>
 
         <h2 className="text-base font-bold mt-6">1. Penerimaan Syarat</h2>
@@ -53,7 +53,7 @@ const TermsOfService = () => {
 
         <h2 className="text-base font-bold mt-6">9. Kontak</h2>
         <p>Jika Anda memiliki pertanyaan tentang syarat dan ketentuan ini, silakan hubungi kami melalui fitur bantuan di dalam aplikasi.</p>
-      </div>
+      </main>
     </div>
   );
 };
