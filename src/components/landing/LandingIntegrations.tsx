@@ -8,13 +8,15 @@ import polarLogo from "@/assets/integrations/polar.svg";
 import qrisLogo from "@/assets/integrations/qris.svg";
 import shopeepayLogo from "@/assets/integrations/shopeepay.svg";
 import tokopediaLogo from "@/assets/integrations/tokopedia.svg";
+import whatsappLogo from "@/assets/integrations/whatsapp.svg";
+import xenditLogo from "@/assets/integrations/xendit.svg";
 
 type Integration = { name: string; logo?: string };
 
 const integrations: Integration[] = [
-  { name: "WhatsApp" },
+  { name: "WhatsApp", logo: whatsappLogo },
   { name: "Midtrans", logo: midtransLogo },
-  { name: "Xendit" },
+  { name: "Xendit", logo: xenditLogo },
   { name: "Doku", logo: dokuLogo },
   { name: "Polar", logo: polarLogo },
   { name: "Google", logo: googleLogo },
