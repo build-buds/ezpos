@@ -1,66 +1,32 @@
 
-# Halaman Blog SEO untuk EZPOS
+## Tujuan
 
-## Pendekatan
+Merapikan tampilan halaman `/blog` (listing) dan `/blog/:slug` (detail artikel) agar lebih konsisten dengan visual identity landing page EZPOS: hero gradient, card style, spacing, dan CTA branding.
 
-Artikel blog disimpan sebagai **data statis** di file `src/data/blog-posts.ts`. Untuk menambah artikel baru, Anda cukup menambahkan object baru ke array di file tersebut — tidak perlu database atau CMS.
+## Perubahan
 
-## Yang Akan Dibuat
+### 1. Blog Listing (`src/pages/Blog.tsx`)
 
-### 1. Data artikel — `src/data/blog-posts.ts`
-- Array of blog post objects dengan field: `slug`, `title`, `description`, `content` (HTML string), `date`, `author`, `image`, `tags`, `readTime`
-- Sudah terisi 2-3 artikel contoh bertema F&B/POS agar langsung ada konten
+- **Hero section**: Tambahkan hero banner dengan background gradient primary (sama seperti landing sections), badge pill "Blog EZPOS", dan heading + subtitle yang lebih prominent.
+- **Card styling**: Tambahkan hover effect yang lebih halus, konsisten border-radius `rounded-2xl`, dan subtle gradient/shadow. Perbaiki alignment tag badges agar rata dan tidak berantakan saat jumlah tag berbeda.
+- **CTA di bawah grid**: Tambahkan CTA section "Coba EZPOS Gratis" di bawah daftar artikel, konsisten dengan `LandingCTA` style.
+- **Spacing**: Sesuaikan padding dan gap agar match dengan section spacing di landing page (py-16/py-24).
 
-### 2. Halaman daftar blog — `src/pages/Blog.tsx`
-- Route: `/blog`
-- Layout: LandingNavbar + LandingFooter (sama seperti /contact)
-- SEO component + BlogPosting JSON-LD schema
-- Grid kartu artikel (gambar, judul, tanggal, excerpt, tags)
-- Responsive: 1 kolom mobile, 2-3 kolom desktop
+### 2. Blog Post Detail (`src/pages/BlogPost.tsx`)
 
-### 3. Halaman detail artikel — `src/pages/BlogPost.tsx`
-- Route: `/blog/:slug`
-- SEO meta unik per artikel (title, description, canonical, OG)
-- Article JSON-LD schema (BlogPosting)
-- Heading hierarchy: H1 judul, H2/H3 di konten
-- Breadcrumb (Beranda > Blog > Judul Artikel)
-- Navigasi "Artikel Lainnya" di bawah
+- **Header area**: Tambahkan subtle blue accent line/divider di atas judul, dan perbaiki spacing breadcrumb-tag-title agar lebih compact dan clean.
+- **Author & meta row**: Tambahkan avatar placeholder atau icon EZPOS di samping author name untuk visual consistency.
+- **Article content**: Pastikan prose styling menggunakan warna primary untuk links dan heading yang konsisten.
+- **CTA box di akhir artikel**: Tambahkan branded CTA card di bawah konten artikel (sebelum "Artikel Lainnya") — box dengan background primary/10, heading ajakan, dan tombol "Coba EZPOS Gratis".
+- **"Artikel Lainnya" section**: Perbaiki card style agar match dengan listing page cards.
 
-### 4. Update routing — `src/App.tsx`
-- Tambah route `/blog` dan `/blog/:slug` (publik, tanpa ProtectedRoute)
+### 3. Minor Brand Touches
 
-### 5. Update SEO files
-- `public/sitemap.xml` — tambah `/blog`
-- `public/robots.txt` — pastikan `/blog` tidak di-disallow
-- `scripts/prerender-meta.ts` — tambah route `/blog` untuk prerender
+- Konsistenkan penggunaan `font-display` untuk semua heading di blog.
+- Pastikan tag badges menggunakan warna `primary/10` dan `text-primary` secara konsisten.
+- Tambahkan subtle decorative blur circles (background) di hero blog, mirip landing hero.
 
-### 6. Link di navbar/footer
-- Tambah link "Blog" di LandingNavbar dan LandingFooter
+## File yang Diubah
 
----
-
-## Cara Menambah Artikel Baru
-
-Setelah selesai, untuk menambah artikel baru Anda cukup:
-
-1. Buka file `src/data/blog-posts.ts`
-2. Tambahkan object baru ke array, contoh:
-
-```ts
-{
-  slug: "judul-artikel-baru",
-  title: "Judul Artikel Baru",
-  description: "Deskripsi singkat untuk meta SEO...",
-  content: `<p>Isi artikel dalam HTML...</p>`,
-  date: "2026-05-01",
-  author: "EZPOS Team",
-  image: "/blog/nama-gambar.webp",
-  tags: ["POS", "Tips"],
-  readTime: 5,
-}
-```
-
-3. (Opsional) Taruh gambar di `public/blog/`
-4. Deploy — artikel otomatis muncul di `/blog` dan bisa diakses di `/blog/judul-artikel-baru`
-
-Tidak perlu sentuh file lain — halaman blog dan detail otomatis membaca dari array data tersebut.
+- `src/pages/Blog.tsx`
+- `src/pages/BlogPost.tsx`
