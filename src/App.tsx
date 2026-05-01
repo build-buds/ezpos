@@ -32,6 +32,8 @@ import Kiosk from "./pages/Kiosk";
 import PublicKiosk from "./pages/PublicKiosk";
 import Queue from "./pages/Queue";
 import PublicQueue from "./pages/PublicQueue";
+import Blog from "./pages/Blog";
+import BlogPost from "./pages/BlogPost";
 
 const queryClient = new QueryClient();
 
@@ -68,6 +70,8 @@ const App = () => (
           <Route path="/terms" element={<TermsOfService />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/blog/:slug" element={<BlogPost />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </AppProvider>

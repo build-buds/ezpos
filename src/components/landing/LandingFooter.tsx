@@ -28,6 +28,7 @@ const LandingFooter = () => {
             <h2 id="footer-company" className="text-base font-semibold text-foreground">Perusahaan</h2>
             <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
               <li><a href="#faq" className="hover:text-primary">FAQ</a></li>
+              <li><Link to="/blog" className="hover:text-primary">Blog</Link></li>
               <li><Link to="/contact" className="hover:text-primary">Hubungi Kami</Link></li>
               <li><a href="mailto:halo@ezpos.id" className="hover:text-primary">Email</a></li>
             </ul>

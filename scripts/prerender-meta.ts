@@ -94,6 +94,12 @@ const ROUTES: RouteMeta[] = [
     description:
       "Pelajari bagaimana EZPOS mengumpulkan, menggunakan, dan melindungi data pribadi serta data bisnis Anda sesuai standar privasi yang berlaku.",
   },
+  {
+    path: "/blog",
+    title: "Blog EZPOS — Tips Kasir POS & Manajemen Restoran",
+    description:
+      "Tips, panduan, dan insight seputar kasir POS, manajemen restoran, QR ordering, dan teknologi F&B di Indonesia.",
+  },
 ];
 
 const escapeHtml = (s: string) =>

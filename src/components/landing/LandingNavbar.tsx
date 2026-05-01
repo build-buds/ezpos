@@ -12,7 +12,7 @@ const navItems = [
   { label: "Tentang Kami", href: "#why-choose" },
   { label: "Integrasi", href: "#integrasi" },
   { label: "Harga", href: "#pricing" },
-  { label: "Resources", href: "#faq" },
+  { label: "Blog", href: "/blog" },
 ];
 
 const LandingNavbar = () => {
@@ -21,9 +21,11 @@ const LandingNavbar = () => {
 
   const ctaTarget = isLoggedIn ? (isOnboarded ? "/dashboard" : "/onboarding") : "/auth";
 
-  const handleAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    // Smooth scroll for in-page anchors but still keep <a href> crawlable
+  const handleAnchorClick = (e: React.MouseEvent<HTMLAnchorElement | HTMLElement>, href: string) => {
     setOpen(false);
+    // If it's a route link (starts with /), let the browser handle it
+    if (href.startsWith("/")) return;
+    // Smooth scroll for in-page anchors
     const el = document.querySelector(href);
     if (el) {
       e.preventDefault();
