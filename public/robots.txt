@@ -1,13 +1,6 @@
 # robots.txt for EZPOS
 User-agent: *
 Allow: /
-Allow: /assets/
-Allow: /*.css$
-Allow: /*.js$
-Allow: /*.svg$
-Allow: /*.png$
-Allow: /*.jpg$
-Allow: /*.webp$
 
 Disallow: /auth
 Disallow: /home
@@ -18,5 +11,6 @@ Disallow: /products
 Disallow: /reports
 Disallow: /settings
 Disallow: /checkout/
+Disallow: /splash
 
 Sitemap: https://ezpos.id/sitemap.xml
