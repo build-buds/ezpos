@@ -71,6 +71,18 @@ const ROUTES: RouteMeta[] = [
       "Hubungi tim EZPOS untuk demo, konsultasi gratis, atau dukungan terkait kasir POS, QR ordering, dan solusi manajemen F&B di Indonesia.",
   },
   {
+    path: "/pricing",
+    title: "Harga EZPOS — Gratis & Pro mulai Rp 299rb/bulan",
+    description:
+      "Lihat paket harga EZPOS: mulai gratis untuk kasir dasar, upgrade ke Pro untuk QR ordering, kiosk, antrian digital, dan fitur lengkap restoran.",
+  },
+  {
+    path: "/modules",
+    title: "Modul & Fitur EZPOS — POS, QR Order, Kiosk, Antrian",
+    description:
+      "Jelajahi modul EZPOS: kasir POS, QR ordering, kiosk self-service, antrian digital, loyalty, biolink, dan lainnya untuk bisnis F&B Anda.",
+  },
+  {
     path: "/terms",
     title: "Syarat & Ketentuan — EZPOS",
     description:
