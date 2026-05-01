@@ -1,5 +1,6 @@
 import { useParams, Link, Navigate } from "react-router-dom";
-import { Calendar, Clock, ChevronRight, ArrowLeft } from "lucide-react";
+import { Calendar, Clock, ChevronRight, ArrowLeft, ArrowRight, User } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import LandingNavbar from "@/components/landing/LandingNavbar";
 import LandingFooter from "@/components/landing/LandingFooter";
 import SEO from "@/components/SEO";
@@ -59,8 +60,11 @@ const BlogPost = () => {
           <span className="truncate text-foreground">{post.title}</span>
         </nav>
 
+        {/* Accent line */}
+        <div className="mb-6 h-1 w-16 rounded-full bg-primary" />
+
         {/* Tags */}
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-1.5">
           {post.tags.map((tag) => (
             <span key={tag} className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
               {tag}
@@ -72,7 +76,13 @@ const BlogPost = () => {
           {post.title}
         </h1>
 
-        <div className="mt-4 flex items-center gap-4 text-sm text-muted-foreground">
+        <div className="mt-5 flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
+          <span className="flex items-center gap-1.5">
+            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10">
+              <User className="h-3.5 w-3.5 text-primary" />
+            </span>
+            {post.author}
+          </span>
           <span className="flex items-center gap-1">
             <Calendar className="h-4 w-4" />
             {new Date(post.date).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}
@@ -81,7 +91,6 @@ const BlogPost = () => {
             <Clock className="h-4 w-4" />
             {post.readTime} menit baca
           </span>
-          <span>{post.author}</span>
         </div>
 
         {/* Article Content */}
@@ -89,6 +98,21 @@ const BlogPost = () => {
           className="prose prose-neutral mt-10 max-w-none dark:prose-invert prose-headings:font-display prose-headings:font-bold prose-a:text-primary"
           dangerouslySetInnerHTML={{ __html: post.content }}
         />
+
+        {/* CTA Box */}
+        <div className="mt-12 rounded-2xl border border-primary/10 bg-primary/5 p-6 md:p-8 text-center">
+          <h2 className="font-display text-xl font-bold text-foreground md:text-2xl">
+            Tertarik Menggunakan EZPOS?
+          </h2>
+          <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">
+            Mulai kelola bisnis F&B Anda lebih efisien — gratis, langsung dari HP.
+          </p>
+          <Button asChild variant="cta" size="lg" className="mt-5">
+            <Link to="/auth">
+              Coba EZPOS Gratis <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
+          </Button>
+        </div>
 
         {/* Other Posts */}
         {otherPosts.length > 0 && (
@@ -99,9 +123,9 @@ const BlogPost = () => {
                 <Link
                   key={p.slug}
                   to={`/blog/${p.slug}`}
-                  className="group rounded-xl border border-border p-4 transition-shadow hover:shadow-md"
+                  className="group rounded-2xl border border-border bg-card p-5 transition-all duration-300 hover:shadow-lg hover:border-primary/20 hover:-translate-y-1"
                 >
-                  <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2">
+                  <h3 className="font-display font-bold text-foreground group-hover:text-primary transition-colors line-clamp-2">
                     {p.title}
                   </h3>
                   <p className="mt-1 text-sm text-muted-foreground line-clamp-2">{p.description}</p>
