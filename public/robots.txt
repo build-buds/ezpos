@@ -13,4 +13,15 @@ Disallow: /settings
 Disallow: /checkout/
 Disallow: /splash
 
+# Block legacy WordPress URLs (old site)
+Disallow: /author/
+Disallow: /category/
+Disallow: /wp-json/
+Disallow: /wp-admin/
+Disallow: /wp-content/
+Disallow: /wp-includes/
+Disallow: /feed/
+Disallow: /*feed/
+Disallow: /hello-world/
+
 Sitemap: https://ezpos.id/sitemap.xml
