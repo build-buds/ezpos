@@ -1,5 +1,12 @@
+import { useEffect, useRef } from "react";
 import { Star } from "lucide-react";
 import { Card } from "@/components/ui/card";
+
+declare global {
+  interface Window {
+    Trustpilot?: { loadFromElement: (el: HTMLElement, force?: boolean) => void };
+  }
+}
 
 const testimonials = [
   {
@@ -20,6 +27,14 @@ const testimonials = [
 ];
 
 const LandingTestimonials = () => {
+  const trustpilotRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (trustpilotRef.current && window.Trustpilot) {
+      window.Trustpilot.loadFromElement(trustpilotRef.current, true);
+    }
+  }, []);
+
   return (
     <section className="bg-background py-20 md:py-28">
       <div className="container max-w-7xl px-4 md:px-6">
@@ -44,6 +59,23 @@ const LandingTestimonials = () => {
               </div>
             </Card>
           ))}
+        </div>
+
+        <div className="mt-12">
+          <div
+            ref={trustpilotRef}
+            className="trustpilot-widget"
+            data-locale="en-US"
+            data-template-id="56278e9abfbbba0bdcd568bc"
+            data-businessunit-id="6a22c2d3248cdf89b0e2a121"
+            data-style-height="55"
+            data-style-width="100%"
+            data-token="c26f7093-b9f5-44ec-a5c2-f1d8c5c3f501"
+          >
+            <a href="https://www.trustpilot.com/review/ezpos.id" target="_blank" rel="noopener">
+              Trustpilot
+            </a>
+          </div>
         </div>
       </div>
     </section>
