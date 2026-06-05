@@ -134,13 +134,11 @@ export const usePublicKioskProducts = (businessId: string | undefined) => {
 };
 
 export const startKioskSession = async (businessId: string): Promise<string | null> => {
-  const { data, error } = await supabase
-    .from("kiosk_sessions")
-    .insert([{ business_id: businessId }])
-    .select("id")
-    .single();
+  const { data, error } = await supabase.rpc("start_kiosk_session" as never, {
+    _business_id: businessId,
+  } as never);
   if (error) return null;
-  return data?.id || null;
+  return (data as unknown as string) || null;
 };
 
 export const completeKioskSession = async (
