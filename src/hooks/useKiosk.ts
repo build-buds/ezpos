@@ -125,7 +125,7 @@ export const usePublicKioskProducts = (businessId: string | undefined) => {
     queryFn: async () => {
       if (!businessId) return [];
       const { data, error } = await supabase
-        .from("products")
+        .from("products_public" as never)
         .select("*")
         .eq("business_id", businessId)
         .order("name");
@@ -150,15 +150,12 @@ export const completeKioskSession = async (
   sessionId: string,
   payload: { transaction_id: string; order_type: string; total: number }
 ) => {
-  await supabase
-    .from("kiosk_sessions")
-    .update({
-      completed_at: new Date().toISOString(),
-      transaction_id: payload.transaction_id,
-      order_type: payload.order_type,
-      total: payload.total,
-    })
-    .eq("id", sessionId);
+  await supabase.rpc("complete_kiosk_session" as never, {
+    _id: sessionId,
+    _transaction_id: payload.transaction_id,
+    _order_type: payload.order_type,
+    _total: payload.total,
+  } as never);
 };
 
 export const createPublicTransaction = async (payload: {

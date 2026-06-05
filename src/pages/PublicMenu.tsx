@@ -105,7 +105,7 @@ const PublicMenu = () => {
       setBusiness(biz as BusinessData);
 
       const { data: prods } = await supabase
-        .from("products")
+        .from("products_public" as never)
         .select("id, name, description, price, category, image_url")
         .eq("business_id", biz.id)
         .order("category", { ascending: true })

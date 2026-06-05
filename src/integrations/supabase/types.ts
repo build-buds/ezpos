@@ -778,7 +778,53 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      products_public: {
+        Row: {
+          business_id: string | null
+          category: string | null
+          created_at: string | null
+          description: string | null
+          id: string | null
+          image_url: string | null
+          name: string | null
+          price: number | null
+          stock: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          business_id?: string | null
+          category?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string | null
+          image_url?: string | null
+          name?: string | null
+          price?: number | null
+          stock?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          business_id?: string | null
+          category?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string | null
+          image_url?: string | null
+          name?: string | null
+          price?: number | null
+          stock?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "products_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       adjust_loyalty_points: {
@@ -796,6 +842,16 @@ export type Database = {
       business_has_active_queue: {
         Args: { _business_id: string }
         Returns: boolean
+      }
+      cancel_public_queue_ticket: { Args: { _id: string }; Returns: undefined }
+      complete_kiosk_session: {
+        Args: {
+          _id: string
+          _order_type: string
+          _total: number
+          _transaction_id: string
+        }
+        Returns: undefined
       }
       create_kiosk_transaction: {
         Args: {
@@ -849,6 +905,24 @@ export type Database = {
           id: string
           name: string
           slug: string
+        }[]
+      }
+      get_public_queue_ticket: {
+        Args: { _id: string }
+        Returns: {
+          ahead: number
+          business_id: string
+          called_at: string
+          created_at: string
+          id: string
+          name: string
+          note: string
+          number: string
+          party_size: number
+          seq: number
+          served_at: string
+          status: Database["public"]["Enums"]["queue_status"]
+          updated_at: string
         }[]
       }
       has_role: {

@@ -190,12 +190,12 @@ const FormStage = ({
       <h2 className="text-lg font-bold">Data Pemesan</h2>
       <div>
         <Label>Nama</Label>
-        <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Nama Anda" autoFocus />
+        <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Nama Anda" autoFocus maxLength={100} />
       </div>
       {askPhone && (
         <div>
           <Label>No. WhatsApp (opsional)</Label>
-          <Input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="0812..." />
+          <Input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="0812..." maxLength={30} />
         </div>
       )}
       {askPartySize && (
@@ -210,7 +210,7 @@ const FormStage = ({
       )}
       <div>
         <Label>Catatan (opsional)</Label>
-        <Input value={note} onChange={(e) => setNote(e.target.value)} placeholder="Permintaan khusus..." />
+        <Input value={note} onChange={(e) => setNote(e.target.value)} placeholder="Permintaan khusus..." maxLength={500} />
       </div>
       {terms && <p className="text-[11px] text-muted-foreground">{terms}</p>}
       <div className="flex gap-2">

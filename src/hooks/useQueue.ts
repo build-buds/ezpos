@@ -201,23 +201,28 @@ export const usePublicTicket = (ticketId: string | null, businessId: string | nu
     queryKey: ["public-ticket", ticketId],
     queryFn: async (): Promise<{ ticket: QueueTicket; position: number; ahead: number } | null> => {
       if (!ticketId) return null;
-      const { data: ticket, error } = await supabase
-        .from("queue_tickets")
-        .select("*")
-        .eq("id", ticketId)
-        .maybeSingle();
+      const { data, error } = await supabase.rpc("get_public_queue_ticket" as never, { _id: ticketId } as never);
       if (error) throw error;
-      if (!ticket) return null;
-      const t = ticket as QueueTicket;
-      // Compute position: waiting/called tickets created earlier in same business
-      const { count } = await supabase
-        .from("queue_tickets")
-        .select("id", { count: "exact", head: true })
-        .eq("business_id", t.business_id)
-        .in("status", ["waiting", "called"])
-        .lt("created_at", t.created_at);
-      const ahead = count ?? 0;
-      return { ticket: t, position: ahead + 1, ahead };
+      const row = Array.isArray(data) ? (data as any[])[0] : (data as any);
+      if (!row) return null;
+      const ticket: QueueTicket = {
+        id: row.id,
+        business_id: row.business_id,
+        number: row.number,
+        seq: row.seq,
+        name: row.name,
+        phone: null,
+        party_size: row.party_size,
+        note: row.note,
+        status: row.status,
+        preorder_transaction_id: null,
+        called_at: row.called_at,
+        served_at: row.served_at,
+        created_at: row.created_at,
+        updated_at: row.updated_at,
+      };
+      const ahead = Number(row.ahead ?? 0);
+      return { ticket, position: ahead + 1, ahead };
     },
     enabled: !!ticketId,
     refetchInterval: 8000,
@@ -242,9 +247,6 @@ export const usePublicTicket = (ticketId: string | null, businessId: string | nu
 };
 
 export const cancelPublicTicket = async (ticketId: string) => {
-  const { error } = await supabase
-    .from("queue_tickets")
-    .update({ status: "cancelled" })
-    .eq("id", ticketId);
+  const { error } = await supabase.rpc("cancel_public_queue_ticket" as never, { _id: ticketId } as never);
   if (error) throw error;
 };
