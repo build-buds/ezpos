@@ -72,12 +72,9 @@ const PublicBiolink = () => {
     let active = true;
     (async () => {
       setLoading(true);
-      const { data: bio } = await supabase
-        .from("biolinks")
-        .select("id, business_id, slug, display_name, bio, avatar_url, theme, accent_color, links")
-        .eq("slug", slug)
-        .eq("enabled", true)
-        .maybeSingle();
+      const { data: bioRows } = await supabase
+        .rpc("get_public_biolink" as never, { _slug: slug } as never);
+      const bio = Array.isArray(bioRows) ? (bioRows as any[])[0] : (bioRows as any);
 
       if (!active) return;
       if (!bio) {

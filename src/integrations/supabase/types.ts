@@ -877,6 +877,20 @@ export type Database = {
           queue_position: number
         }[]
       }
+      get_public_biolink: {
+        Args: { _slug: string }
+        Returns: {
+          accent_color: string
+          avatar_url: string
+          bio: string
+          business_id: string
+          display_name: string
+          id: string
+          links: Json
+          slug: string
+          theme: string
+        }[]
+      }
       get_public_kiosk_business: {
         Args: { _slug: string }
         Returns: {
@@ -884,6 +898,31 @@ export type Database = {
           name: string
           slug: string
         }[]
+      }
+      get_public_kiosk_settings: {
+        Args: { _business_id: string }
+        Returns: {
+          accent_color: string
+          ask_loyalty: boolean
+          ask_order_type: boolean
+          business_id: string
+          created_at: string
+          enabled: boolean
+          id: string
+          idle_timeout_seconds: number
+          payment_methods: string[]
+          success_message: string
+          terms: string | null
+          updated_at: string
+          welcome_subtitle: string
+          welcome_title: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "kiosk_settings"
+          isOneToOne: false
+          isSetofReturn: true
+        }
       }
       get_public_menu_business: {
         Args: { _slug: string }
@@ -906,6 +945,32 @@ export type Database = {
           name: string
           slug: string
         }[]
+      }
+      get_public_queue_settings: {
+        Args: { _business_id: string }
+        Returns: {
+          accent_color: string
+          allow_preorder: boolean
+          ask_party_size: boolean
+          ask_phone: boolean
+          avg_serve_minutes: number
+          business_id: string
+          closed_message: string
+          created_at: string
+          enabled: boolean
+          id: string
+          prefix: string
+          terms: string | null
+          updated_at: string
+          welcome_subtitle: string
+          welcome_title: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "queue_settings"
+          isOneToOne: false
+          isSetofReturn: true
+        }
       }
       get_public_queue_ticket: {
         Args: { _id: string }

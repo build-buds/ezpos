@@ -113,25 +113,8 @@ export const useQueueTickets = (range: "active" | "history" = "active") => {
       return (data || []) as QueueTicket[];
     },
     enabled: !!businessId,
+    refetchInterval: 5000,
   });
-
-  // Realtime subscription for owner board
-  useEffect(() => {
-    if (!businessId) return;
-    const channel = supabase
-      .channel(`queue-tickets-${businessId}-${Math.random().toString(36).slice(2)}`)
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "queue_tickets", filter: `business_id=eq.${businessId}` },
-        () => {
-          qc.invalidateQueries({ queryKey: ["queue-tickets", businessId] });
-        }
-      )
-      .subscribe();
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [businessId, qc]);
 
   return query;
 };
@@ -161,13 +144,10 @@ export const usePublicQueueSettings = (slug: string | undefined) => {
       if (e1) throw e1;
       const biz = Array.isArray(bizRows) ? bizRows[0] : bizRows;
       if (!biz) return null;
-      const { data: settings, error: e2 } = await supabase
-        .from("queue_settings")
-        .select("*")
-        .eq("business_id", biz.id)
-        .eq("enabled", true)
-        .maybeSingle();
+      const { data: rows, error: e2 } = await supabase
+        .rpc("get_public_queue_settings" as never, { _business_id: biz.id } as never);
       if (e2) throw e2;
+      const settings = Array.isArray(rows) ? (rows as any[])[0] : (rows as any);
       if (!settings) return null;
       return { business: biz, settings: settings as QueueSettings };
     },
@@ -230,17 +210,7 @@ export const usePublicTicket = (ticketId: string | null, businessId: string | nu
 
   useEffect(() => {
     if (!businessId) return;
-    const channel = supabase
-      .channel(`public-queue-${businessId}-${Math.random().toString(36).slice(2)}`)
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "queue_tickets", filter: `business_id=eq.${businessId}` },
-        () => qc.invalidateQueries({ queryKey: ["public-ticket", ticketId] })
-      )
-      .subscribe();
-    return () => {
-      supabase.removeChannel(channel);
-    };
+    // Realtime disabled on queue_tickets to avoid PII broadcast; polling via refetchInterval above.
   }, [businessId, ticketId, qc]);
 
   return query;

@@ -105,13 +105,10 @@ export const usePublicKioskSettings = (slug: string | undefined) => {
       if (e1) throw e1;
       const biz = Array.isArray(bizRows) ? bizRows[0] : bizRows;
       if (!biz) return null;
-      const { data: settings, error: e2 } = await supabase
-        .from("kiosk_settings")
-        .select("*")
-        .eq("business_id", biz.id)
-        .eq("enabled", true)
-        .maybeSingle();
+      const { data: rows, error: e2 } = await supabase
+        .rpc("get_public_kiosk_settings" as never, { _business_id: biz.id } as never);
       if (e2) throw e2;
+      const settings = Array.isArray(rows) ? (rows as any[])[0] : (rows as any);
       if (!settings) return null;
       return { business: biz, settings: settings as KioskSettings };
     },
