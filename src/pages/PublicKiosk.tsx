@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Loader2, ShoppingBag, UtensilsCrossed, ArrowLeft, Plus, Minus, Check, Banknote, QrCode, Trash2, Coffee, Cookie } from "lucide-react";
+import { Loader2, ShoppingBag, UtensilsCrossed, ArrowLeft, Plus, Minus, Check, Banknote, QrCode, Trash2, Coffee, Cookie, Monitor } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   usePublicKioskSettings,
