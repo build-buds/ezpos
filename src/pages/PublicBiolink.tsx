@@ -3,6 +3,8 @@ import { useParams, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2, Instagram, MessageCircle, Globe, Music2, Mail, Phone, MapPin, Link2, Utensils, ExternalLink } from "lucide-react";
 import { cn } from "@/lib/utils";
+import SEO from "@/components/SEO";
+import JsonLd from "@/components/JsonLd";
 
 interface BiolinkRow {
   id: string;
@@ -151,6 +153,28 @@ const PublicBiolink = () => {
 
   return (
     <div className={cn("min-h-screen flex flex-col", theme.wrap)}>
+      <SEO
+        title={`${displayName} — Biolink`}
+        description={data.bio || `Tautan resmi ${displayName}. Didukung oleh EZPOS.`}
+        path={`/bio/${slug ?? ""}`}
+        image={data.avatar_url || undefined}
+      />
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "ProfilePage",
+          name: displayName,
+          url: `https://ezpos.id/bio/${slug ?? ""}`,
+          mainEntity: {
+            "@type": "Organization",
+            name: displayName,
+            description: data.bio || undefined,
+            image: data.avatar_url || undefined,
+            url: `https://ezpos.id/bio/${slug ?? ""}`,
+            sameAs: allLinks.map((l) => l.url),
+          },
+        }}
+      />
       <div className="flex-1 max-w-md w-full mx-auto px-5 pt-12 pb-8 flex flex-col items-center">
         {/* Avatar */}
         <div

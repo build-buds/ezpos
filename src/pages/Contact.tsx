@@ -117,10 +117,10 @@ const ContactPage = () => {
                   <p className="text-sm font-semibold uppercase tracking-wider text-primary">
                     Hubungi Kami
                   </p>
-                  <h2 className="mt-2 font-display text-3xl font-extrabold leading-tight text-foreground md:text-4xl">
+                  <h1 className="mt-2 font-display text-3xl font-extrabold leading-tight text-foreground md:text-4xl">
                     Mari Terhubung dengan{" "}
                     <span className="text-primary">EZPOS</span>
-                  </h2>
+                  </h1>
                   <p className="mt-4 text-base text-muted-foreground">
                     Kami akan menghubungi Anda kembali dalam 24 jam untuk menjawab pertanyaan Anda.
                   </p>

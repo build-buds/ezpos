@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import MobileLayout from "@/components/MobileLayout";
+import SEO from "@/components/SEO";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -147,6 +148,12 @@ const Pricing = () => {
 
   return (
     <MobileLayout>
+      <SEO
+        title="Harga EZPOS — Paket Free & Pro untuk Restoran F&B"
+        description="Bandingkan paket EZPOS Free dan Pro (Rp 299rb/bulan): produk tak terbatas, transaksi tak terbatas, laporan lengkap, dan multi-perangkat."
+        path="/pricing"
+        noIndex
+      />
       <div className="bg-primary px-5 md:px-8 pt-10 pb-6 text-primary-foreground">
         <button onClick={() => navigate(-1)} className="flex items-center gap-1 mb-4 opacity-80">
           <ArrowLeft className="w-4 h-4" />

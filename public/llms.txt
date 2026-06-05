@@ -1,0 +1,15 @@
+# EZPOS
+
+> EZPOS adalah platform manajemen restoran & F&B all-in-one untuk Indonesia: kasir POS, QR ordering, kiosk self-service, manajemen antrian, dan menu digital.
+
+EZPOS membantu pemilik restoran, kafe, dan warung makan menjalankan bisnis dengan satu aplikasi mobile-first. Tersedia paket Free dan Pro (Rp 299.000/bulan).
+
+## Pages
+
+- [Beranda](/): Ringkasan produk, fitur utama, dan harga EZPOS.
+- [Modul](/modules): Daftar modul EZPOS (POS, QR ordering, kiosk, antrian, biolink, loyalty).
+- [Harga](/pricing): Paket Free vs Pro dan rincian fitur.
+- [Kontak](/contact): Hubungi tim EZPOS untuk demo dan pertanyaan.
+- [Blog](/blog): Artikel dan panduan untuk pemilik restoran & F&B.
+- [Syarat & Ketentuan](/terms): Ketentuan penggunaan layanan EZPOS.
+- [Kebijakan Privasi](/privacy): Bagaimana EZPOS menangani data pengguna.
