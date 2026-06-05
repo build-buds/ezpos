@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import MobileLayout from "@/components/MobileLayout";
+import SEO from "@/components/SEO";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { MODULES } from "@/data/modules";
@@ -14,6 +15,12 @@ const Modules = () => {
 
   return (
     <MobileLayout>
+      <SEO
+        title="Modul EZPOS — POS, QR Ordering, Kiosk, Antrian"
+        description="Aktifkan modul EZPOS sesuai kebutuhan: kasir POS, QR ordering, kiosk self-service, manajemen antrian, biolink, dan loyalty untuk bisnis F&B."
+        path="/modules"
+        noIndex
+      />
       <div className="px-5 md:px-8 lg:px-10 pt-10 lg:pt-8 pb-6 text-primary-foreground bg-primary">
         <div className="flex items-center gap-2">
           <Sparkles className="w-5 h-5" />

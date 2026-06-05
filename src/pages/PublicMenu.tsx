@@ -10,6 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import SEO from "@/components/SEO";
+import JsonLd from "@/components/JsonLd";
 
 interface BusinessData {
   id: string;
@@ -171,6 +172,29 @@ const PublicMenu = () => {
         }
         path={`/menu/${slug ?? ""}`}
         image={business.menu_logo_url || undefined}
+      />
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "Menu",
+          name: `${business.menu_title || business.name} — Menu Digital`,
+          url: `https://ezpos.id/menu/${slug ?? ""}`,
+          hasMenuSection: Object.entries(grouped).map(([cat, items]) => ({
+            "@type": "MenuSection",
+            name: cat,
+            hasMenuItem: items.map((p) => ({
+              "@type": "MenuItem",
+              name: p.name,
+              description: p.description || undefined,
+              image: p.image_url || undefined,
+              offers: {
+                "@type": "Offer",
+                price: p.price,
+                priceCurrency: "IDR",
+              },
+            })),
+          })),
+        }}
       />
       {/* Header */}
       <header

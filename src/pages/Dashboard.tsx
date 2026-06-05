@@ -1,6 +1,7 @@
 import MobileLayout from "@/components/MobileLayout";
 import InstallPrompt from "@/components/InstallPrompt";
 import NotificationBell from "@/components/NotificationBell";
+import SEO from "@/components/SEO";
 import { useAppState } from "@/contexts/AppContext";
 import { useTransactions, useLast7DaysRevenue } from "@/hooks/useTransactions";
 import { useProducts } from "@/hooks/useProducts";
@@ -45,6 +46,12 @@ const Dashboard = () => {
 
   return (
     <MobileLayout>
+      <SEO
+        title="Dashboard EZPOS — Ringkasan Bisnis F&B Anda"
+        description="Pantau penjualan hari ini, tren 7 hari, dan stok produk dalam satu dashboard EZPOS."
+        path="/dashboard"
+        noIndex
+      />
       <div className={cn("px-5 md:px-8 lg:px-10 pt-10 lg:pt-8 pb-6 text-primary-foreground", headerColor)}>
         <div className="flex items-center justify-between">
           <div>
