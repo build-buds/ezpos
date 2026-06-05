@@ -1002,6 +1002,7 @@ export type Database = {
         Args: { _member_id: string; _voucher_id: string }
         Returns: string
       }
+      start_kiosk_session: { Args: { _business_id: string }; Returns: string }
     }
     Enums: {
       app_role: "admin" | "staff"
