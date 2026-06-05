@@ -1,7 +1,8 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { LayoutDashboard, ShoppingCart, Package, FileText, Settings, Sparkles } from "lucide-react";
+import { LayoutDashboard, ShoppingCart, Package, FileText, Settings, Sparkles, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAppState } from "@/contexts/AppContext";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
 import brandIcon from "@/assets/logo.png";
 
 const navItems = [
@@ -17,6 +18,8 @@ const DesktopSidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { businessName } = useAppState();
+  const { data: isAdmin } = useIsAdmin();
+  const items = isAdmin ? [...navItems, { path: "/admin", label: "Admin", icon: ShieldCheck }] : navItems;
 
   return (
     <aside className="hidden lg:flex flex-col w-60 min-h-screen bg-card border-r border-border fixed left-0 top-0 z-40">
@@ -29,7 +32,7 @@ const DesktopSidebar = () => {
       </div>
 
       <nav className="flex-1 px-3 py-4 space-y-1">
-        {navItems.map((item) => {
+        {items.map((item) => {
           const isActive = location.pathname === item.path;
           const Icon = item.icon;
           return (
