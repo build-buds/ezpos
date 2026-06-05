@@ -1,32 +1,57 @@
+# Plan: Perbaikan 3 Bug Kritis EZPOS
 
-## Tujuan
+Plan ini hanya menangani 3 isu 🔴 prioritas tertinggi dari audit. Warning lainnya bisa dikerjakan di sesi terpisah.
 
-Merapikan tampilan halaman `/blog` (listing) dan `/blog/:slug` (detail artikel) agar lebih konsisten dengan visual identity landing page EZPOS: hero gradient, card style, spacing, dan CTA branding.
+---
 
-## Perubahan
+## Bug #1 — Crash halaman Kiosk publik
 
-### 1. Blog Listing (`src/pages/Blog.tsx`)
+**Masalah**: `PublicKiosk.tsx:161` memakai `<Monitor />` tapi ikon `Monitor` tidak ada di daftar import `lucide-react`. Saat user membuka `/kiosk/<slug>` untuk kiosk yang belum aktif/slug salah, halaman crash (white screen + ReferenceError).
 
-- **Hero section**: Tambahkan hero banner dengan background gradient primary (sama seperti landing sections), badge pill "Blog EZPOS", dan heading + subtitle yang lebih prominent.
-- **Card styling**: Tambahkan hover effect yang lebih halus, konsisten border-radius `rounded-2xl`, dan subtle gradient/shadow. Perbaiki alignment tag badges agar rata dan tidak berantakan saat jumlah tag berbeda.
-- **CTA di bawah grid**: Tambahkan CTA section "Coba EZPOS Gratis" di bawah daftar artikel, konsisten dengan `LandingCTA` style.
-- **Spacing**: Sesuaikan padding dan gap agar match dengan section spacing di landing page (py-16/py-24).
+**Perbaikan**:
+- Tambahkan `Monitor` ke import `lucide-react` di `src/pages/PublicKiosk.tsx`.
+- Verifikasi tidak ada ikon lain yang juga lupa di-import (scan cepat seluruh JSX file ini).
 
-### 2. Blog Post Detail (`src/pages/BlogPost.tsx`)
+---
 
-- **Header area**: Tambahkan subtle blue accent line/divider di atas judul, dan perbaiki spacing breadcrumb-tag-title agar lebih compact dan clean.
-- **Author & meta row**: Tambahkan avatar placeholder atau icon EZPOS di samping author name untuk visual consistency.
-- **Article content**: Pastikan prose styling menggunakan warna primary untuk links dan heading yang konsisten.
-- **CTA box di akhir artikel**: Tambahkan branded CTA card di bawah konten artikel (sebelum "Artikel Lainnya") — box dengan background primary/10, heading ajakan, dan tombol "Coba EZPOS Gratis".
-- **"Artikel Lainnya" section**: Perbaiki card style agar match dengan listing page cards.
+## Bug #2 — Push Notification tidak berfungsi
 
-### 3. Minor Brand Touches
+**Masalah**:
+1. Import `corsHeaders` dari path invalid `npm:@supabase/supabase-js@2/cors` → bisa membuat seluruh edge function gagal dimuat.
+2. Payload push dikirim tanpa enkripsi RFC 8291 → browser modern menolak.
 
-- Konsistenkan penggunaan `font-display` untuk semua heading di blog.
-- Pastikan tag badges menggunakan warna `primary/10` dan `text-primary` secara konsisten.
-- Tambahkan subtle decorative blur circles (background) di hero blog, mirip landing hero.
+**Perbaikan** di `supabase/functions/send-push-notification/index.ts`:
+- Ganti import CORS yang salah dengan deklarasi `corsHeaders` lokal (objek `Access-Control-Allow-Origin`, `Allow-Headers`, `Allow-Methods`).
+- Implementasi enkripsi Web Push standard menggunakan library Deno `https://deno.land/x/webpush@…` atau setara (`jsr:@negrel/webpush`) yang menangani VAPID JWT + payload encryption (aes128gcm) dengan key `p256dh` dan `auth` dari `push_subscriptions`.
+- Hapus subscription dari DB jika response push 404/410 (subscription expired).
+- Tetap pakai secrets `VAPID_PUBLIC_KEY` & `VAPID_PRIVATE_KEY` yang sudah ada.
 
-## File yang Diubah
+---
 
-- `src/pages/Blog.tsx`
-- `src/pages/BlogPost.tsx`
+## Bug #3 — Artikel blog tidak ada di sitemap
+
+**Masalah**: `public/sitemap.xml` hanya berisi `/blog` (index), 6 URL `/blog/<slug>` tidak terdaftar → Google tidak meng-crawl artikel via sitemap.
+
+**Perbaikan**:
+- Tambahkan entry `<url>` untuk setiap slug di `src/data/blog-posts.ts` ke `public/sitemap.xml`, dengan `lastmod` = tanggal publish artikel, `changefreq=monthly`, `priority=0.7`.
+- (Opsional, kalau diinginkan otomatis ke depan) Tambahkan langkah generate ke `scripts/prerender-meta.ts` agar sitemap di-rewrite saat build. Kalau tidak diminta sekarang, lewati supaya scope kecil.
+
+---
+
+## Detail Teknis
+
+| File | Aksi |
+|------|------|
+| `src/pages/PublicKiosk.tsx` | Tambah `Monitor` ke import `lucide-react` |
+| `supabase/functions/send-push-notification/index.ts` | Ganti import CORS + implementasi Web Push terenkripsi via library Deno |
+| `public/sitemap.xml` | Append 6 `<url>` blog post |
+
+## Verifikasi
+1. Cek build/typecheck output untuk `PublicKiosk.tsx` & edge function (auto-deploy).
+2. Test panggil edge function `send-push-notification` via `curl_edge_functions` ke user yang sudah subscribe; cek log.
+3. Buka `/sitemap.xml` di preview, pastikan 6 URL blog muncul.
+
+## Tidak termasuk (sesuai permintaan)
+- Race condition `loadBusinessData`
+- Inkonsistensi harga prerender vs UI
+- Warning lain (stok POS, QRIS kiosk, dll.)
