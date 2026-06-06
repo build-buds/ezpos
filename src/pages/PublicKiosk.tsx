@@ -12,6 +12,7 @@ import {
 import { Numpad } from "@/components/kiosk/Numpad";
 import { formatRupiah } from "@/data/products";
 import { toast } from "sonner";
+import SEO from "@/components/SEO";
 
 type Step = "welcome" | "type" | "menu" | "cart" | "pay" | "success";
 type OrderType = "kiosk-dinein" | "kiosk-takeaway";
@@ -173,6 +174,12 @@ const PublicKiosk = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col" onClick={resetIdle} onTouchStart={resetIdle}>
+      <SEO
+        title={`${business?.name ?? "Kiosk"} — Self-Service`}
+        description="Halaman kiosk self-service. Didukung oleh EZPOS."
+        path={`/kiosk/${slug ?? ""}`}
+        noIndex
+      />
       {/* Welcome */}
       {step === "welcome" && (
         <div className="flex-1 flex flex-col items-center justify-center text-center p-8" style={{ background: `linear-gradient(135deg, ${accent}15, ${accent}05)` }}>

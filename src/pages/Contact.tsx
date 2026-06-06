@@ -14,6 +14,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { useRevealOnScroll } from "@/hooks/useRevealOnScroll";
 import SEO from "@/components/SEO";
 import JsonLd from "@/components/JsonLd";
+import { trackEvent } from "@/lib/analytics";
 
 const WA_NUMBER = "6281234567890";
 
@@ -54,6 +55,7 @@ const ContactPage = () => {
       .filter(Boolean)
       .join("\n");
 
+    trackEvent("lead_form_submit", { form: "contact", subject: values.subject });
     window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
     toast.success("Pesan berhasil dikirim. Kami akan menghubungi Anda segera.");
     form.reset();
