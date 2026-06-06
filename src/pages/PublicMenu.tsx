@@ -172,6 +172,7 @@ const PublicMenu = () => {
         }
         path={`/menu/${slug ?? ""}`}
         image={business.menu_logo_url || undefined}
+        noIndex
       />
       <JsonLd
         data={{

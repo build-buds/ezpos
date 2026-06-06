@@ -12,6 +12,15 @@ Disallow: /reports
 Disallow: /settings
 Disallow: /checkout/
 Disallow: /splash
+Disallow: /admin
+Disallow: /modules
+Disallow: /biolink
+Disallow: /loyalty
+Disallow: /kiosk
+Disallow: /queue
+Disallow: /menu/
+Disallow: /bio/
+Disallow: /pricing
 
 # Block legacy WordPress URLs (old site)
 Disallow: /author/

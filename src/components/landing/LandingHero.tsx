@@ -3,6 +3,7 @@ import { ArrowRight, PlayCircle, ShieldCheck, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAppState } from "@/contexts/AppContext";
 import heroImage from "@/assets/hero-ibu-happy.png";
+import { trackEvent } from "@/lib/analytics";
 
 const LandingHero = () => {
   const { isLoggedIn, isOnboarded } = useAppState();
@@ -37,7 +38,12 @@ const LandingHero = () => {
 
             <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start">
               <Button asChild variant="cta" size="lg" className="w-full sm:w-auto">
-                <Link to={ctaTarget}>
+                <Link
+                  to={ctaTarget}
+                  onClick={() =>
+                    trackEvent("primary_cta_click", { location: "hero", target: ctaTarget })
+                  }
+                >
                   Jadwalkan Demo
                   <ArrowRight className="ml-1 h-4 w-4" />
                 </Link>
@@ -56,6 +62,7 @@ const LandingHero = () => {
                       e.preventDefault();
                       el.scrollIntoView({ behavior: "smooth" });
                     }
+                    trackEvent("secondary_cta_click", { location: "hero", target: "#produk" });
                   }}
                 >
                   <PlayCircle className="mr-1 h-4 w-4" />
@@ -81,6 +88,12 @@ const LandingHero = () => {
                 alt="Pelaku usaha Indonesia menggunakan EZPOS"
                 className="relative z-0 block h-auto w-full object-contain"
                 loading="eager"
+                decoding="async"
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore — fetchpriority not yet in React types
+                fetchpriority="high"
+                width={1024}
+                height={1024}
               />
             </div>
           </div>

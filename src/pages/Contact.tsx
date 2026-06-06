@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -36,19 +35,6 @@ type ContactValues = z.infer<typeof contactSchema>;
 
 const ContactPage = () => {
   useRevealOnScroll();
-
-  useEffect(() => {
-    document.title = "Hubungi Kami — EZPOS";
-    const desc =
-      "Hubungi tim EZPOS untuk konsultasi, demo produk, atau pertanyaan seputar aplikasi POS Anda. Kami akan merespons dalam 24 jam.";
-    let meta = document.querySelector('meta[name="description"]');
-    if (!meta) {
-      meta = document.createElement("meta");
-      meta.setAttribute("name", "description");
-      document.head.appendChild(meta);
-    }
-    meta.setAttribute("content", desc);
-  }, []);
 
   const form = useForm<ContactValues>({
     resolver: zodResolver(contactSchema),
