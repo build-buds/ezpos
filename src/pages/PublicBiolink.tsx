@@ -102,11 +102,6 @@ const PublicBiolink = () => {
     };
   }, [slug]);
 
-  useEffect(() => {
-    const title = data?.display_name || biz?.name || "Biolink";
-    document.title = `${title} • EZPOS`;
-  }, [data, biz]);
-
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -158,6 +153,7 @@ const PublicBiolink = () => {
         description={data.bio || `Tautan resmi ${displayName}. Didukung oleh EZPOS.`}
         path={`/bio/${slug ?? ""}`}
         image={data.avatar_url || undefined}
+        noIndex
       />
       <JsonLd
         data={{

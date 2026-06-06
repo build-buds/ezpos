@@ -13,6 +13,7 @@ import {
   usePublicTicket,
   cancelPublicTicket,
 } from "@/hooks/useQueue";
+import SEO from "@/components/SEO";
 
 type Stage = "welcome" | "form" | "status";
 
@@ -61,6 +62,12 @@ const PublicQueuePage = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
+      <SEO
+        title={`${business.name} — Antrian Online`}
+        description="Halaman antrian online. Didukung oleh EZPOS."
+        path={`/queue/${slug ?? ""}`}
+        noIndex
+      />
       <header className="px-4 sm:px-6 py-4 border-b" style={{ borderColor: `${accent}33` }}>
         <p className="text-xs text-muted-foreground">Antrian</p>
         <h1 className="text-base sm:text-lg font-bold truncate">{business.name}</h1>

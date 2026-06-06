@@ -41,61 +41,6 @@ const Landing = () => {
     bustCaches();
   }, []);
 
-  useEffect(() => {
-    document.title =
-      "EZPOS — Kasir Restoran, QR Ordering & Manajemen F&B #1 di Indonesia";
-    const desc =
-      "EZPOS: Solusi lengkap kasir POS, QR ordering, kiosk self-service, dan manajemen antrian untuk restoran, kafe, dan warung makan di Indonesia.";
-    const setMeta = (name: string, content: string, attr: "name" | "property" = "name") => {
-      let m = document.querySelector(`meta[${attr}="${name}"]`) as HTMLMetaElement | null;
-      if (!m) {
-        m = document.createElement("meta");
-        m.setAttribute(attr, name);
-        document.head.appendChild(m);
-      }
-      m.setAttribute("content", content);
-    };
-    setMeta("description", desc);
-    setMeta("keywords", "kasir restoran, POS F&B, QR ordering Indonesia, aplikasi kasir, kiosk self-service, manajemen antrian restoran, EZPOS");
-    setMeta("og:title", "EZPOS — Manajemen Restoran F&B All-in-One", "property");
-    setMeta("og:description", desc, "property");
-    setMeta("twitter:title", "EZPOS — Manajemen Restoran F&B All-in-One");
-    setMeta("twitter:description", desc);
-
-    // Canonical
-    let canonical = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
-    if (!canonical) {
-      canonical = document.createElement("link");
-      canonical.rel = "canonical";
-      document.head.appendChild(canonical);
-    }
-    canonical.href = window.location.origin + "/";
-
-    // JSON-LD structured data
-    const ldId = "ezpos-jsonld";
-    let ld = document.getElementById(ldId) as HTMLScriptElement | null;
-    if (!ld) {
-      ld = document.createElement("script");
-      ld.type = "application/ld+json";
-      ld.id = ldId;
-      document.head.appendChild(ld);
-    }
-    ld.text = JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "SoftwareApplication",
-      name: "EZPOS",
-      applicationCategory: "BusinessApplication",
-      operatingSystem: "Web, Android, iOS",
-      offers: {
-        "@type": "Offer",
-        price: "0",
-        priceCurrency: "IDR",
-      },
-      description: desc,
-      url: window.location.origin + "/",
-    });
-  }, []);
-
   return (
     <div ref={revealRef} className="min-h-screen bg-background">
       <SEO
@@ -118,7 +63,7 @@ const Landing = () => {
               contactType: "customer support",
               email: "halo@ezpos.id",
               areaServed: "ID",
-              availableLanguage: ["Indonesian", "English"],
+              availableLanguage: ["Indonesian"],
             },
             sameAs: ["https://ezpos.lovable.app"],
           },
@@ -133,6 +78,18 @@ const Landing = () => {
               target: "https://ezpos.id/?q={search_term_string}",
               "query-input": "required name=search_term_string",
             },
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "SoftwareApplication",
+            name: "EZPOS",
+            applicationCategory: "BusinessApplication",
+            operatingSystem: "Web, Android, iOS",
+            inLanguage: "id-ID",
+            url: "https://ezpos.id/",
+            offers: { "@type": "Offer", price: "0", priceCurrency: "IDR" },
+            description:
+              "Aplikasi kasir POS untuk restoran, kafe, dan warung makan di Indonesia. Gratis selamanya untuk paket dasar.",
           },
         ]}
       />

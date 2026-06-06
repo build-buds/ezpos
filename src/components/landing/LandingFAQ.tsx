@@ -1,5 +1,6 @@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import JsonLd from "@/components/JsonLd";
+import { trackEvent } from "@/lib/analytics";
 
 const faqs = [
   { q: "Apakah EZPOS benar-benar gratis?", a: "Ya, paket Gratis tersedia selamanya tanpa biaya tersembunyi. Anda hanya bayar jika butuh fitur Pro." },
@@ -34,7 +35,18 @@ const LandingFAQ = () => {
           </h2>
         </div>
 
-        <Accordion type="single" collapsible className="mt-12">
+        <Accordion
+          type="single"
+          collapsible
+          className="mt-12"
+          onValueChange={(value) => {
+            if (value) {
+              const idx = Number(value.replace("item-", ""));
+              const q = faqs[idx]?.q;
+              if (q) trackEvent("faq_expand", { question: q });
+            }
+          }}
+        >
           {faqs.map((f, i) => (
             <AccordionItem key={i} value={`item-${i}`}>
               <AccordionTrigger className="text-left font-semibold">{f.q}</AccordionTrigger>

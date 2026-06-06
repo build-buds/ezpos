@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -15,6 +14,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { useRevealOnScroll } from "@/hooks/useRevealOnScroll";
 import SEO from "@/components/SEO";
 import JsonLd from "@/components/JsonLd";
+import { trackEvent } from "@/lib/analytics";
 
 const WA_NUMBER = "6281234567890";
 
@@ -37,19 +37,6 @@ type ContactValues = z.infer<typeof contactSchema>;
 const ContactPage = () => {
   useRevealOnScroll();
 
-  useEffect(() => {
-    document.title = "Hubungi Kami — EZPOS";
-    const desc =
-      "Hubungi tim EZPOS untuk konsultasi, demo produk, atau pertanyaan seputar aplikasi POS Anda. Kami akan merespons dalam 24 jam.";
-    let meta = document.querySelector('meta[name="description"]');
-    if (!meta) {
-      meta = document.createElement("meta");
-      meta.setAttribute("name", "description");
-      document.head.appendChild(meta);
-    }
-    meta.setAttribute("content", desc);
-  }, []);
-
   const form = useForm<ContactValues>({
     resolver: zodResolver(contactSchema),
     defaultValues: { name: "", phone: "", email: "", subject: "", message: "", consent: false },
@@ -68,6 +55,7 @@ const ContactPage = () => {
       .filter(Boolean)
       .join("\n");
 
+    trackEvent("lead_form_submit", { form: "contact", subject: values.subject });
     window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
     toast.success("Pesan berhasil dikirim. Kami akan menghubungi Anda segera.");
     form.reset();
