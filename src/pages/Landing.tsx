@@ -44,7 +44,7 @@ const Landing = () => {
   return (
     <div ref={revealRef} className="min-h-screen bg-background">
       <SEO
-        title="EZPOS — Kasir Restoran, QR Ordering & Manajemen F&B #1 di Indonesia"
+        title="EZPOS — Kasir Restoran & Manajemen F&B #1 di Indonesia"
         description="EZPOS: Solusi lengkap kasir POS, QR ordering, kiosk self-service, dan manajemen antrian untuk restoran, kafe, dan warung makan di Indonesia."
         path="/"
       />
