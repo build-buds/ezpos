@@ -369,6 +369,68 @@ const blogPosts: BlogPost[] = [
     tags: ["Antrian", "Manajemen", "Restoran"],
     readTime: 4,
   },
+  {
+    slug: "sistem-reservasi-restoran",
+    title: "Panduan Lengkap Sistem Reservasi Restoran: Apa Itu, Manfaat & Cara Menerapkannya",
+    description:
+      "Reservasi adalah kunci mengelola kapasitas restoran secara efisien. Pelajari apa itu sistem reservasi restoran, manfaatnya, dan cara menerapkannya dengan teknologi modern.",
+    content: `
+<p>Pernah menolak pelanggan karena meja penuh, padahal 30 menit kemudian banyak meja kosong? Atau sebaliknya, menyiapkan meja untuk grup besar yang tidak pernah datang? Inilah masalah klasik yang diselesaikan oleh <strong>sistem reservasi restoran</strong>.</p>
+
+<h2>Apa Itu Reservasi Restoran?</h2>
+<p><strong>Reservasi adalah</strong> proses pemesanan tempat (meja) di restoran untuk waktu tertentu sebelum pelanggan datang. Dengan reservasi, restoran bisa mengatur kapasitas, staff, dan stok bahan baku jauh lebih akurat.</p>
+<p>Dulu, reservasi dilakukan via telepon dan dicatat di buku. Sekarang, sistem reservasi digital memungkinkan pelanggan booking sendiri lewat WhatsApp, website, atau QR code di meja.</p>
+
+<h2>Manfaat Sistem Reservasi Digital untuk Restoran</h2>
+<h3>1. Mengurangi No-Show & Walk-Out</h3>
+<p>Konfirmasi otomatis via WhatsApp atau email mengurangi kemungkinan pelanggan lupa atau membatalkan mendadak. Beberapa restoran bahkan menerapkan deposit kecil untuk grup besar.</p>
+
+<h3>2. Optimalisasi Kapasitas Meja</h3>
+<p>Sistem reservasi modern menampilkan layout meja secara real-time. Anda bisa melihat meja mana yang booked, mana yang free, dan kapan meja akan kosong kembali.</p>
+
+<h3>3. Perencanaan Stok & Staff yang Lebih Akurat</h3>
+<p>Dengan data reservasi harian, Anda tahu persis berapa banyak bahan baku yang harus disiapkan dan berapa staff yang perlu standby — mengurangi waste sekaligus mencegah kekurangan.</p>
+
+<h3>4. Pengalaman Pelanggan yang Lebih Baik</h3>
+<p>Pelanggan tidak perlu mengantre lama. Datang, tunjukkan konfirmasi, langsung duduk. Untuk momen spesial (ulang tahun, anniversary), pengalaman ini sangat berharga.</p>
+
+<h3>5. Database Pelanggan Otomatis</h3>
+<p>Setiap reservasi otomatis menyimpan data pelanggan (nama, nomor HP, preferensi). Data ini bisa dipakai untuk program loyalty, promo ulang tahun, atau marketing campaign.</p>
+
+<h2>Cara Menerapkan Sistem Reservasi di Restoran Anda</h2>
+<h3>Langkah 1: Petakan Layout & Kapasitas Meja</h3>
+<p>Buat denah meja digital — berapa meja untuk 2 orang, 4 orang, 6+ orang. Estimasi rata-rata durasi makan per sesi (biasanya 60–90 menit untuk casual dining).</p>
+
+<h3>Langkah 2: Pilih Channel Reservasi</h3>
+<ul>
+  <li><strong>WhatsApp Business</strong> — paling populer di Indonesia, low barrier untuk pelanggan</li>
+  <li><strong>Form web / link biolink</strong> — cocok untuk restoran yang aktif di Instagram</li>
+  <li><strong>QR code di pintu masuk</strong> — untuk waiting list saat ramai</li>
+</ul>
+
+<h3>Langkah 3: Integrasikan dengan POS & Antrian</h3>
+<p>Sistem reservasi terpisah dari POS membuat staff harus pindah-pindah aplikasi. Pilih solusi all-in-one supaya reservasi, antrian, dan transaksi tercatat di satu tempat.</p>
+
+<h3>Langkah 4: Tetapkan Kebijakan Pembatalan</h3>
+<p>Komunikasikan jelas: berapa lama sebelum jadwal pelanggan boleh cancel, apakah ada deposit untuk grup besar, dan policy untuk no-show.</p>
+
+<h2>Reservasi + Antrian Digital = Kombinasi Terbaik</h2>
+<p>Reservasi cocok untuk pelanggan yang merencanakan kunjungan. Tapi banyak pelanggan F&B di Indonesia datang spontan (walk-in). Solusinya: kombinasikan reservasi dengan <a href="/blog/tips-manajemen-antrian-restoran">sistem antrian digital</a> supaya walk-in customer tetap bisa dilayani secara teratur.</p>
+
+<h2>EZPOS untuk Manajemen Reservasi & Antrian Restoran</h2>
+<p>EZPOS menyediakan ekosistem lengkap untuk restoran modern: kasir POS, QR ordering, kiosk self-service, antrian digital, dan integrasi WhatsApp untuk konfirmasi reservasi. Semua dalam satu aplikasi yang bisa diakses dari HP atau tablet.</p>
+<ul>
+  <li><strong>Gratis selamanya</strong> untuk paket dasar</li>
+  <li><strong>EZPOS Pro</strong> mulai Rp 299.000/bulan untuk fitur lengkap reservasi, kiosk & antrian</li>
+  <li><strong>Tanpa hardware khusus</strong> — pakai device yang sudah ada</li>
+</ul>
+<p><strong>Siap modernisasi sistem reservasi restoran Anda?</strong> <a href="/">Coba EZPOS gratis sekarang</a> dan rasakan bedanya dalam 1 minggu pertama.</p>
+`,
+    date: "2026-06-20",
+    author: "EZPOS Team",
+    tags: ["Reservasi", "Manajemen", "Restoran"],
+    readTime: 6,
+  },
 ];
 
 export default blogPosts;
