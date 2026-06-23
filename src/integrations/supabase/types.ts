@@ -721,6 +721,8 @@ export type Database = {
           discount: number
           id: string
           items: Json
+          kitchen_status: string
+          kitchen_updated_at: string
           order_type: string | null
           payment_method: string
           status: string
@@ -732,6 +734,8 @@ export type Database = {
           discount?: number
           id?: string
           items?: Json
+          kitchen_status?: string
+          kitchen_updated_at?: string
           order_type?: string | null
           payment_method: string
           status?: string
@@ -743,6 +747,8 @@ export type Database = {
           discount?: number
           id?: string
           items?: Json
+          kitchen_status?: string
+          kitchen_updated_at?: string
           order_type?: string | null
           payment_method?: string
           status?: string
