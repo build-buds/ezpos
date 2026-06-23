@@ -33,14 +33,14 @@ export const MODULES: ModuleDef[] = [
     description:
       "Layar dapur digital yang menerima order langsung dari kasir & menu QR. Staf dapur bisa mengubah status pesanan (baru → diproses → siap → diantar) tanpa kertas.",
     icon: ChefHat,
-    status: "coming-soon",
+    status: "active",
+    path: "/kds",
     features: [
       "Real-time order dari POS & QR Order",
-      "Notifikasi suara saat pesanan baru",
-      "Estimasi waktu prepare otomatis",
-      "Multi-station (panas, dingin, bar)",
+      "Status pesanan: Baru → Dimasak → Siap",
+      "Timer otomatis & indikator pesanan lama",
+      "Sinkron lintas perangkat secara real-time",
     ],
-    isPro: true,
   },
   {
     slug: "loyalty",
