@@ -36,6 +36,7 @@ import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import Admin from "./pages/Admin";
 import AdminRoute from "@/components/AdminRoute";
+import KDS from "./pages/KDS";
 
 const queryClient = new QueryClient();
 
@@ -67,6 +68,7 @@ const App = () => (
           <Route path="/kiosk/:slug" element={<PublicKiosk />} />
           <Route path="/queue" element={<ProtectedRoute><Queue /></ProtectedRoute>} />
           <Route path="/queue/:slug" element={<PublicQueue />} />
+          <Route path="/kds" element={<ProtectedRoute><KDS /></ProtectedRoute>} />
           <Route path="/menu/:slug" element={<PublicMenu />} />
           <Route path="/bio/:slug" element={<PublicBiolink />} />
           <Route path="/terms" element={<TermsOfService />} />

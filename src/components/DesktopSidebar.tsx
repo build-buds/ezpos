@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { LayoutDashboard, ShoppingCart, Package, FileText, Settings, Sparkles, ShieldCheck } from "lucide-react";
+import { LayoutDashboard, ShoppingCart, Package, FileText, Settings, Sparkles, ShieldCheck, ChefHat } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAppState } from "@/contexts/AppContext";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
@@ -9,6 +9,7 @@ const navItems = [
   { path: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { path: "/pos", label: "Kasir", icon: ShoppingCart },
   { path: "/products", label: "Produk", icon: Package },
+  { path: "/kds", label: "Dapur", icon: ChefHat },
   { path: "/modules", label: "Modul", icon: Sparkles },
   { path: "/reports", label: "Laporan", icon: FileText },
   { path: "/settings", label: "Pengaturan", icon: Settings },
